@@ -6,12 +6,17 @@ import json
 
 import pytest
 
+from odoo_boost.mcp_server.tools.aggregate_records import aggregate_records
 from odoo_boost.mcp_server.tools.application_info import application_info
+from odoo_boost.mcp_server.tools.check_odoo_ls import check_odoo_ls
 from odoo_boost.mcp_server.tools.database_query import database_query
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.mcp_server.tools.execute_method import execute_method
 from odoo_boost.mcp_server.tools.get_config import get_config
+from odoo_boost.mcp_server.tools.get_model_inheritance import get_model_inheritance
 from odoo_boost.mcp_server.tools.get_module_info import get_module_info
+from odoo_boost.mcp_server.tools.inspect_local_addon import inspect_local_addon
+from odoo_boost.mcp_server.tools.lint_odoo_code import lint_odoo_code
 from odoo_boost.mcp_server.tools.list_access_rights import list_access_rights
 from odoo_boost.mcp_server.tools.list_menus import list_menus
 from odoo_boost.mcp_server.tools.list_models import list_models
@@ -19,6 +24,8 @@ from odoo_boost.mcp_server.tools.list_routes import list_routes
 from odoo_boost.mcp_server.tools.list_views import list_views
 from odoo_boost.mcp_server.tools.list_workflows import list_workflows
 from odoo_boost.mcp_server.tools.read_log_entries import read_log_entries
+from odoo_boost.mcp_server.tools.resolve_local_xml_id import resolve_local_xml_id
+from odoo_boost.mcp_server.tools.resolve_xml_id import resolve_xml_id
 from odoo_boost.mcp_server.tools.search_docs import search_docs
 from odoo_boost.mcp_server.tools.search_records import search_records
 
@@ -296,3 +303,148 @@ class TestListWorkflows:
         result = json.loads(list_workflows(model_name="res.partner"))
         if result["automated_actions"]:
             assert result["automated_actions"][0]["model"] == "res.partner"
+
+
+# ---------------------------------------------------------------------------
+# aggregate_records
+# ---------------------------------------------------------------------------
+
+
+class TestAggregateRecords:
+    def test_aggregate_records_returns_groups(self):
+        result = json.loads(aggregate_records("sale.order", groupby='["partner_id"]'))
+        assert "model" in result
+        assert result["model"] == "sale.order"
+        assert "groups" in result
+        assert len(result["groups"]) > 0
+
+
+# ---------------------------------------------------------------------------
+# resolve_xml_id
+# ---------------------------------------------------------------------------
+
+
+class TestResolveXmlId:
+    def test_resolve_existing_xml_id(self):
+        result = json.loads(resolve_xml_id("base.partner_admin"))
+        assert result["found"] is True
+        assert result["module"] == "base"
+        assert result["model"] == "res.partner"
+
+    def test_resolve_nonexistent_xml_id(self):
+        result = json.loads(resolve_xml_id("nonexistent.id"))
+        assert result["found"] is False
+
+
+# ---------------------------------------------------------------------------
+# get_model_inheritance
+# ---------------------------------------------------------------------------
+
+
+class TestGetModelInheritance:
+    def test_get_model_inheritance_existing(self):
+        result = json.loads(get_model_inheritance("res.partner"))
+        assert result["found"] is True
+        assert result["model"] == "res.partner"
+        assert "contributing_modules" in result
+
+    def test_get_model_inheritance_nonexistent(self):
+        result = json.loads(get_model_inheritance("nonexistent.model"))
+        assert result["found"] is False
+
+
+# ---------------------------------------------------------------------------
+# inspect_local_addon & resolve_local_xml_id
+# ---------------------------------------------------------------------------
+
+
+class TestLocalAddonTools:
+    def test_inspect_local_addon(self, tmp_path):
+        (tmp_path / "__manifest__.py").write_text('{"name": "Local Addon", "version": "1.0"}')
+        (tmp_path / "models.py").write_text(
+            'from odoo import models, fields\nclass Local(models.Model):\n    _name = "local.test"\n'
+        )
+        result = json.loads(inspect_local_addon(str(tmp_path)))
+        assert result["addon_name"] == tmp_path.name
+        assert len(result["models"]) == 1
+        assert result["models"][0]["_name"] == "local.test"
+
+    def test_resolve_local_xml_id(self, tmp_path):
+        (tmp_path / "views.xml").write_text(
+            '<odoo><record id="view_test" model="ir.ui.view"></record></odoo>'
+        )
+        result = json.loads(resolve_local_xml_id(str(tmp_path), "view_test"))
+        assert result["found"] is True
+        assert result["definition"]["id"] == "view_test"
+
+
+# ---------------------------------------------------------------------------
+# lint_odoo_code & check_odoo_ls
+# ---------------------------------------------------------------------------
+
+
+class TestLintAndLsTools:
+    def test_lint_odoo_code(self, tmp_path):
+        bad_file = tmp_path / "bad.py"
+        bad_file.write_text(
+            "from odoo import models\nclass Bad(models.Model):\n    def test(self):\n        self.env.cr.commit()\n"
+        )
+        result = json.loads(lint_odoo_code(str(bad_file)))
+        assert "engine" in result
+        assert result["total_issues"] > 0
+
+    def test_check_odoo_ls(self):
+        result = json.loads(check_odoo_ls())
+        assert "installed" in result
+
+
+# ---------------------------------------------------------------------------
+# database_query compact mode
+# ---------------------------------------------------------------------------
+
+
+class TestDatabaseQueryCompact:
+    def test_compact_mode(self):
+        raw = json.loads(database_query("res.partner", compact=False))
+        compact = json.loads(database_query("res.partner", compact=True))
+        assert raw["returned_count"] == compact["returned_count"]
+        # Compact records should omit None or empty values
+        if compact["records"]:
+            for _k, v in compact["records"][0].items():
+                assert v is not None and v is not False and v != ""
+
+
+# ---------------------------------------------------------------------------
+# MCP v2 Server, Resources, and Prompts
+# ---------------------------------------------------------------------------
+
+
+class TestMcpServerV2:
+    @pytest.mark.anyio
+    async def test_server_resources_and_prompts(self, monkeypatch, mock_connection, sample_config):
+        from odoo_boost.mcp_server.server import create_mcp_server
+
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.server.create_connection", lambda cfg: mock_connection
+        )
+        server = create_mcp_server(sample_config)
+
+        # Verify resources
+        resources = await server.list_resources()
+        uris = [str(r.uri) for r in resources]
+        assert "odoo://guidelines/oca" in uris
+        assert "odoo://skills/catalog" in uris
+
+        templates = await server.list_resource_templates()
+        template_uris = [t.uri_template for t in templates]
+        assert "odoo://schema/{model_name}" in template_uris
+
+        # Verify prompts
+        prompts = await server.list_prompts()
+        prompt_names = [p.name for p in prompts]
+        assert "review_odoo_addon" in prompt_names
+        assert "upgrade_odoo_addon" in prompt_names
+
+        # Verify tools count
+        tools = await server.list_tools()
+        assert len(tools) == 22

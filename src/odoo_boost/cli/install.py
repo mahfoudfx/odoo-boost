@@ -65,6 +65,16 @@ def install() -> None:
     odoo_version = version_info.get("server_serie", server_version.split("-")[0])
     console.print(f"  Detected Odoo version: [cyan]{odoo_version}[/]")
 
+    import shutil
+
+    ls_bin = shutil.which("odoo-ls")
+    if ls_bin:
+        console.print(f"  Detected Odoo Language Server: [green]{ls_bin}[/]")
+    else:
+        console.print(
+            "  Odoo Language Server: [dim]not on PATH (using built-in pure-Python AST scanner)[/]"
+        )
+
     # --- Step 3: Select agents ---
     console.print("\n[bold]Step 3:[/] Select AI agents to configure\n")
 

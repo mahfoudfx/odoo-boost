@@ -1,17 +1,41 @@
 # Agent Configuration
 
-Odoo Boost supports 6 AI coding agents. Each agent gets three types of generated files:
+Odoo Boost supports 11 modern AI coding agents. For each agent, Odoo Boost generates:
 
-1. **Guidelines** — Odoo development best practices in the agent's native format
-2. **MCP Config** — Configuration so the agent can call Odoo Boost MCP tools
-3. **Skills** — Step-by-step guides for common Odoo development tasks
+1. **Guidelines** — Odoo development best practices and version notes in the agent's native format
+2. **MCP Config** — Machine-readable configuration connecting the agent to the Odoo Boost MCP server
+3. **Skills & Progressive Routing** — Step-by-step guides along with `SKILLS_ROUTING.md`
 
 ## Supported Agents
+
+### Antigravity (App & CLI `agy`)
+
+| File | Path |
+|---|---|
+| Guidelines | `AGENTS.md` |
+| MCP Config | `.agents/mcp_config.json` |
+| Skills | `.agents/skills/` |
+
+**MCP Config format (`.agents/mcp_config.json`):**
+```json
+{
+  "mcpServers": {
+    "odoo-boost": {
+      "command": "/path/to/python",
+      "args": ["-m", "odoo_boost", "mcp"]
+    }
+  }
+}
+```
+
+Antigravity auto-discovers workspace customizations in `.agents/`, reading `mcp_config.json`, `AGENTS.md`, and skills in `.agents/skills/`.
+
+---
 
 ### Claude Code
 
 | File | Path |
-|------|------|
+|---|---|
 | Guidelines | `CLAUDE.md` |
 | MCP Config | `.mcp.json` |
 | Skills | `.ai/skills/` |
@@ -28,26 +52,19 @@ Odoo Boost supports 6 AI coding agents. Each agent gets three types of generated
 }
 ```
 
-> The `command` is set to the full path of the Python interpreter that has Odoo Boost installed. This ensures the MCP server starts in the correct environment regardless of `PATH`.
-
-Claude Code auto-detects both `CLAUDE.md` and `.mcp.json` in the project root. No additional setup needed.
-
-You can also manually add the MCP server:
-```bash
-claude mcp add odoo-boost -- python -m odoo_boost mcp
-```
+Claude Code auto-detects `CLAUDE.md` and `.mcp.json` in your project root upon launch.
 
 ---
 
 ### Cursor
 
 | File | Path |
-|------|------|
+|---|---|
 | Guidelines | `.cursor/rules/odoo-boost.mdc` |
 | MCP Config | `.cursor/mcp.json` |
 | Skills | `.cursor/skills/` |
 
-**Guidelines format:** Cursor uses `.mdc` files with YAML frontmatter:
+**Guidelines format:** Cursor uses `.mdc` rules with YAML frontmatter:
 ```markdown
 ---
 description: Odoo development guidelines from Odoo Boost
@@ -71,14 +88,12 @@ alwaysApply: true
 }
 ```
 
-Cursor auto-detects both files. Open the project in Cursor and the guidelines and tools are immediately available.
-
 ---
 
 ### GitHub Copilot
 
 | File | Path |
-|------|------|
+|---|---|
 | Guidelines | `.github/copilot-instructions.md` |
 | MCP Config | `.vscode/mcp.json` |
 | Skills | `.github/skills/` |
@@ -95,14 +110,12 @@ Cursor auto-detects both files. Open the project in Cursor and the guidelines an
 }
 ```
 
-Open the project in VS Code with GitHub Copilot. The instructions file and MCP config are auto-detected.
-
 ---
 
 ### OpenAI Codex
 
 | File | Path |
-|------|------|
+|---|---|
 | Guidelines | `AGENTS.md` |
 | MCP Config | `.codex/config.toml` |
 | Skills | `.agents/skills/` |
@@ -115,19 +128,42 @@ command = "/path/to/python"
 args = ["-m", "odoo_boost", "mcp"]
 ```
 
-Codex reads `AGENTS.md` automatically and connects to MCP servers defined in `.codex/config.toml`.
+---
+
+### OpenCode
+
+| File | Path |
+|---|---|
+| Guidelines | `AGENTS.md` |
+| MCP Config | `opencode.json` |
+| Skills | `.agents/skills/` |
+
+**MCP Config format (`opencode.json`):**
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "odoo-boost": {
+        "command": "/path/to/python",
+        "args": ["-m", "odoo_boost", "mcp"]
+      }
+    }
+  }
+}
+```
 
 ---
 
-### Gemini CLI
+### Pi
 
 | File | Path |
-|------|------|
-| Guidelines | `GEMINI.md` |
-| MCP Config | `.gemini/settings.json` |
+|---|---|
+| Guidelines | `AGENTS.md` |
+| MCP Config | `.pi/mcp.json` |
 | Skills | `.agents/skills/` |
 
-**MCP Config format (`.gemini/settings.json`):**
+**MCP Config format (`.pi/mcp.json`):**
 ```json
 {
   "mcpServers": {
@@ -139,16 +175,79 @@ Codex reads `AGENTS.md` automatically and connects to MCP servers defined in `.c
 }
 ```
 
-Gemini CLI reads `GEMINI.md` and `.gemini/settings.json` from the project root.
+---
 
-> **Note:** Gemini CLI and Codex share the `.agents/skills/` directory to avoid duplication.
+### Hermes
+
+| File | Path |
+|---|---|
+| Guidelines | `AGENTS.md` |
+| MCP Config | `.hermes/config.yaml` |
+| Skills | `.agents/skills/` |
+
+**MCP Config format (`.hermes/config.yaml`):**
+```yaml
+mcp_servers:
+  odoo-boost:
+    command: "/path/to/python"
+    args:
+      - "-m"
+      - "odoo_boost"
+      - "mcp"
+```
+
+---
+
+### Windsurf
+
+| File | Path |
+|---|---|
+| Guidelines | `.windsurfrules` |
+| MCP Config | `.windsurf/mcp.json` |
+| Skills | `.windsurf/skills/` |
+
+**MCP Config format (`.windsurf/mcp.json`):**
+```json
+{
+  "mcpServers": {
+    "odoo-boost": {
+      "command": "/path/to/python",
+      "args": ["-m", "odoo_boost", "mcp"]
+    }
+  }
+}
+```
+
+---
+
+### Cline
+
+| File | Path |
+|---|---|
+| Guidelines | `.clinerules` |
+| MCP Config | `.cline/mcp_settings.json` |
+| Skills | `.cline/skills/` |
+
+**MCP Config format (`.cline/mcp_settings.json`):**
+```json
+{
+  "mcpServers": {
+    "odoo-boost": {
+      "command": "/path/to/python",
+      "args": ["-m", "odoo_boost", "mcp"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
 
 ---
 
 ### Junie
 
 | File | Path |
-|------|------|
+|---|---|
 | Guidelines | `.junie/guidelines.md` |
 | MCP Config | `.junie/mcp/mcp.json` |
 | Skills | `.junie/skills/` |
@@ -169,48 +268,35 @@ Gemini CLI reads `GEMINI.md` and `.gemini/settings.json` from the project root.
 
 ## Selecting Agents
 
-### During Install
-
-The `odoo-boost install` wizard lets you pick agents interactively:
-
+### During Install Wizard
+The interactive wizard prompts:
 ```
-Enter agent numbers (comma-separated) or 'all' [all]: 1,2,3
+Step 3: Select AI agents to configure
+
+  1. Antigravity (App & CLI agy) (antigravity)
+  2. Claude Code (claude_code)
+  3. Cursor (cursor)
+  4. GitHub Copilot (copilot)
+  5. OpenAI Codex (codex)
+  6. OpenCode (opencode)
+  7. Pi (pi)
+  8. Hermes (hermes)
+  9. Windsurf (windsurf)
+  10. Cline (cline)
+  11. Junie (junie)
+
+  Enter agent numbers (comma-separated) or 'all' [all]:
 ```
 
-### In Config
-
-You can also edit `odoo-boost.json` directly:
-
+### In `odoo-boost.json`
+You can configure agents explicitly in `odoo-boost.json`:
 ```json
 {
-  "agents": ["claude_code", "cursor", "copilot"]
+  "agents": ["antigravity", "claude_code", "cursor", "windsurf", "cline"]
 }
 ```
 
-Valid agent IDs: `claude_code`, `cursor`, `copilot`, `codex`, `gemini_cli`, `junie`
+Valid identifiers:
+`antigravity`, `claude_code`, `cursor`, `copilot`, `codex`, `opencode`, `pi`, `hermes`, `windsurf`, `cline`, `junie`.
 
-Then run `odoo-boost update` to regenerate files.
-
-## Adding / Removing Agents
-
-1. Edit the `agents` list in `odoo-boost.json`
-2. Run `odoo-boost update`
-
-Files for removed agents are **not** automatically deleted. To clean up, remove them manually or use `odoo-boost install` to start fresh.
-
-## How the MCP Server Starts
-
-When your AI agent uses an MCP tool, it runs `python -m odoo_boost mcp` as a subprocess (using the full path to the Python interpreter). This:
-
-1. Reads `odoo-boost.json` from the current directory (or walks up to find it)
-2. Connects to Odoo via XML-RPC
-3. Authenticates
-4. Starts the MCP server on stdio
-
-The agent communicates with the MCP server via stdin/stdout using the [MCP protocol](https://modelcontextprotocol.io/).
-
-### Why full Python paths?
-
-The generated MCP configs embed the absolute path to the Python interpreter (e.g. `/home/user/.venv/bin/python`) instead of a bare `odoo-boost` command. This is because AI agents typically spawn MCP servers as subprocesses without inheriting your shell's `PATH` or virtualenv activation. Using the full path guarantees the correct Python environment is used every time.
-
-If you move or recreate your virtualenv, run `odoo-boost update` to regenerate the MCP configs with the new path.
+Run `odoo-boost update` to apply changes.

@@ -67,3 +67,24 @@ class TestMcpCommand:
         monkeypatch.chdir(tmp_path)
         result = runner.invoke(app, ["mcp"])
         assert result.exit_code == 1
+
+
+class TestLintCommand:
+    def test_lint_help(self):
+        result = runner.invoke(app, ["lint", "--help"])
+        assert result.exit_code == 0
+        assert "Run OCA coding standard checks" in result.output
+
+    def test_lint_clean_file(self):
+        result = runner.invoke(app, ["lint", "src/odoo_boost/__init__.py"])
+        assert result.exit_code == 0
+        assert "No issues found" in result.output
+
+    def test_lint_issues_file(self, tmp_path):
+        bad_file = tmp_path / "bad.py"
+        bad_file.write_text(
+            "from odoo import models\n\nclass BadModel(models.Model):\n    def test(self):\n        self.env.cr.commit()\n"
+        )
+        result = runner.invoke(app, ["lint", str(bad_file)])
+        assert result.exit_code == 1
+        assert "Linter Results" in result.output or "issues found" in result.output

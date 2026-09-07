@@ -1,12 +1,12 @@
 # MCP Tools Reference
 
-Odoo Boost provides 15 MCP tools that give your AI agent deep introspection into a running Odoo instance. All tools connect via XML-RPC and respect Odoo's access rights.
+Odoo Boost provides 22 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
 
 All tools return JSON strings.
 
 ---
 
-## application_info
+## 1. application_info
 
 Get Odoo application info: server version, installed modules, database details.
 
@@ -20,17 +20,14 @@ Get Odoo application info: server version, installed modules, database details.
   "protocol_version": 1,
   "installed_modules_count": 147,
   "installed_modules": [
-    { "name": "account", "description": "Invoicing", "version": "18.0.2.0.0" },
-    ...
+    { "name": "account", "description": "Invoicing", "version": "18.0.2.0.0" }
   ]
 }
 ```
 
-**Example prompt:** "What version of Odoo is running and what modules are installed?"
-
 ---
 
-## database_schema
+## 2. database_schema
 
 Get the field definitions (schema) of an Odoo model.
 
@@ -55,19 +52,16 @@ Get the field definitions (schema) of an Odoo model.
       "stored": true,
       "indexed": true,
       "help": null
-    },
-    ...
+    }
   ]
 }
 ```
 
-**Example prompt:** "Show me the schema of the sale.order model"
-
 ---
 
-## database_query
+## 3. database_query
 
-Execute an ORM `search_read` on any Odoo model. Safe — goes through access rights.
+Execute an ORM `search_read` on any Odoo model. Safe — goes through Odoo access rights. Supports an optional `compact` mode to preserve AI token context.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -77,6 +71,7 @@ Execute an ORM `search_read` on any Odoo model. Safe — goes through access rig
 | `limit` | int | no | `80` | Max records to return |
 | `offset` | int | no | `0` | Records to skip |
 | `order` | str | no | `""` | Sort order, e.g. `"name asc"` |
+| `compact` | bool | no | `false` | When true, strips false/null values and uses compact JSON |
 
 **Returns:**
 ```json
@@ -87,17 +82,200 @@ Execute an ORM `search_read` on any Odoo model. Safe — goes through access rig
   "offset": 0,
   "limit": 5,
   "records": [
-    { "id": 1, "name": "My Company", "email": "info@example.com" },
-    ...
+    { "id": 1, "name": "My Company", "email": "info@example.com" }
   ]
 }
 ```
 
-**Example prompt:** "Find all partners that are companies, show name and email, limit to 10"
+---
+
+## 4. aggregate_records
+
+Perform server-side `read_group` aggregations (e.g. sums, counts, averages, and group-bys) without fetching thousands of individual records.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `model` | str | yes | — | Model name, e.g. `sale.order` |
+| `fields` | str | yes | — | JSON list of fields to aggregate, e.g. `["amount_total:sum", "partner_id"]` |
+| `groupby` | str | yes | — | JSON list of groupby fields, e.g. `["partner_id", "date_order:month"]` |
+| `domain` | str | no | `"[]"` | Domain filter as JSON string |
+| `limit` | int | no | `80` | Max groups to return |
+| `offset` | int | no | `0` | Groups to skip |
+| `order` | str | no | `""` | Order string, e.g. `"amount_total desc"` |
+
+**Returns:**
+```json
+{
+  "model": "sale.order",
+  "group_count": 3,
+  "groups": [
+    {
+      "partner_id": [12, "Deco Addict"],
+      "amount_total": 4520.50,
+      "partner_id_count": 4
+    }
+  ]
+}
+```
 
 ---
 
-## list_models
+## 5. resolve_xml_id
+
+Resolve an external ID (`ir.model.data` XML ID like `base.main_company` or `account.view_move_form`) to its underlying database ID, model, and metadata.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `xml_id` | str | yes | — | Fully qualified XML ID (`module.name`) or local ID |
+| `module` | str | no | `""` | Optional module name if not included in `xml_id` |
+
+**Returns:**
+```json
+{
+  "found": true,
+  "xml_id": "base.main_company",
+  "module": "base",
+  "name": "main_company",
+  "model": "res.company",
+  "res_id": 1,
+  "noupdate": true
+}
+```
+
+---
+
+## 6. get_model_inheritance
+
+Inspect an Odoo model's inheritance hierarchy, including `_inherit` extension chains, `_inherits` delegation pointers, and parent models.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `model_name` | str | yes | — | Technical model name, e.g. `product.product` |
+
+**Returns:**
+```json
+{
+  "model": "product.product",
+  "name": "Product Variant",
+  "inherit": ["mail.thread", "mail.activity.mixin"],
+  "inherits": {
+    "product.template": "product_tmpl_id"
+  }
+}
+```
+
+---
+
+## 7. inspect_local_addon
+
+Fast, sub-50ms offline static scanner. Uses Python's standard `ast` and `xml.etree` libraries to inspect uncommitted or local addon directories without needing Docker or a live database.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `addon_path` | str | yes | — | Path to the local addon directory |
+
+**Returns:**
+```json
+{
+  "addon_name": "custom_sales",
+  "models": [
+    {
+      "model_name": "custom.order",
+      "inherits": ["mail.thread"],
+      "field_names": ["name", "order_date", "line_ids"],
+      "file": "models/custom_order.py"
+    }
+  ],
+  "xml_elements": [
+    {
+      "tag": "record",
+      "id": "view_custom_order_form",
+      "model": "ir.ui.view",
+      "file": "views/order_views.xml"
+    }
+  ],
+  "manifest_info": {
+    "name": "Custom Sales",
+    "version": "18.0.1.0.0",
+    "depends": ["sale", "mail"]
+  }
+}
+```
+
+---
+
+## 8. resolve_local_xml_id
+
+Find and locate where an XML ID is declared or referenced within local addon files on disk.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `xml_id` | str | yes | — | XML ID to locate (e.g. `view_order_form`) |
+| `directory` | str | no | `"."` | Root directory to search within |
+
+**Returns:**
+```json
+{
+  "xml_id": "view_custom_order_form",
+  "matches": [
+    {
+      "file": "views/order_views.xml",
+      "line": 4,
+      "tag": "record",
+      "type": "declaration"
+    }
+  ]
+}
+```
+
+---
+
+## 9. lint_odoo_code
+
+Lint an Odoo module or file against OCA standards. Uses `pylint-odoo` if installed, or falls back to an intelligent built-in AST safety scanner (checking for missing ACLs, SQL injections, `self.env.cr.commit()`, and deprecated `<tree>` tags).
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `path` | str | yes | — | File or directory path to lint |
+
+**Returns:**
+```json
+{
+  "path": "addons/custom_sale",
+  "tool": "pylint-odoo",
+  "passed": false,
+  "issues_count": 1,
+  "issues": [
+    {
+      "file": "models/order.py",
+      "line": 42,
+      "symbol": "sql-injection",
+      "message": "Possible SQL injection using string formatting"
+    }
+  ]
+}
+```
+
+---
+
+## 10. check_odoo_ls
+
+Check if the official Odoo Language Server (`odoo-ls`) is installed, executable, and available in your environment.
+
+**Parameters:** None
+
+**Returns:**
+```json
+{
+  "available": true,
+  "path": "/usr/local/bin/odoo-ls",
+  "version": "odoo-ls 0.1.0"
+}
+```
+
+---
+
+## 11. list_models
 
 List available Odoo models with field counts.
 
@@ -107,23 +285,9 @@ List available Odoo models with field counts.
 | `filter_module` | str | no | `""` | Filter by source module name |
 | `limit` | int | no | `200` | Max models to return |
 
-**Returns:**
-```json
-{
-  "total": 12,
-  "models": [
-    { "model": "sale.order", "name": "Sales Order", "field_count": 89 },
-    { "model": "sale.order.line", "name": "Sales Order Line", "field_count": 67 },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "List all models related to 'sale'"
-
 ---
 
-## list_views
+## 12. list_views
 
 List Odoo views (`ir.ui.view`), optionally filtered by model or type. Returns the full XML architecture.
 
@@ -133,31 +297,9 @@ List Odoo views (`ir.ui.view`), optionally filtered by model or type. Returns th
 | `view_type` | str | no | `""` | Filter by type: `form`, `list`, `kanban`, `search`, etc. |
 | `limit` | int | no | `50` | Max views to return |
 
-**Returns:**
-```json
-{
-  "total": 3,
-  "views": [
-    {
-      "id": 123,
-      "name": "res.partner.view.form",
-      "model": "res.partner",
-      "type": "form",
-      "priority": 16,
-      "inherit_id": null,
-      "active": true,
-      "arch": "<form>...</form>"
-    },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "Show me the form views for res.partner"
-
 ---
 
-## list_menus
+## 13. list_menus
 
 List Odoo menu items (`ir.ui.menu`).
 
@@ -166,30 +308,9 @@ List Odoo menu items (`ir.ui.menu`).
 | `parent_id` | int | no | `0` | `0` = root menus only, `-1` = all menus, or a specific parent ID |
 | `limit` | int | no | `200` | Max menus to return |
 
-**Returns:**
-```json
-{
-  "total": 12,
-  "menus": [
-    {
-      "id": 1,
-      "name": "Discuss",
-      "complete_name": "Discuss",
-      "parent_id": null,
-      "action": "ir.actions.client,123",
-      "sequence": 1,
-      "child_count": 3
-    },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "Show me the top-level menu structure"
-
 ---
 
-## list_routes
+## 14. list_routes
 
 List website pages and known controller routes.
 
@@ -198,126 +319,43 @@ List website pages and known controller routes.
 | `filter_url` | str | no | `""` | Substring filter on URL |
 | `limit` | int | no | `100` | Max routes to return |
 
-**Returns:**
-```json
-{
-  "total": 15,
-  "routes": [
-    { "type": "page", "url": "/about-us", "name": "About Us", "published": true },
-    { "type": "rewrite", "url": "/old-page", "target": "/new-page", "name": "Redirect" },
-    ...
-  ]
-}
-```
-
-> **Note:** Requires the `website` module to be installed for page listings.
-
-**Example prompt:** "What website pages are published?"
-
 ---
 
-## list_access_rights
+## 15. list_access_rights
 
 List access rights (`ir.model.access`) and record rules (`ir.rule`) for a model.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `model_name` | str | no | `""` | Filter by model name. Empty for all. |
+| `model_name` | str | no | `""` | Filter by model name. Empty for all |
 | `limit` | int | no | `100` | Max entries per type |
-
-**Returns:**
-```json
-{
-  "model_filter": "res.partner",
-  "access_rights": [
-    {
-      "name": "res_partner_user",
-      "model": "Contact",
-      "group": "User",
-      "read": true, "write": true, "create": true, "unlink": false
-    },
-    ...
-  ],
-  "record_rules": [
-    {
-      "name": "res_partner_rule",
-      "model": "Contact",
-      "domain": "['|',('id','child_of',user.commercial_partner_id.id),...]",
-      "global": false,
-      "read": true, "write": true, "create": true, "unlink": true
-    },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "What are the access rights and record rules for sale.order?"
 
 ---
 
-## get_config
+## 16. get_config
 
 Get Odoo system configuration parameters (`ir.config_parameter`).
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `key` | str | no | `""` | Exact key or substring filter. Empty returns all. |
+| `key` | str | no | `""` | Exact key or substring filter. Empty returns all |
 | `limit` | int | no | `100` | Max parameters to return |
-
-**Returns:**
-```json
-{
-  "total": 3,
-  "parameters": [
-    { "key": "web.base.url", "value": "http://localhost:8069" },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "What is the web.base.url configuration?"
 
 ---
 
-## get_module_info
+## 17. get_module_info
 
-Get detailed information about an Odoo module including dependencies and models it defines.
+Get detailed information about an Odoo module including dependencies and defined models.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `module_name` | str | yes | — | Technical module name, e.g. `sale` |
 
-**Returns:**
-```json
-{
-  "name": "sale",
-  "title": "Sales",
-  "summary": "From quotations to invoices",
-  "author": "Odoo SA",
-  "version": "18.0.2.0.0",
-  "state": "installed",
-  "category": "Sales/Sales",
-  "license": "LGPL-3",
-  "application": true,
-  "dependencies": [
-    { "name": "account", "auto_install_required": false },
-    ...
-  ],
-  "models": [
-    { "model": "sale.order", "name": "Sales Order" },
-    { "model": "sale.order.line", "name": "Sales Order Line" },
-    ...
-  ]
-}
-```
-
-**Example prompt:** "Tell me about the sale module — what does it depend on and what models does it define?"
-
 ---
 
-## search_records
+## 18. search_records
 
-Search and read records from any Odoo model with domain filtering and pagination.
+Search and read records from any Odoo model with domain filtering and pagination (default limit 20).
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -328,37 +366,22 @@ Search and read records from any Odoo model with domain filtering and pagination
 | `offset` | int | no | `0` | Records to skip |
 | `order` | str | no | `""` | Sort order |
 
-This is similar to `database_query` but with a smaller default limit (20 vs 80), designed for browsing records.
-
-**Example prompt:** "Search for all users, show name and login, sorted by name"
-
 ---
 
-## execute_method
+## 19. execute_method
 
-Execute an arbitrary ORM method on an Odoo model. This is similar to Laravel's Tinker — use with care.
+Execute an arbitrary ORM method on an Odoo model (similar to Laravel Tinker).
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `model` | str | yes | — | Technical model name |
-| `method` | str | yes | — | Method name, e.g. `default_get`, `fields_get`, `name_search` |
+| `method` | str | yes | — | Method name (e.g. `default_get`, `fields_get`) |
 | `args` | str | no | `"[]"` | Positional arguments as JSON list |
 | `kwargs` | str | no | `"{}"` | Keyword arguments as JSON object |
 
-**Returns:**
-```json
-{
-  "model": "res.partner",
-  "method": "default_get",
-  "result": { "name": false, "company_type": "company", ... }
-}
-```
-
-**Example prompt:** "Call default_get on res.partner to see what default values are set"
-
 ---
 
-## read_log_entries
+## 20. read_log_entries
 
 Read Odoo log entries from `ir.logging`. Requires `log_db` to be configured in `odoo.conf`.
 
@@ -368,61 +391,20 @@ Read Odoo log entries from `ir.logging`. Requires `log_db` to be configured in `
 | `func` | str | no | `""` | Filter by function name substring |
 | `limit` | int | no | `50` | Max entries to return |
 
-**Returns:**
-```json
-{
-  "total": 5,
-  "entries": [
-    {
-      "timestamp": "2025-01-15 10:30:00",
-      "level": "WARNING",
-      "name": "odoo.addons.sale",
-      "function": "_check_order",
-      "path": "/path/to/file.py",
-      "line": "142",
-      "message": "Order validation failed"
-    },
-    ...
-  ]
-}
-```
-
-> **Note:** Returns an error message if `log_db` is not configured.
-
-**Example prompt:** "Show me the latest error log entries"
-
 ---
 
-## search_docs
+## 21. search_docs
 
-Search Odoo documentation and return relevant links. Does not require a connection — works from a built-in topic index.
+Search Odoo documentation topics and return official documentation links.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `topic` | str | no | `""` | Topic keyword (e.g. `orm`, `views`, `security`). Empty lists all topics. |
-| `version` | str | no | `""` | Odoo version, e.g. `18.0`. Defaults to `18`. |
-
-**Available topics:** `orm`, `fields`, `views`, `actions`, `security`, `controllers`, `qweb`, `owl`, `assets`, `testing`, `data`, `reports`, `module`, `web_services`, `mixins`
-
-**Returns:**
-```json
-{
-  "results": [
-    {
-      "topic": "orm",
-      "title": "ORM API",
-      "url": "https://www.odoo.com/documentation/18/developer/reference/backend/orm.html",
-      "description": "Model definitions, fields, CRUD, domains, recordsets."
-    }
-  ]
-}
-```
-
-**Example prompt:** "Find me the Odoo documentation for OWL components"
+| `topic` | str | no | `""` | Topic keyword (e.g. `orm`, `views`, `owl`) |
+| `version` | str | no | `""` | Odoo version, e.g. `18.0` |
 
 ---
 
-## list_workflows
+## 22. list_workflows
 
 List automated actions (`base.automation`) and server actions (`ir.actions.server`).
 
@@ -431,31 +413,33 @@ List automated actions (`base.automation`) and server actions (`ir.actions.serve
 | `model_name` | str | no | `""` | Filter by model name |
 | `limit` | int | no | `50` | Max entries per type |
 
-**Returns:**
-```json
-{
-  "model_filter": "sale.order",
-  "automated_actions": [
-    {
-      "id": 5,
-      "name": "Auto-confirm quotation",
-      "model": "sale.order",
-      "trigger": "on_write",
-      "active": true,
-      "server_action_count": 1
-    }
-  ],
-  "server_actions": [
-    {
-      "id": 12,
-      "name": "Send confirmation email",
-      "model": "sale.order",
-      "type": "email",
-      "code_preview": "",
-      "sequence": 5
-    }
-  ]
-}
-```
+---
 
-**Example prompt:** "What automated actions and server actions exist for sale.order?"
+# MCP Resources Reference
+
+Odoo Boost exposes native MCP resources that agents can query directly without making an active tool call round-trip.
+
+| Resource URI | Description |
+|---|---|
+| `odoo://schema/{model_name}` | Dynamic template: returns the complete field schema for `{model_name}` (e.g. `odoo://schema/res.partner`). |
+| `odoo://guidelines/oca` | Returns the composed OCA standards and best practices markdown document. |
+| `odoo://skills/catalog` | Returns the `SKILLS_ROUTING.md` progressive skills catalog and intent index. |
+
+---
+
+# MCP Prompts Reference
+
+Odoo Boost registers pre-engineered prompt workflows that users or agents can invoke to initiate structured development tasks.
+
+### 1. `review_odoo_addon`
+Pre-populates an architectural review prompt instructing the AI assistant to audit an Odoo addon at a specified path against OCA conventions, check `security/ir.model.access.csv`, and detect SQL injection or N+1 query patterns.
+
+- **Arguments**:
+  - `path` (string, required): Directory path of the addon to review.
+
+### 2. `upgrade_odoo_addon`
+Pre-populates an upgrade and migration analysis prompt instructing the AI assistant to check an addon for breaking changes, deprecated XML tags (e.g. `<tree>` vs `<list>`), obsolete `attrs`, and ORM updates for a target Odoo version.
+
+- **Arguments**:
+  - `path` (string, required): Directory path of the addon to analyze.
+  - `target_version` (string, optional, default `"18.0"`): Target Odoo version (e.g. `"17.0"`, `"18.0"`, `"19.0"`).

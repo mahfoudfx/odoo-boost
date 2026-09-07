@@ -1,36 +1,40 @@
 # Guidelines
 
-Odoo Boost bundles comprehensive Odoo development guidelines that are injected into your AI agent's context. This ensures your agent writes idiomatic Odoo code following official best practices.
+Odoo Boost bundles comprehensive Odoo development guidelines injected into your AI agent's native context. This ensures that generated code is idiomatic, clean, secure, and compliant with OCA (Odoo Community Association) standards.
 
 ## What's Included
 
-The guidelines are composed from 9 core files plus a version-specific addendum:
+Guidelines are composed from 10 core files plus a version-specific addendum:
 
-### Core Guidelines
+### Core Guidelines (10 Topics)
 
 | File | Topic | Covers |
-|------|-------|--------|
-| `odoo_general.md` | General Principles | Architecture, conventions, module dependencies |
+|---|---|---|
+| `odoo_general.md` | General Principles | Architecture, module lifecycle, dependencies |
 | `module_structure.md` | Module Structure | Directory layout, `__manifest__.py`, file naming |
-| `orm_best_practices.md` | ORM Best Practices | Models, fields, CRUD, domains, performance |
-| `security.md` | Security | ACLs, record rules, groups, common pitfalls |
-| `views_and_ui.md` | Views & UI | Form, list, kanban, search, inheritance, actions |
-| `controllers.md` | Controllers | HTTP routes, JSON-RPC, best practices |
-| `javascript_owl.md` | JavaScript & OWL | Components, templates, hooks, services, assets |
-| `testing.md` | Testing | Python tests, HTTP tests, test patterns |
-| `coding_style.md` | Coding Style | Python, XML, JS conventions, naming, commits |
+| `orm_best_practices.md` | ORM Best Practices | Models, fields, CRUD, domains, performance, batched queries |
+| `security.md` | Security | ACLs (`ir.model.access`), record rules (`ir.rule`), groups, `sudo()` audits |
+| `views_and_ui.md` | Views & UI | Form, list, kanban, search views, XPath inheritance, actions |
+| `controllers.md` | Controllers | HTTP routes, JSON-RPC endpoints, authentication |
+| `javascript_owl.md` | JavaScript & OWL | OWL components, templates, hooks, services, assets |
+| `testing.md` | Testing | Python `TransactionCase`, HTTP tests, tour tests |
+| `coding_style.md` | Coding Style | Python conventions, XML formatting, git commits |
+| `oca_standards.md` | OCA Standards | Community quality guidelines, SQL safety, transaction handling |
 
-### Version-Specific Files
+### Version-Specific Addenda
 
-| File | Version | Key Topics |
-|------|---------|------------|
-| `v17.md` | Odoo 17 | `<list>` tag, `attrs` removal, OWL 2, `Command` API |
-| `v18.md` | Odoo 18 | Inline expressions mandatory, portal redesign |
-| `v19.md` | Odoo 19 | `<tree>` removed, Python 3.12+ required |
+| File | Version | Key Highlights |
+|---|---|---|
+| `v14.md` | Odoo 14 | Legacy `attrs`, Classic `web.assets_backend`, `[(0, 0, vals)]` tuples |
+| `v15.md` | Odoo 15 | Asset bundles in manifest `assets` dict, OWL 1 introduction |
+| `v16.md` | Odoo 16 | Transition to OWL 2, performance improvements |
+| `v17.md` | Odoo 17 | `<list>` tag introduced, `attrs` deprecated, `Command` API, new dark/light UI |
+| `v18.md` | Odoo 18 | Mandatory `<list>` tag, inline view expressions, portal revamp |
+| `v19.md` | Odoo 19 | `<tree>` strictly removed, Python 3.12+ required, search view cleanups |
 
 ## How Version Selection Works
 
-During `odoo-boost install`, the detected Odoo version is saved to `odoo-boost.json`:
+During `odoo-boost install`, Odoo Boost detects your server version and writes it to `odoo-boost.json`:
 
 ```json
 {
@@ -38,32 +42,30 @@ During `odoo-boost install`, the detected Odoo version is saved to `odoo-boost.j
 }
 ```
 
-When generating guidelines, the composer:
-
-1. Assembles all 9 core files
-2. Appends the matching version file (e.g. `v18.md` for version `18.0`)
-3. Writes the result to the agent's guidelines file
-
-This means your agent gets version-correct advice. For example:
-- On Odoo 17: "Use `<list>` instead of `<tree>` (both work but `<list>` is preferred)"
-- On Odoo 19: "Only `<list>` is supported — `<tree>` will cause errors"
+When building agent guidelines, the composer:
+1. Concatenates all 10 core guideline files (including OCA standards).
+2. Appends the version-specific file (e.g. `v18.md` for Odoo 18).
+3. Writes the document directly into the target agent's guidelines file.
 
 ## Where Guidelines Are Written
 
-Each agent has its own guidelines file in the format it expects:
-
 | Agent | File | Format |
-|-------|------|--------|
+|---|---|---|
+| Antigravity (App & CLI) | `AGENTS.md` | Markdown |
 | Claude Code | `CLAUDE.md` | Markdown |
 | Cursor | `.cursor/rules/odoo-boost.mdc` | Markdown with YAML frontmatter |
 | GitHub Copilot | `.github/copilot-instructions.md` | Markdown |
 | OpenAI Codex | `AGENTS.md` | Markdown |
-| Gemini CLI | `GEMINI.md` | Markdown |
+| OpenCode | `AGENTS.md` | Markdown |
+| Pi | `AGENTS.md` | Markdown |
+| Hermes | `AGENTS.md` | Markdown |
+| Windsurf | `.windsurfrules` | Markdown |
+| Cline | `.clinerules` | Markdown |
 | Junie | `.junie/guidelines.md` | Markdown |
 
 ## Refreshing Guidelines
 
-To regenerate guidelines (e.g. after an Odoo Boost update with improved content):
+To refresh or re-generate guidelines after updating Odoo Boost:
 
 ```bash
 odoo-boost update
@@ -71,14 +73,12 @@ odoo-boost update
 
 ## Programmatic Access
 
-You can use the guidelines composer directly in Python:
-
 ```python
 from odoo_boost.guidelines import compose_guidelines
 
-# All core guidelines + v18-specific notes
-content = compose_guidelines("18.0")
+# All core guidelines + OCA standards + v19 notes
+content = compose_guidelines("19.0")
 
-# Core guidelines only (no version-specific notes)
-content = compose_guidelines()
+# Core guidelines only
+core_only = compose_guidelines()
 ```

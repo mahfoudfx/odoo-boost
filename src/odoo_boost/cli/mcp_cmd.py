@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -13,7 +14,9 @@ console = Console(stderr=True)
 
 
 def mcp(
-    config: Path | None = typer.Option(None, "--config", "-c", help="Path to odoo-boost.json"),
+    config: Annotated[
+        Path | None, typer.Option("--config", "-c", help="Path to odoo-boost.json")
+    ] = None,
 ) -> None:
     """Start the MCP server (stdio transport)."""
     try:

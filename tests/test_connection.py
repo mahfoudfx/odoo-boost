@@ -80,6 +80,15 @@ class TestXmlRpcConnection:
         conn = XmlRpcConnection("http://localhost:8069/", "testdb", "admin", "admin")
         assert conn._url == "http://localhost:8069"
 
+    def test_timeout_transport_selection(self):
+        conn_http = XmlRpcConnection("http://localhost:8069", "db", "u", "p", timeout=15.0)
+        transport_http = conn_http._get_transport()
+        assert transport_http.timeout == 15.0
+
+        conn_https = XmlRpcConnection("https://example.com", "db", "u", "p", timeout=25.0)
+        transport_https = conn_https._get_transport()
+        assert transport_https.timeout == 25.0
+
 
 class TestConnectionFactory:
     def test_create_xmlrpc(self, sample_connection_config):

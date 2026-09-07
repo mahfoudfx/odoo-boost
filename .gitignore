@@ -20,3 +20,27 @@ env/
 htmlcov/
 .tox/
 .nox/
+mise.toml
+
+# Odoo Boost generated files
+odoo-boost.json
+CLAUDE.md
+AGENTS.md
+.windsurfrules
+.clinerules
+.mcp.json
+opencode.json
+.ai/skills/
+.agents/
+.cursor/rules/odoo-boost.mdc
+.cursor/mcp.json
+.cursor/skills/
+.vscode/mcp.json
+.github/copilot-instructions.md
+.github/skills/
+.codex/
+.pi/
+.hermes/
+.windsurf/
+.cline/
+.junie/

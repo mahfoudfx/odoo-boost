@@ -46,4 +46,16 @@ class TestComposeGuidelines:
         assert "# Odoo Development Guidelines" in result
 
     def test_core_files_list_not_empty(self):
-        assert len(_CORE_FILES) == 9
+        assert len(_CORE_FILES) == 10
+        assert "oca_standards.md" in _CORE_FILES
+
+    def test_includes_oca_standards(self):
+        result = compose_guidelines()
+        assert "Odoo Community Association (OCA) Standards" in result
+        assert "ir.model.access.csv" in result
+
+    def test_version_specific_addenda(self):
+        for ver in ["14.0", "15.0", "16.0", "17.0", "18.0", "19.0"]:
+            result = compose_guidelines(version=ver)
+            major = ver.split(".")[0]
+            assert f"Odoo {major}" in result

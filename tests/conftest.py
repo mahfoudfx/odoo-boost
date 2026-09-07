@@ -56,6 +56,8 @@ class MockOdooConnection(OdooConnection):
         if method == "search_count":
             domain = args[0] if args else []
             return len(self._filter(model, domain))
+        if method == "read_group":
+            return [{"state": "draft", "amount_total": 100.0, "state_count": 2}]
         # For arbitrary method calls, return a generic response
         return {"method": method, "args": list(args), "kwargs": kwargs}
 
@@ -262,7 +264,22 @@ def _seed_default_data(conn: MockOdooConnection) -> None:
     conn.seed(
         "ir.model.data",
         [
-            {"id": 1, "module": "base", "model": "ir.model", "res_id": 1},
+            {
+                "id": 1,
+                "module": "base",
+                "name": "partner_admin",
+                "model": "res.partner",
+                "res_id": 1,
+                "noupdate": True,
+            },
+            {
+                "id": 2,
+                "module": "base",
+                "name": "model_ir_model",
+                "model": "ir.model",
+                "res_id": 1,
+                "noupdate": True,
+            },
         ],
     )
     conn.seed(

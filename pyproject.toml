@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "odoo-boost"
 dynamic = ["version"]
-description = "AI coding agents with deep introspection into running Odoo instances via MCP tools"
+description = "AI coding agents with deep runtime introspection and static analysis for Odoo instances and addons via MCP tools"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -15,7 +15,19 @@ authors = [
 maintainers = [
     {name = "Jan-Phillip Oesterling", email = "jappi2000@ewetel.net"},
 ]
-keywords = ["odoo", "mcp", "ai", "coding-assistant", "boost"]
+keywords = [
+    "odoo",
+    "mcp",
+    "ai",
+    "coding-assistant",
+    "boost",
+    "antigravity",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "cline",
+    "oca",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -28,19 +40,37 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
 dependencies = [
-    "typer>=0.9.0",
-    "rich>=13.0.0",
-    "mcp>=1.0.0",
-    "pydantic>=2.0.0",
-    "httpx>=0.25.0",
+    "typer>=0.15.0",
+    "rich>=13.9.0",
+    "mcp>=2.1.0",
+    "pydantic>=2.10.0",
+    "httpx>=0.28.0",
+    "pyyaml>=6.0",
+    "packaging>=24.0",
+    "defusedxml>=0.7.1",
 ]
 
 [project.optional-dependencies]
+lint = [
+    "pylint>=3.2.0",
+    "pylint-odoo>=10.0.11",
+]
+xml = [
+    "lxml>=5.2.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=6.0",
     "ruff>=0.8",
     "mypy>=1.13",
+    "pylint>=3.2.0",
+    "pylint-odoo>=10.0.11",
+]
+all = [
+    "pylint>=3.2.0",
+    "pylint-odoo>=10.0.11",
+    "pyyaml>=6.0",
+    "lxml>=5.2.0",
 ]
 
 [project.scripts]

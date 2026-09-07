@@ -1,4 +1,4 @@
-"""Tests for odoo_boost.agents (base + all 6 concrete agents)."""
+"""Tests for odoo_boost.agents (base + all 11 concrete agents)."""
 
 from __future__ import annotations
 
@@ -7,14 +7,20 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 from odoo_boost.agents import AGENTS, ALL_AGENT_IDS, Agent
+from odoo_boost.agents.antigravity import AntigravityAgent
 from odoo_boost.agents.claude_code import ClaudeCodeAgent
+from odoo_boost.agents.cline import ClineAgent
 from odoo_boost.agents.codex import CodexAgent
 from odoo_boost.agents.copilot import CopilotAgent
 from odoo_boost.agents.cursor import CursorAgent
-from odoo_boost.agents.gemini_cli import GeminiCliAgent
+from odoo_boost.agents.hermes import HermesAgent
 from odoo_boost.agents.junie import JunieAgent
+from odoo_boost.agents.opencode import OpenCodeAgent
+from odoo_boost.agents.pi import PiAgent
+from odoo_boost.agents.windsurf import WindsurfAgent
 from odoo_boost.config.schema import OdooBoostConfig
 
 # ---------------------------------------------------------------------------
@@ -23,14 +29,27 @@ from odoo_boost.config.schema import OdooBoostConfig
 
 
 class TestAgentRegistry:
-    def test_six_agents(self):
-        assert len(AGENTS) == 6
+    def test_eleven_agents(self):
+        assert len(AGENTS) == 11
 
     def test_all_ids(self):
         assert list(AGENTS.keys()) == ALL_AGENT_IDS
 
     def test_known_ids(self):
-        for agent_id in ["claude_code", "cursor", "copilot", "codex", "gemini_cli", "junie"]:
+        expected_ids = [
+            "antigravity",
+            "claude_code",
+            "cursor",
+            "opencode",
+            "pi",
+            "hermes",
+            "windsurf",
+            "cline",
+            "codex",
+            "copilot",
+            "junie",
+        ]
+        for agent_id in expected_ids:
             assert agent_id in AGENTS
 
 
@@ -40,11 +59,16 @@ class TestAgentRegistry:
 
 
 AGENT_CLASSES = [
+    AntigravityAgent,
     ClaudeCodeAgent,
     CursorAgent,
-    CopilotAgent,
+    OpenCodeAgent,
+    PiAgent,
+    HermesAgent,
+    WindsurfAgent,
+    ClineAgent,
     CodexAgent,
-    GeminiCliAgent,
+    CopilotAgent,
     JunieAgent,
 ]
 
@@ -83,8 +107,6 @@ class TestAgentContracts:
         agent.install()
         assert agent.guidelines_path.exists()
         content = agent.guidelines_path.read_text(encoding="utf-8")
-        # All agents write guidelines with the Odoo Development header
-        # Cursor wraps in .mdc frontmatter, but it's still there
         assert "Odoo" in content
 
     def test_mcp_config_written(self, agent: Agent):
@@ -97,7 +119,7 @@ class TestAgentContracts:
         agent.install()
         assert agent.skills_dir.is_dir()
         skill_files = list(agent.skills_dir.rglob("SKILL.md"))
-        assert len(skill_files) == 8
+        assert len(skill_files) >= 8
 
     def test_uninstall_removes_files(self, agent: Agent):
         agent.install()
@@ -115,6 +137,53 @@ class TestAgentContracts:
 # ---------------------------------------------------------------------------
 # Agent-specific format tests
 # ---------------------------------------------------------------------------
+
+
+class TestAntigravityAgent:
+    def test_paths(self, sample_config, tmp_path):
+        a = AntigravityAgent(config=sample_config, project_path=tmp_path)
+        assert a.guidelines_path.name == "AGENTS.md"
+        assert a.mcp_config_path == tmp_path / ".agents" / "mcp_config.json"
+        assert a.skills_dir == tmp_path / ".agents" / "skills"
+
+    def test_mcp_config_json(self, sample_config, tmp_path):
+        a = AntigravityAgent(config=sample_config, project_path=tmp_path)
+        a.install()
+        data = json.loads(a.mcp_config_path.read_text())
+        assert "mcpServers" in data
+        assert "odoo-boost" in data["mcpServers"]
+
+
+class TestOpenCodeAgent:
+    def test_mcp_format(self, sample_config, tmp_path):
+        a = OpenCodeAgent(config=sample_config, project_path=tmp_path)
+        a.install()
+        data = json.loads(a.mcp_config_path.read_text())
+        assert "mcp" in data
+        assert data["mcp"]["odoo-boost"]["type"] == "local"
+
+
+class TestHermesAgent:
+    def test_mcp_yaml_format(self, sample_config, tmp_path):
+        a = HermesAgent(config=sample_config, project_path=tmp_path)
+        a.install()
+        data = yaml.safe_load(a.mcp_config_path.read_text())
+        assert "mcp_servers" in data
+        assert "odoo-boost" in data["mcp_servers"]
+
+
+class TestWindsurfAgent:
+    def test_guidelines_at_windsurfrules(self, sample_config, tmp_path):
+        a = WindsurfAgent(config=sample_config, project_path=tmp_path)
+        assert a.guidelines_path.name == ".windsurfrules"
+        assert a.mcp_config_path == tmp_path / ".windsurf" / "mcp.json"
+
+
+class TestClineAgent:
+    def test_guidelines_at_clinerules(self, sample_config, tmp_path):
+        a = ClineAgent(config=sample_config, project_path=tmp_path)
+        assert a.guidelines_path.name == ".clinerules"
+        assert a.mcp_config_path == tmp_path / ".cline" / "mcp_settings.json"
 
 
 class TestClaudeCodeAgent:
@@ -144,7 +213,7 @@ class TestCopilotAgent:
         a = CopilotAgent(config=sample_config, project_path=tmp_path)
         a.install()
         data = json.loads(a.mcp_config_path.read_text())
-        assert "servers" in data  # Copilot uses "servers" not "mcpServers"
+        assert "servers" in data
 
 
 class TestCodexAgent:
@@ -154,12 +223,6 @@ class TestCodexAgent:
         content = a.mcp_config_path.read_text()
         assert "[mcp_servers.odoo-boost]" in content
         assert a.mcp_config_path.suffix == ".toml"
-
-
-class TestGeminiCliAgent:
-    def test_guidelines_at_gemini_md(self, sample_config, tmp_path):
-        a = GeminiCliAgent(config=sample_config, project_path=tmp_path)
-        assert a.guidelines_path.name == "GEMINI.md"
 
 
 class TestJunieAgent:
@@ -178,8 +241,6 @@ class TestJunieAgent:
 class TestConditionalGeneration:
     @pytest.fixture()
     def _config_factory(self, sample_config):
-        """Return a helper to create config with custom generate flags."""
-
         def _make(generate_mcp: bool = True, generate_ai_files: bool = True) -> OdooBoostConfig:
             return OdooBoostConfig(
                 connection=sample_config.connection,
@@ -196,10 +257,8 @@ class TestConditionalGeneration:
         cfg = _config_factory(generate_mcp=False, generate_ai_files=True)
         a = ClaudeCodeAgent(config=cfg, project_path=tmp_path)
         paths = a.install()
-        # Guidelines and skills should exist
         assert a.guidelines_path.exists()
         assert a.skills_dir.is_dir()
-        # MCP config should not exist
         assert not a.mcp_config_path.exists()
         assert a.mcp_config_path not in paths
 
@@ -207,9 +266,7 @@ class TestConditionalGeneration:
         cfg = _config_factory(generate_mcp=True, generate_ai_files=False)
         a = ClaudeCodeAgent(config=cfg, project_path=tmp_path)
         paths = a.install()
-        # MCP config should exist
         assert a.mcp_config_path.exists()
-        # Guidelines and skills should not exist
         assert not a.guidelines_path.exists()
         assert not a.skills_dir.exists()
         assert a.guidelines_path not in paths

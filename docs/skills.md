@@ -1,103 +1,98 @@
-# Skills
+# Skills & Progressive Routing
 
-Odoo Boost includes 8 step-by-step skill guides that help AI agents perform common Odoo development tasks. Each skill is a `SKILL.md` file with YAML frontmatter and a detailed walkthrough.
+Odoo Boost includes **20 specialized development skills** organized into three categories: **Core**, **Workflows**, and **Domain Patterns**.
 
-## Available Skills
+To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTING.md`** index file in each agent's skills directory. AI agents consult this routing index to progressively fetch only the skill files required for the task at hand.
 
+---
+
+## Skills Catalog
+
+### 1. Core Development (8 Skills)
 | Skill | Directory | Description |
-|-------|-----------|-------------|
+|---|---|---|
 | Creating Models | `creating_models/` | Create a new Odoo model with fields, constraints, and methods |
 | XML Views | `xml_views/` | Create and customize form, list, kanban, and search views |
-| Security Rules | `security_rules/` | Set up ACLs (`ir.model.access`) and record rules (`ir.rule`) |
-| OWL Components | `owl_components/` | Create custom OWL frontend components with templates |
-| Controllers & Routes | `controllers_routes/` | Create HTTP controllers and API endpoints |
+| Security Rules | `security_rules/` | Set up ACLs (`ir.model.access.csv`) and record rules (`ir.rule`) |
+| OWL Components | `owl_components/` | Create custom OWL frontend components and templates |
+| Controllers & Routes | `controllers_routes/` | Create HTTP controllers and JSON-RPC API endpoints |
 | Report Development | `report_development/` | Create QWeb PDF reports and report actions |
 | Automated Actions | `automated_actions/` | Create `base.automation` and server actions |
 | Testing | `testing/` | Write Python and JavaScript tests for Odoo modules |
 
-## Skill Format
+### 2. Workflows & Engineering Standards (4 Skills)
+| Skill | Directory | Description |
+|---|---|---|
+| Code Review | `code_review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
+| Upgrade Analysis | `upgrade_analysis/` | Cross-version migration checklist (v14 to v19 breaking changes, `<tree>` to `<list>`, `attrs`) |
+| Spec-Driven Dev | `spec_driven_dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
+| Conventional Commits | `conventional_commit/` | Standardized Odoo & OCA commit formatting (`[ADD]`, `[FIX]`, `[REF]`, `[MIG]`, etc.) |
 
-Each skill is a `SKILL.md` file with YAML frontmatter:
+### 3. High-Impact Domain Patterns (8 Skills)
+| Skill | Directory | Description |
+|---|---|---|
+| Accounting Domain | `domain_accounting/` | Double-entry invariants, `account.move`, `account.move.line`, invoices, and currency rounding |
+| Stock & Inventory | `domain_stock/` | Transfers, pickings, stock moves, quant reservations, and valuation integrity |
+| Multi-Company | `domain_multi_company/` | Multi-company models, company-dependent properties, and record rules |
+| Mail & Chatter | `domain_mail_chatter/` | Inheriting `mail.thread` and `mail.activity.mixin`, field tracking, and chatter UI |
+| Wizards & Transients | `domain_wizards/` | `models.TransientModel`, wizard form dialogs, and action button workflows |
+| Crons & Automation | `domain_crons_automation/` | Batch-safe scheduled actions (`ir.cron`), error isolation, and cron definitions |
+| Computed Fields | `domain_computed_fields/` | `@api.depends`, complete assignment rules, inverse methods, and search handlers |
+| Model Inheritance | `domain_inheritance/` | Classical (`_inherit`), prototype, and delegation (`_inherits`) inheritance + XPath view extensions |
 
-```markdown
 ---
-name: Creating Models
-description: Step-by-step guide to create a new Odoo model with fields, constraints, and methods.
-globs: ["models/**/*.py", "__manifest__.py"]
+
+## Progressive Skill Routing (`SKILLS_ROUTING.md`)
+
+When skills are installed, Odoo Boost writes a `SKILLS_ROUTING.md` table into the agent's skills directory.
+
+For example, an agent working in `.agents/skills/` reads `SKILLS_ROUTING.md` to discover:
+- What directory corresponds to an intent (e.g. "audit multi-company code" -> `code_review/SKILL.md` + `domain_multi_company/SKILL.md`)
+- File trigger patterns (globs)
+- Concise summaries
+
+This allows LLM agents to maintain minimal prompt overhead while retaining immediate access to in-depth Odoo documentation.
+
 ---
-
-# Creating Odoo Models
-
-## Steps
-
-1. **Create the Python file** ...
-2. **Define the model class** ...
-...
-
-## Checklist
-- [ ] `_name` and `_description` set
-- [ ] Fields defined with proper types
-...
-```
-
-### Frontmatter Fields
-
-| Field | Description |
-|-------|-------------|
-| `name` | Human-readable skill name |
-| `description` | Brief description of what the skill covers |
-| `globs` | File patterns the skill applies to (used by agents that support glob-based context) |
 
 ## Where Skills Are Installed
 
-Each agent writes skills to its own directory:
-
 | Agent | Skills Directory |
-|-------|-----------------|
+|---|---|
+| Antigravity (App & CLI) | `.agents/skills/` |
 | Claude Code | `.ai/skills/` |
 | Cursor | `.cursor/skills/` |
 | GitHub Copilot | `.github/skills/` |
-| Codex | `.agents/skills/` |
-| Gemini CLI | `.agents/skills/` |
+| OpenAI Codex | `.agents/skills/` |
+| OpenCode | `.agents/skills/` |
+| Pi | `.agents/skills/` |
+| Hermes | `.agents/skills/` |
+| Windsurf | `.windsurf/skills/` |
+| Cline | `.cline/skills/` |
 | Junie | `.junie/skills/` |
 
-> Codex and Gemini CLI share `.agents/skills/` to avoid duplication.
-
-Each skill gets its own subdirectory:
-
-```
-.ai/skills/
-├── creating_models/
-│   └── SKILL.md
-├── xml_views/
-│   └── SKILL.md
-├── security_rules/
-│   └── SKILL.md
-├── owl_components/
-│   └── SKILL.md
-├── controllers_routes/
-│   └── SKILL.md
-├── report_development/
-│   └── SKILL.md
-├── automated_actions/
-│   └── SKILL.md
-└── testing/
-    └── SKILL.md
-```
+---
 
 ## Programmatic Access
 
 ```python
-from odoo_boost.skills import list_skills, load_skill, install_skills
 from pathlib import Path
+from odoo_boost.skills import (
+    list_skills,
+    load_skill,
+    install_skills,
+    generate_skills_routing,
+)
 
-# List available skill names
-skills = list_skills()
-# ['creating_models', 'xml_views', 'security_rules', ...]
+# List all 20 skills
+all_skills = list_skills()
 
-# Read a single skill's content
-content = load_skill("creating_models")
+# Filter by category: "core", "workflows", or "domain"
+workflows = list_skills(category="workflows")
 
-# Install all skills to a directory
-install_skills(Path("./my-skills"))
+# Read a single skill's markdown
+review_guide = load_skill("code_review")
+
+# Install all skills and generate SKILLS_ROUTING.md
+install_skills(Path("./custom_skills"))
 ```

@@ -10,26 +10,30 @@
 ```python
 from odoo.tests.common import TransactionCase, tagged
 
-@tagged('post_install', '-at_install')
-class TestSaleOrder(TransactionCase):
 
+@tagged("post_install", "-at_install")
+class TestSaleOrder(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.partner = cls.env['res.partner'].create({'name': 'Test Partner'})
+        cls.partner = cls.env["res.partner"].create({"name": "Test Partner"})
 
     def test_create_order(self):
-        order = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-        })
-        self.assertEqual(order.state, 'draft')
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+            }
+        )
+        self.assertEqual(order.state, "draft")
 
     def test_confirm_order(self):
-        order = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-        })
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+            }
+        )
         order.action_confirm()
-        self.assertEqual(order.state, 'sale')
+        self.assertEqual(order.state, "sale")
 ```
 
 ### Test Tags

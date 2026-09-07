@@ -14,6 +14,7 @@ def database_query(
     limit: int = 80,
     offset: int = 0,
     order: str = "",
+    compact: bool = False,
 ) -> str:
     """Execute an ORM search_read on any Odoo model (safe, respects access rights).
 
@@ -24,6 +25,7 @@ def database_query(
         limit: Maximum number of records to return (default 80).
         offset: Number of records to skip (default 0).
         order: Sort order, e.g. 'name asc, id desc'.
+        compact: When True, strips null/empty fields and truncates bulky strings to save tokens.
     """
     conn = get_connection()
 
@@ -38,6 +40,20 @@ def database_query(
         offset=offset,
         order=order or None,
     )
+
+    if compact and isinstance(records, list):
+        cleaned_records = []
+        for rec in records:
+            clean_rec = {}
+            for k, v in rec.items():
+                if v is None or v is False or v == "":
+                    continue
+                if isinstance(v, str) and len(v) > 100:
+                    clean_rec[k] = f"{v[:97]}..."
+                else:
+                    clean_rec[k] = v
+            cleaned_records.append(clean_rec)
+        records = cleaned_records
 
     total = conn.search_count(model, domain=parsed_domain)
 

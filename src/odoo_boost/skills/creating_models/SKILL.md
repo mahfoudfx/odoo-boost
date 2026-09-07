@@ -15,37 +15,43 @@ globs: ["models/**/*.py", "__manifest__.py"]
    from odoo import models, fields, api, _
    from odoo.exceptions import ValidationError
 
-   class MyModel(models.Model):
-       _name = 'my.model'
-       _description = 'My Model'
-       _order = 'sequence, name'
 
-       name = fields.Char(string='Name', required=True)
+   class MyModel(models.Model):
+       _name = "my.model"
+       _description = "My Model"
+       _order = "sequence, name"
+
+       name = fields.Char(string="Name", required=True)
        sequence = fields.Integer(default=10)
        active = fields.Boolean(default=True)
-       state = fields.Selection([
-           ('draft', 'Draft'),
-           ('confirmed', 'Confirmed'),
-           ('done', 'Done'),
-       ], default='draft', string='Status', tracking=True)
-       partner_id = fields.Many2one('res.partner', string='Partner')
-       line_ids = fields.One2many('my.model.line', 'model_id', string='Lines')
-       tag_ids = fields.Many2many('my.model.tag', string='Tags')
-       total = fields.Float(compute='_compute_total', store=True)
+       state = fields.Selection(
+           [
+               ("draft", "Draft"),
+               ("confirmed", "Confirmed"),
+               ("done", "Done"),
+           ],
+           default="draft",
+           string="Status",
+           tracking=True,
+       )
+       partner_id = fields.Many2one("res.partner", string="Partner")
+       line_ids = fields.One2many("my.model.line", "model_id", string="Lines")
+       tag_ids = fields.Many2many("my.model.tag", string="Tags")
+       total = fields.Float(compute="_compute_total", store=True)
 
-       @api.depends('line_ids.amount')
+       @api.depends("line_ids.amount")
        def _compute_total(self):
            for record in self:
-               record.total = sum(record.line_ids.mapped('amount'))
+               record.total = sum(record.line_ids.mapped("amount"))
 
-       @api.constrains('name')
+       @api.constrains("name")
        def _check_name(self):
            for record in self:
                if record.name and len(record.name) < 3:
                    raise ValidationError(_("Name must be at least 3 characters."))
 
        def action_confirm(self):
-           self.write({'state': 'confirmed'})
+           self.write({"state": "confirmed"})
    ```
 
 3. **Register in `__init__.py`**: Add `from . import my_model` in `models/__init__.py`.

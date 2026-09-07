@@ -88,22 +88,22 @@ from odoo import api, models
 
 
 class MyModelReport(models.AbstractModel):
-    _name = 'report.my_module.report_my_model'
-    _description = 'My Model Report'
+    _name = "report.my_module.report_my_model"
+    _description = "My Model Report"
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        docs = self.env['my.model'].browse(docids)
+        docs = self.env["my.model"].browse(docids)
         return {
-            'doc_ids': docids,
-            'doc_model': 'my.model',
-            'docs': docs,
-            'data': data,
-            'extra_data': self._compute_extra_data(docs),
+            "doc_ids": docids,
+            "doc_model": "my.model",
+            "docs": docs,
+            "data": data,
+            "extra_data": self._compute_extra_data(docs),
         }
 
     def _compute_extra_data(self, docs):
-        return {'summary': f'{len(docs)} records'}
+        return {"summary": f"{len(docs)} records"}
 ```
 
 ### 4. Update Manifest

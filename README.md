@@ -1,17 +1,18 @@
 # Odoo Boost
 
-AI coding agents with deep introspection into running Odoo instances via MCP tools.
+AI coding agents with deep runtime introspection and static analysis for Odoo instances and addons.
 
-Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost gives your AI coding assistant deep knowledge of your Odoo project — models, views, records, access rights, configuration, and more — plus Odoo-specific development guidelines and step-by-step skills.
+Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips your AI coding assistants with deep knowledge of your Odoo project — live models, views, records, access rights, configuration, and offline AST/XML scanning — plus Odoo-specific development guidelines, OCA standards, and step-by-step skills.
 
-## Features
+## Highlights
 
-- **15 MCP Tools** — Introspect models, views, records, access rights, config, routes, workflows, and more from a live Odoo instance
-- **6 AI Agents** — Claude Code, Cursor, Copilot, Codex, Gemini CLI, Junie
-- **Odoo Guidelines** — Version-aware development best practices injected into your agent's context
-- **8 Skills** — Step-by-step guides for common Odoo development tasks (creating models, views, security, OWL components, etc.)
-- **Multi-version** — Supports Odoo 17, 18, and 19
-- **Zero config on Odoo side** — Connects via XML-RPC, no Odoo module installation needed
+- **22 MCP Tools, Resources & Prompts** — Built natively on MCP v2 with live introspection, static AST scanning, dynamic resources (`odoo://schema/{model}`), and pre-built prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **11 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie.
+- **Pure-Python & 100% Docker-Free** — Fast local AST and hardened XML scanning (`defusedxml`) runs in sub-50ms without Docker, Doodba, or heavy external daemons.
+- **20 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
+- **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, and 19.
+- **Optional Static Linting & LSP** — Seamless integration with `OCA/pylint-odoo` and `odoo/odoo-ls` with automatic graceful fallbacks.
+- **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
 
 ## Installation
 
@@ -23,6 +24,19 @@ Or with [uv](https://docs.astral.sh/uv/):
 
 ```bash
 uv pip install odoo-boost
+```
+
+To include optional features:
+
+```bash
+# Optional OCA code linter (pylint-odoo)
+pip install "odoo-boost[lint]"
+
+# Optional RelaxNG XML schema validation (lxml)
+pip install "odoo-boost[xml]"
+
+# All optional dependencies
+pip install "odoo-boost[all]"
 ```
 
 You can also install it as a global CLI tool:
@@ -41,10 +55,11 @@ odoo-boost install
 ```
 
 The wizard will:
-- Ask for your Odoo connection details (URL, database, username, password)
-- Test the connection and detect the Odoo version
-- Let you select which AI agents to configure
-- Generate all necessary files (guidelines, MCP config, skills)
+- Collect your Odoo connection details (URL, database, username, password/API key)
+- Test the connection and detect the Odoo version (supports v14 through v19)
+- Check for optional tools like `odoo-ls`
+- Let you select which AI agents to configure (from 11 supported agents)
+- Generate guidelines, MCP server configs, skills catalog, and `SKILLS_ROUTING.md`
 
 ### 2. Verify the connection
 
@@ -52,57 +67,68 @@ The wizard will:
 odoo-boost check
 ```
 
-Or with explicit credentials:
+Or test with explicit credentials:
 
 ```bash
 odoo-boost check --url http://localhost:8069 --database mydb --username admin --password admin
 ```
 
-### 3. Start coding
+### 3. Run static code checks (Docker-Free)
 
-Your AI agent is now configured. The MCP server starts automatically when your agent needs it. Try asking your agent:
+```bash
+# Lint current directory or specific addon path
+odoo-boost lint ./addons/my_custom_addon
+```
 
-> "What models are available in this Odoo instance?"
-> "Show me the fields on the res.partner model"
-> "Search for all installed modules related to accounting"
+### 4. Start coding
+
+Your AI assistant is now configured. The MCP server starts automatically when your agent needs it. Try asking your agent:
+
+> "What models are available in this Odoo instance?"  
+> "Run inspect_local_addon on ./my_addon to see what models and XML views it declares"  
+> "Check whether my computed field implementation follows OCA standards"  
+> "Aggregate total invoice amounts by partner for the last quarter using aggregate_records"  
 
 ## Commands
 
 | Command | Description |
-|---------|-------------|
-| `odoo-boost install` | Interactive setup wizard |
-| `odoo-boost check` | Test connection to Odoo |
-| `odoo-boost update` | Re-generate files from saved config |
-| `odoo-boost mcp` | Start the MCP server (stdio) |
-| `odoo-boost --version` | Show version |
+|---|---|
+| `odoo-boost install` | Interactive setup wizard with agent configuration |
+| `odoo-boost check` | Test connection to Odoo instance |
+| `odoo-boost lint [path]` | Run OCA/pylint-odoo or AST static checks on local addons |
+| `odoo-boost update` | Re-generate guidelines, configs, and skills from saved config |
+| `odoo-boost mcp` | Start the MCP server (stdio transport) |
+| `odoo-boost --version` | Show installed version |
 
-You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_boost --version`.
+You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_boost lint .`.
 
 ## How It Works
 
 ```
-┌─────────────────┐     stdio      ┌─────────────────┐    XML-RPC     ┌──────────────┐
-│   AI Agent      │◄──────────────►│  Odoo Boost     │◄─────────────►│    Odoo      │
-│ (Claude, etc.)  │                │  MCP Server     │               │   Instance   │
-└─────────────────┘                └─────────────────┘               └──────────────┘
-        │                                  │
-        ▼                                  │
-  Guidelines +                        15 MCP Tools
-  Skills (md)                    (models, views, records,
-                                  config, access rights…)
+┌─────────────────────────┐     stdio      ┌─────────────────────────────────┐    XML-RPC     ┌────────────────┐
+│        AI Agent         │◄──────────────►│        Odoo Boost MCP           │◄─────────────►│  Odoo Server   │
+│ (Antigravity, Claude,   │                │   (Runtime + AST Scanner)       │               │ (v14 - v19)    │
+│  Cursor, OpenCode, ...) │                └────────────────┬────────────────┘               └────────────────┘
+└───────────┬─────────────┘                                 │
+            │                                               ▼
+            ▼                                  ┌───────────────────────────┐
+     Guidelines, OCA,                          │     22 MCP Tools          │
+  20 Skills + Routing Map                      │ - Live ORM & DB schema    │
+  (Local Markdown Files)                       │ - read_group aggregation  │
+                                               │ - Sub-50ms local AST scan │
+                                               │ - XML ID resolution       │
+                                               │ - pylint-odoo & odoo-ls   │
+                                               └───────────────────────────┘
 ```
 
-Odoo Boost sits between your AI agent and your Odoo instance. It provides:
-
-1. **MCP Tools** — Your agent calls tools like `list_models`, `search_records`, `database_schema` to understand your Odoo instance in real-time
-2. **Guidelines** — Odoo development best practices are injected into your agent's context so it writes idiomatic code
-3. **Skills** — Step-by-step guides for common tasks (creating models, views, security rules, etc.)
+Odoo Boost sits between your AI agent and your Odoo instance / codebase:
+1. **22 MCP Tools** — Real-time database queries, schema inspection, local AST parsing, and validation.
+2. **OCA Guidelines** — Version-specific guidelines (v14-v19) and OCA architectural rules.
+3. **20 Progressive Skills** — Step-by-step checklists indexed in `SKILLS_ROUTING.md` for low-token, on-demand loading.
 
 ### Robust MCP Server Resolution
 
-The generated MCP config files use the **full path to the Python interpreter** that has Odoo Boost installed, rather than relying on a bare `odoo-boost` command being available on `PATH`. This ensures the MCP server starts correctly regardless of how your AI agent spawns subprocesses.
-
-For example, the generated `.mcp.json` for Claude Code looks like:
+Generated MCP configs embed the **absolute path to your Python interpreter** rather than relying on a bare `odoo-boost` command on `$PATH`:
 
 ```json
 {
@@ -115,23 +141,26 @@ For example, the generated `.mcp.json` for Claude Code looks like:
 }
 ```
 
-This means:
-- The MCP server always runs in the correct Python environment
-- No dependency on `PATH` configuration or shell activation
-- Works with virtualenvs, `uv tool`, and system installs alike
+This guarantees that:
+- The MCP server always executes within the correct virtual environment
+- No dependency on environment variable activation or shell state
+- Seamless execution inside VS Code, Cursor, Antigravity, OpenCode, or CLI agents
 
 ## .gitignore
 
-Generated files contain environment-specific paths and should generally not be committed. Add the following to your `.gitignore`:
+Generated files contain environment-specific paths and local configs. Add the following to your project `.gitignore`:
 
 ```gitignore
 # Odoo Boost
 odoo-boost.json
 CLAUDE.md
 AGENTS.md
-GEMINI.md
+.windsurfrules
+.clinerules
 .mcp.json
+opencode.json
 .ai/skills/
+.agents/
 .cursor/rules/odoo-boost.mdc
 .cursor/mcp.json
 .cursor/skills/
@@ -139,34 +168,40 @@ GEMINI.md
 .github/copilot-instructions.md
 .github/skills/
 .codex/
-.gemini/settings.json
-.agents/skills/
+.pi/
+.hermes/
+.windsurf/
+.cline/
 .junie/
 ```
 
-> **Note:** Only the files listed above are generated by Odoo Boost.
-> Directories like `.github/` and `.vscode/` may contain other project files — do not ignore the entire directory.
+> **Note:** Directories like `.github/` and `.vscode/` may contain existing project files — ignore only the generated sub-files/directories.
+
+## Supported Agents
+
+| Agent | Guidelines | MCP Config | Skills Directory |
+|---|---|---|---|
+| **Antigravity (App & CLI `agy`)** | `AGENTS.md` | `.agents/mcp_config.json` | `.agents/skills/` |
+| **Claude Code** | `CLAUDE.md` | `.mcp.json` | `.ai/skills/` |
+| **Cursor** | `.cursor/rules/odoo-boost.mdc` | `.cursor/mcp.json` | `.cursor/skills/` |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | `.vscode/mcp.json` | `.github/skills/` |
+| **OpenAI Codex** | `AGENTS.md` | `.codex/config.toml` | `.agents/skills/` |
+| **OpenCode** | `AGENTS.md` | `opencode.json` | `.agents/skills/` |
+| **Pi** | `AGENTS.md` | `.pi/mcp.json` | `.agents/skills/` |
+| **Hermes** | `AGENTS.md` | `.hermes/config.yaml` | `.agents/skills/` |
+| **Windsurf** | `.windsurfrules` | `.windsurf/mcp.json` | `.windsurf/skills/` |
+| **Cline** | `.clinerules` | `.cline/mcp_settings.json` | `.cline/skills/` |
+| **Junie** | `.junie/guidelines.md` | `.junie/mcp/mcp.json` | `.junie/skills/` |
 
 ## Documentation
 
 - [Getting Started](https://github.com/havmedia/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
-- [MCP Tools Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/mcp-tools.md) — All 15 tools with parameters and examples
-- [Agent Configuration](https://github.com/havmedia/odoo-boost/blob/main/docs/agents.md) — Supported agents and their generated files
-- [Configuration](https://github.com/havmedia/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and CLI options
-- [Guidelines](https://github.com/havmedia/odoo-boost/blob/main/docs/guidelines.md) — Bundled Odoo development guidelines
-- [Skills](https://github.com/havmedia/odoo-boost/blob/main/docs/skills.md) — Step-by-step development skills
-- [Contributing](https://github.com/havmedia/odoo-boost/blob/main/CONTRIBUTING.md) — How to add tools, agents, and skills
-
-## Supported Agents
-
-| Agent | Guidelines | MCP Config | Skills |
-|-------|-----------|------------|--------|
-| Claude Code | `CLAUDE.md` | `.mcp.json` | `.ai/skills/` |
-| Cursor | `.cursor/rules/odoo-boost.mdc` | `.cursor/mcp.json` | `.cursor/skills/` |
-| GitHub Copilot | `.github/copilot-instructions.md` | `.vscode/mcp.json` | `.github/skills/` |
-| OpenAI Codex | `AGENTS.md` | `.codex/config.toml` | `.agents/skills/` |
-| Gemini CLI | `GEMINI.md` | `.gemini/settings.json` | `.agents/skills/` |
-| Junie | `.junie/guidelines.md` | `.junie/mcp/mcp.json` | `.junie/skills/` |
+- [MCP Tools Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 22 tools with examples
+- [Agent Configuration](https://github.com/havmedia/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 11 supported agents
+- [Skills Catalog](https://github.com/havmedia/odoo-boost/blob/main/docs/skills.md) — 20 progressive skills and routing table
+- [Guidelines](https://github.com/havmedia/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v19 and OCA rules)
+- [Configuration Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
+- [Contributing](https://github.com/havmedia/odoo-boost/blob/main/CONTRIBUTING.md) — Developer guide and tool authoring
 
 ## License
 

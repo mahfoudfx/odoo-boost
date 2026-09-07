@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import importlib.resources
 
+from packaging.version import InvalidVersion, Version
+from packaging.version import parse as parse_version
+
 _CORE_FILES = [
     "odoo_general.md",
     "module_structure.md",
@@ -14,6 +17,7 @@ _CORE_FILES = [
     "javascript_owl.md",
     "testing.md",
     "coding_style.md",
+    "oca_standards.md",
 ]
 
 
@@ -48,7 +52,12 @@ def compose_guidelines(version: str | None = None) -> str:
 
     # Version-specific addendum
     if version:
-        major = version.split(".")[0]
+        try:
+            parsed = parse_version(str(version))
+            major = str(parsed.major) if isinstance(parsed, Version) else str(version).split(".")[0]
+        except (InvalidVersion, TypeError):
+            major = str(version).split(".")[0]
+
         version_file = f"versions/v{major}.md"
         try:
             version_content = _read_resource(version_file)

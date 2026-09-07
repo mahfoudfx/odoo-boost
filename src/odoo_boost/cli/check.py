@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -16,11 +17,13 @@ console = Console()
 
 
 def check(
-    url: str | None = typer.Option(None, help="Odoo server URL"),
-    database: str | None = typer.Option(None, help="Database name"),
-    username: str | None = typer.Option(None, help="Username"),
-    password: str | None = typer.Option(None, help="Password or API key"),
-    config: Path | None = typer.Option(None, "--config", "-c", help="Path to odoo-boost.json"),
+    url: Annotated[str | None, typer.Option(help="Odoo server URL")] = None,
+    database: Annotated[str | None, typer.Option(help="Database name")] = None,
+    username: Annotated[str | None, typer.Option(help="Username")] = None,
+    password: Annotated[str | None, typer.Option(help="Password or API key")] = None,
+    config: Annotated[
+        Path | None, typer.Option("--config", "-c", help="Path to odoo-boost.json")
+    ] = None,
 ) -> None:
     """Test the connection to an Odoo instance."""
     # Build connection config from CLI flags or config file

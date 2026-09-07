@@ -11,18 +11,21 @@
 from odoo import http
 from odoo.http import request
 
+
 class MyController(http.Controller):
-
-    @http.route('/my/page', type='http', auth='user', website=True)
+    @http.route("/my/page", type="http", auth="user", website=True)
     def my_page(self, **kwargs):
-        return request.render('my_module.my_template', {
-            'records': request.env['my.model'].search([]),
-        })
+        return request.render(
+            "my_module.my_template",
+            {
+                "records": request.env["my.model"].search([]),
+            },
+        )
 
-    @http.route('/api/data', type='json', auth='user')
+    @http.route("/api/data", type="json", auth="user")
     def api_data(self, model_name, domain=None):
         records = request.env[model_name].search_read(domain or [])
-        return {'records': records}
+        return {"records": records}
 ```
 
 ### Best Practices

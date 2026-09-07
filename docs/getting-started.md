@@ -1,12 +1,14 @@
 # Getting Started
 
-This guide walks you through installing Odoo Boost and connecting it to your Odoo instance.
+This guide walks you through installing Odoo Boost, configuring your AI agents, and using the MCP tools.
 
 ## Prerequisites
 
-- **Python 3.10+** (3.12+ recommended)
-- **A running Odoo instance** (17, 18, or 19) accessible via HTTP
-- **Admin credentials** (or an API key) for the Odoo instance
+- **Python 3.10+** (Python 3.12+ recommended)
+- **An Odoo instance** (v14 through v19) accessible over HTTP/HTTPS, or local Odoo addons for offline AST scanning
+- **User credentials or API key** for your Odoo database
+
+---
 
 ## Step 1: Install Odoo Boost
 
@@ -20,176 +22,82 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv pip install odoo-boost
 ```
 
-Or as a global CLI tool (available outside any virtualenv):
+For optional features:
 
 ```bash
-uv tool install odoo-boost
+# Optional OCA code linting (pylint-odoo)
+pip install "odoo-boost[lint]"
+
+# Optional RelaxNG XML view validation (lxml)
+pip install "odoo-boost[xml]"
+
+# All optional packages
+pip install "odoo-boost[all]"
 ```
 
-Verify the installation:
+Verify your installation:
 
 ```bash
 odoo-boost --version
-# or equivalently:
-python -m odoo_boost --version
 ```
+
+---
 
 ## Step 2: Run the Install Wizard
 
-Navigate to your Odoo project directory and run:
+Navigate to your Odoo project repository and run:
 
 ```bash
 cd /path/to/your/odoo-project
 odoo-boost install
 ```
 
-The wizard will guide you through:
+The wizard will:
+1. **Prompt for Odoo connection details**: URL, database name, user, and password/API key.
+2. **Test the connection**: Verify authentication, detect Odoo version (e.g. 14.0, 17.0, 18.0, 19.0), and check for `odoo-ls`.
+3. **Select AI agents**: Choose from 11 modern assistants:
+   - Antigravity (App & CLI `agy`)
+   - Claude Code
+   - Cursor
+   - GitHub Copilot
+   - OpenAI Codex
+   - OpenCode
+   - Pi
+   - Hermes
+   - Windsurf
+   - Cline
+   - Junie
+4. **Generate files**: Creates guidelines, MCP configs, 20 skills, and the `SKILLS_ROUTING.md` index.
 
-### Connection Details
+---
 
-```
-Step 1: Odoo connection details
+## Step 3: Verify the Connection and Local Tools
 
-  Odoo URL [http://localhost:8069]:
-  Database name: mydb
-  Username [admin]:
-  Password / API key [admin]:
-```
-
-### Connection Test
-
-The wizard automatically tests your connection and detects the Odoo version:
-
-```
-Step 2: Testing connection…
-
-  Server version: 18.0
-  Authenticated as UID: 2
-  Detected Odoo version: 18.0
-```
-
-### Agent Selection
-
-Choose which AI agents you want to configure:
-
-```
-Step 3: Select AI agents to configure
-
-  1. Claude Code (claude_code)
-  2. Cursor (cursor)
-  3. GitHub Copilot (copilot)
-  4. OpenAI Codex (codex)
-  5. Gemini CLI (gemini_cli)
-  6. Junie (junie)
-
-  Enter agent numbers (comma-separated) or 'all' [all]:
-```
-
-Enter specific numbers (e.g. `1,2,3`) or just press Enter for all agents.
-
-### File Generation
-
-The wizard generates all necessary files:
-
-```
-Step 4: Generating files…
-
-  Created odoo-boost.json
-  Created CLAUDE.md
-  Created .mcp.json
-  Created .ai/skills/creating_models/SKILL.md
-  ...
-```
-
-## Step 3: Verify the Connection
+Test the live connection anytime:
 
 ```bash
 odoo-boost check
 ```
 
-This reads credentials from `odoo-boost.json` and tests the connection:
-
-```
-Checking Odoo connection...
-
-  Server version: 18.0
-  Authenticated as UID: 2
-  Installed modules: 147
-
-            Connection Summary
-┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Property       ┃ Value                 ┃
-┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
-│ URL            │ http://localhost:8069 │
-│ Database       │ mydb                  │
-│ Username       │ admin                 │
-│ Server Version │ 18.0                  │
-│ Protocol       │ xmlrpc                │
-└────────────────┴───────────────────────┘
-
-Connection successful!
-```
-
-You can also test with explicit credentials (useful before running `install`):
+Run static linting on your local addon code:
 
 ```bash
-odoo-boost check --url http://localhost:8069 --database mydb --username admin --password admin
+odoo-boost lint ./my_custom_addon
 ```
 
-## Step 4: Start Using It
+---
 
-Your AI agent is now configured. How you use it depends on which agent you chose.
+## Step 4: Start Coding with AI Agents
 
-### Claude Code
+Open your project in your preferred editor or agent:
 
-The `.mcp.json` file is auto-detected. Just start Claude Code in your project:
+- **Antigravity (App & CLI `agy`)**: Auto-detects `AGENTS.md` and `.agents/mcp_config.json`.
+- **Claude Code**: Run `claude` in your project root; `.mcp.json` and `CLAUDE.md` are auto-loaded.
+- **Cursor**: Open the workspace in Cursor; `.cursor/rules/odoo-boost.mdc` and `.cursor/mcp.json` are active.
+- **Windsurf / Cline / OpenCode / Copilot / Codex / Pi / Hermes / Junie**: Native configurations are in place.
 
-```bash
-claude
-```
-
-Or manually add the MCP server:
-
-```bash
-claude mcp add odoo-boost -- python -m odoo_boost mcp
-```
-
-Then try:
-
-```
-> Use the list_models tool to show me all models related to "sale"
-> What fields does the sale.order model have?
-> Search for all confirmed sale orders from the last 30 days
-```
-
-### Cursor
-
-Open the project in Cursor. It auto-detects `.cursor/mcp.json` and `.cursor/rules/odoo-boost.mdc`.
-
-### GitHub Copilot (VS Code)
-
-Open the project in VS Code. Copilot reads `.vscode/mcp.json` and `.github/copilot-instructions.md`.
-
-### Other Agents
-
-Each agent has its own configuration files — see [Agent Configuration](agents.md) for details.
-
-## Updating Generated Files
-
-If you change your Odoo connection, add agents, or want to refresh the guidelines:
-
-1. Edit `odoo-boost.json` (or re-run `odoo-boost install`)
-2. Run:
-
-```bash
-odoo-boost update
-```
-
-This regenerates all agent files from your saved config.
-
-## Next Steps
-
-- [MCP Tools Reference](mcp-tools.md) — Learn what each of the 15 tools does
-- [Agent Configuration](agents.md) — Details on each agent's file layout
-- [Skills](skills.md) — Browse the step-by-step development guides
-- [Configuration](configuration.md) — Full config reference
+Ask your assistant:
+- *"Inspect my local addon in ./addons/my_sale with inspect_local_addon"*
+- *"What is the schema of the account.move model?"*
+- *"Use aggregate_records to compute total monthly sales for Deco Addict"*
+- *"Run lint_odoo_code on my models to check for OCA compliance"*

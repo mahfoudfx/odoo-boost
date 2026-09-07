@@ -2,10 +2,47 @@
 
 from __future__ import annotations
 
+import http.client
 import xmlrpc.client
 from typing import Any
 
 from odoo_boost.connection.base import OdooConnection as BaseConnection
+
+
+class _TimeoutTransport(xmlrpc.client.Transport):
+    """HTTP transport with an explicit socket timeout."""
+
+    def __init__(
+        self,
+        timeout: float = 30.0,
+        use_datetime: bool = False,
+        use_builtin_types: bool = False,
+    ) -> None:
+        super().__init__(use_datetime=use_datetime, use_builtin_types=use_builtin_types)
+        self.timeout = timeout
+
+    def make_connection(self, host: Any) -> http.client.HTTPConnection:
+        conn = super().make_connection(host)
+        conn.timeout = self.timeout
+        return conn
+
+
+class _SafeTimeoutTransport(xmlrpc.client.SafeTransport):
+    """HTTPS transport with an explicit socket timeout."""
+
+    def __init__(
+        self,
+        timeout: float = 30.0,
+        use_datetime: bool = False,
+        use_builtin_types: bool = False,
+    ) -> None:
+        super().__init__(use_datetime=use_datetime, use_builtin_types=use_builtin_types)
+        self.timeout = timeout
+
+    def make_connection(self, host: Any) -> http.client.HTTPSConnection:
+        conn = super().make_connection(host)
+        conn.timeout = self.timeout
+        return conn
 
 
 class XmlRpcConnection(BaseConnection):
@@ -17,14 +54,21 @@ class XmlRpcConnection(BaseConnection):
         database: str,
         username: str,
         password: str,
+        timeout: float = 30.0,
     ) -> None:
         self._url = url.rstrip("/")
         self._database = database
         self._username = username
         self._password = password
+        self._timeout = timeout
         self._uid: int | None = None
         self._common: xmlrpc.client.ServerProxy | None = None
         self._object: xmlrpc.client.ServerProxy | None = None
+
+    def _get_transport(self) -> xmlrpc.client.Transport:
+        if self._url.lower().startswith("https://"):
+            return _SafeTimeoutTransport(timeout=self._timeout)
+        return _TimeoutTransport(timeout=self._timeout)
 
     # -- lazy proxy helpers --------------------------------------------------
 
@@ -32,7 +76,9 @@ class XmlRpcConnection(BaseConnection):
     def _common_proxy(self) -> xmlrpc.client.ServerProxy:
         if self._common is None:
             self._common = xmlrpc.client.ServerProxy(
-                f"{self._url}/xmlrpc/2/common", allow_none=True
+                f"{self._url}/xmlrpc/2/common",
+                transport=self._get_transport(),
+                allow_none=True,
             )
         return self._common
 
@@ -40,7 +86,9 @@ class XmlRpcConnection(BaseConnection):
     def _object_proxy(self) -> xmlrpc.client.ServerProxy:
         if self._object is None:
             self._object = xmlrpc.client.ServerProxy(
-                f"{self._url}/xmlrpc/2/object", allow_none=True
+                f"{self._url}/xmlrpc/2/object",
+                transport=self._get_transport(),
+                allow_none=True,
             )
         return self._object
 

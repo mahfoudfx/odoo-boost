@@ -1,4 +1,4 @@
-"""Gemini CLI agent – generates GEMINI.md + .gemini/settings.json."""
+"""Cline agent – generates .clinerules + .cline/mcp_settings.json."""
 
 from __future__ import annotations
 
@@ -8,17 +8,17 @@ from pathlib import Path
 from odoo_boost.agents.base import Agent
 
 
-class GeminiCliAgent(Agent):
-    id = "gemini_cli"
-    display_name = "Gemini CLI"
+class ClineAgent(Agent):
+    id = "cline"
+    display_name = "Cline / Roo Code"
 
     @property
     def guidelines_path(self) -> Path:
-        return self.project_path / "GEMINI.md"
+        return self.project_path / ".clinerules"
 
     @property
     def mcp_config_path(self) -> Path:
-        return self.project_path / ".gemini" / "settings.json"
+        return self.project_path / ".cline" / "mcp_settings.json"
 
     @property
     def skills_dir(self) -> Path:
