@@ -42,7 +42,19 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
 
     # Establish connection
     conn = create_connection(config.connection)
-    conn.authenticate()
+    try:
+        conn.authenticate()
+    except Exception as exc:
+        import sys
+
+        print(
+            f"[odoo-boost] Warning: Could not pre-authenticate with Odoo at {config.connection.url} ({exc}).",
+            file=sys.stderr,
+        )
+        print(
+            "[odoo-boost] MCP server running in resilient mode. Live tools will connect on demand.",
+            file=sys.stderr,
+        )
 
     set_context(ServerContext(connection=conn, config=config))
 
@@ -99,25 +111,39 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # -------------------------------------------------------------------------
     # Tools Registration (22 tools)
     # -------------------------------------------------------------------------
-    # Live database tools
-    mcp.tool()(application_info)
-    mcp.tool()(database_schema)
-    mcp.tool()(database_query)
-    mcp.tool()(list_models)
-    mcp.tool()(list_views)
-    mcp.tool()(list_menus)
-    mcp.tool()(list_routes)
-    mcp.tool()(list_access_rights)
-    mcp.tool()(get_config)
-    mcp.tool()(get_module_info)
-    mcp.tool()(search_records)
-    mcp.tool()(execute_method)
-    mcp.tool()(read_log_entries)
-    mcp.tool()(search_docs)
-    mcp.tool()(list_workflows)
-    mcp.tool()(aggregate_records)
-    mcp.tool()(resolve_xml_id)
-    mcp.tool()(get_model_inheritance)
+    def _resilient_live_tool(fn: Any) -> Any:
+        """Wrap live tool so ConnectionError / offline Odoo produces clear ToolError messages."""
+        import functools
+        from mcp.server.mcpserver.exceptions import ToolError
+
+        @functools.wraps(fn)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return fn(*args, **kwargs)
+            except ConnectionError as exc:
+                raise ToolError(str(exc)) from exc
+
+        return wrapper
+
+    # Live database tools (resilient to offline server)
+    mcp.tool()(_resilient_live_tool(application_info))
+    mcp.tool()(_resilient_live_tool(database_schema))
+    mcp.tool()(_resilient_live_tool(database_query))
+    mcp.tool()(_resilient_live_tool(list_models))
+    mcp.tool()(_resilient_live_tool(list_views))
+    mcp.tool()(_resilient_live_tool(list_menus))
+    mcp.tool()(_resilient_live_tool(list_routes))
+    mcp.tool()(_resilient_live_tool(list_access_rights))
+    mcp.tool()(_resilient_live_tool(get_config))
+    mcp.tool()(_resilient_live_tool(get_module_info))
+    mcp.tool()(_resilient_live_tool(search_records))
+    mcp.tool()(_resilient_live_tool(execute_method))
+    mcp.tool()(_resilient_live_tool(read_log_entries))
+    mcp.tool()(_resilient_live_tool(search_docs))
+    mcp.tool()(_resilient_live_tool(list_workflows))
+    mcp.tool()(_resilient_live_tool(aggregate_records))
+    mcp.tool()(_resilient_live_tool(resolve_xml_id))
+    mcp.tool()(_resilient_live_tool(get_model_inheritance))
 
     # Local AST, verification, and diagnostics tools
     mcp.tool()(inspect_local_addon)

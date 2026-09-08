@@ -13,6 +13,13 @@ class OdooConnection(ABC):
     def authenticate(self) -> int:
         """Authenticate and return the user ID."""
 
+    def ensure_authenticated(self) -> int:
+        """Ensure connection is authenticated, returning the user ID."""
+        try:
+            return self.uid
+        except RuntimeError:
+            return self.authenticate()
+
     @abstractmethod
     def execute(
         self,

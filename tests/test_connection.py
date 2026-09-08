@@ -89,6 +89,56 @@ class TestXmlRpcConnection:
         transport_https = conn_https._get_transport()
         assert transport_https.timeout == 25.0
 
+    def test_ensure_authenticated_when_cached(self):
+        conn = self._make_conn()
+        conn._uid = 5
+        assert conn.ensure_authenticated() == 5
+
+    def test_ensure_authenticated_when_none(self):
+        conn = self._make_conn()
+        mock_common = MagicMock()
+        mock_common.authenticate.return_value = 7
+        conn._common = mock_common
+        assert conn.ensure_authenticated() == 7
+        assert conn.uid == 7
+
+    def test_authenticate_protocol_error(self):
+        import xmlrpc.client
+
+        conn = self._make_conn()
+        mock_common = MagicMock()
+        mock_common.authenticate.side_effect = xmlrpc.client.ProtocolError(
+            "http://localhost:8069/xmlrpc/2/common", 502, "Bad Gateway", {}
+        )
+        conn._common = mock_common
+        with pytest.raises(ConnectionError, match="502 Bad Gateway"):
+            conn.authenticate()
+
+    def test_authenticate_os_error(self):
+        conn = self._make_conn()
+        mock_common = MagicMock()
+        mock_common.authenticate.side_effect = ConnectionRefusedError("Connection refused")
+        conn._common = mock_common
+        with pytest.raises(ConnectionError, match="Cannot reach Odoo"):
+            conn.authenticate()
+
+    def test_execute_lazy_authentication(self):
+        conn = self._make_conn()
+        assert conn._uid is None
+
+        mock_common = MagicMock()
+        mock_common.authenticate.return_value = 3
+        conn._common = mock_common
+
+        mock_object = MagicMock()
+        mock_object.execute_kw.return_value = [{"id": 1}]
+        conn._object = mock_object
+
+        result = conn.execute("res.partner", "read", [1])
+        assert result == [{"id": 1}]
+        assert conn.uid == 3
+        mock_common.authenticate.assert_called_once()
+
 
 class TestConnectionFactory:
     def test_create_xmlrpc(self, sample_connection_config):

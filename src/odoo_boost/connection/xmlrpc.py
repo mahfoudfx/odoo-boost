@@ -95,10 +95,28 @@ class XmlRpcConnection(BaseConnection):
     # -- public interface ----------------------------------------------------
 
     def authenticate(self) -> int:
-        uid = self._common_proxy.authenticate(self._database, self._username, self._password, {})
+        try:
+            uid = self._common_proxy.authenticate(self._database, self._username, self._password, {})
+        except xmlrpc.client.ProtocolError as exc:
+            raise ConnectionError(
+                f"Cannot connect to Odoo at {self._url} ({exc.errcode} {exc.errmsg}). "
+                "Ensure your Odoo instance and reverse proxy are running."
+            ) from exc
+        except OSError as exc:
+            raise ConnectionError(
+                f"Cannot reach Odoo at {self._url}: {exc}. "
+                "Ensure your Odoo instance is running."
+            ) from exc
+
         if not uid:
             raise ConnectionError(f"Authentication failed for {self._username}@{self._database}")
         self._uid = int(uid)  # type: ignore[arg-type]
+        return self._uid
+
+    def ensure_authenticated(self) -> int:
+        """Ensure connection is authenticated, authenticating lazily if needed."""
+        if self._uid is None:
+            return self.authenticate()
         return self._uid
 
     @property
@@ -114,15 +132,27 @@ class XmlRpcConnection(BaseConnection):
         *args: Any,
         **kwargs: Any,
     ) -> Any:
-        return self._object_proxy.execute_kw(
-            self._database,
-            self.uid,
-            self._password,
-            model,
-            method,
-            list(args),
-            kwargs or {},
-        )
+        uid = self.ensure_authenticated()
+        try:
+            return self._object_proxy.execute_kw(
+                self._database,
+                uid,
+                self._password,
+                model,
+                method,
+                list(args),
+                kwargs or {},
+            )
+        except xmlrpc.client.ProtocolError as exc:
+            raise ConnectionError(
+                f"Cannot connect to Odoo at {self._url} ({exc.errcode} {exc.errmsg}). "
+                "Ensure your Odoo instance is running."
+            ) from exc
+        except OSError as exc:
+            raise ConnectionError(
+                f"Cannot reach Odoo at {self._url}: {exc}. "
+                "Ensure your Odoo instance is running."
+            ) from exc
 
     def search_read(
         self,
@@ -150,4 +180,15 @@ class XmlRpcConnection(BaseConnection):
         return self.execute(model, "search_count", domain or [])
 
     def get_version(self) -> dict[str, Any]:
-        return self._common_proxy.version()  # type: ignore[return-value]
+        try:
+            return self._common_proxy.version()  # type: ignore[return-value]
+        except xmlrpc.client.ProtocolError as exc:
+            raise ConnectionError(
+                f"Cannot connect to Odoo at {self._url} ({exc.errcode} {exc.errmsg}). "
+                "Ensure your Odoo instance is running."
+            ) from exc
+        except OSError as exc:
+            raise ConnectionError(
+                f"Cannot reach Odoo at {self._url}: {exc}. "
+                "Ensure your Odoo instance is running."
+            ) from exc

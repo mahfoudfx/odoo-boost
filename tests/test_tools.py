@@ -448,3 +448,42 @@ class TestMcpServerV2:
         # Verify tools count
         tools = await server.list_tools()
         assert len(tools) == 22
+
+    @pytest.mark.anyio
+    async def test_server_resilient_when_odoo_offline(
+        self, monkeypatch, mock_connection, sample_config
+    ):
+        from unittest.mock import MagicMock
+        from odoo_boost.mcp_server.server import create_mcp_server
+
+        mock_connection.authenticate = MagicMock(
+            side_effect=ConnectionError("Cannot connect to Odoo (502 Bad Gateway)")
+        )
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.server.create_connection", lambda cfg: mock_connection
+        )
+        # Server must start successfully without crashing
+        server = create_mcp_server(sample_config)
+        tools = await server.list_tools()
+        assert len(tools) == 22
+
+    @pytest.mark.anyio
+    async def test_live_tool_error_when_offline(
+        self, monkeypatch, mock_connection, sample_config
+    ):
+        from unittest.mock import MagicMock
+        from odoo_boost.mcp_server.server import create_mcp_server
+        from mcp.server.mcpserver.exceptions import ToolError
+
+        mock_connection.authenticate = MagicMock(
+            side_effect=ConnectionError("Cannot connect to Odoo (502 Bad Gateway)")
+        )
+        mock_connection.search_read = MagicMock(
+            side_effect=ConnectionError("Cannot connect to Odoo (502 Bad Gateway)")
+        )
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.server.create_connection", lambda cfg: mock_connection
+        )
+        server = create_mcp_server(sample_config)
+        with pytest.raises(ToolError, match="502 Bad Gateway"):
+            await server.call_tool("search_records", {"model": "res.partner"})
