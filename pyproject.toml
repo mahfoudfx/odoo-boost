@@ -88,6 +88,7 @@ packages = ["src/odoo_boost"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = ["ignore::getpass.GetPassWarning"]
 
 [tool.ruff]
 target-version = "py310"
@@ -103,12 +104,19 @@ python_version = "3.10"
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+disallow_untyped_defs = true
+strict_equality = true
 
 [tool.coverage.run]
 source = ["odoo_boost"]
+branch = true
 
 [tool.coverage.report]
-fail_under = 60
+fail_under = 70
 show_missing = true
 exclude_lines = [
     "pragma: no cover",

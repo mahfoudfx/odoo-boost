@@ -105,6 +105,65 @@ class TestOdooBoostConfig:
         cfg = OdooBoostConfig.model_validate(data)
         assert cfg.connection.url == sample_connection_config.url
 
+    def test_mcp_defaults(self, sample_connection_config):
+        cfg = OdooBoostConfig(connection=sample_connection_config)
+        assert cfg.mcp_transport == "stdio"
+        assert cfg.mcp_target == "auto"
+        assert cfg.wsl_distro is None
+        assert cfg.mcp_host == "127.0.0.1"
+        assert cfg.mcp_port == 8765
+        assert cfg.mcp_command is None
+
+    def test_mcp_fields_roundtrip(self, sample_connection_config):
+        cfg = OdooBoostConfig(
+            connection=sample_connection_config,
+            mcp_transport="http",
+            mcp_target="wsl",
+            wsl_distro="Ubuntu",
+            mcp_host="0.0.0.0",
+            mcp_port=9100,
+            mcp_command=["docker", "run", "odoo-boost"],
+        )
+        restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
+        assert restored.mcp_transport == "http"
+        assert restored.mcp_target == "wsl"
+        assert restored.wsl_distro == "Ubuntu"
+        assert restored.mcp_host == "0.0.0.0"
+        assert restored.mcp_port == 9100
+        assert restored.mcp_command == ["docker", "run", "odoo-boost"]
+
+    def test_backward_compat_missing_mcp_fields(self, sample_connection_config):
+        data = {
+            "connection": sample_connection_config.model_dump(),
+            "odoo_version": "18.0",
+            "agents": ["claude_code"],
+        }
+        cfg = OdooBoostConfig.model_validate(data)
+        assert cfg.mcp_transport == "stdio"
+        assert cfg.mcp_target == "auto"
+
+    def test_security_defaults(self, sample_connection_config):
+        cfg = OdooBoostConfig(connection=sample_connection_config)
+        assert cfg.mcp_token is None
+        assert cfg.readonly is False
+        assert cfg.allowed_roots == []
+
+    def test_token_hidden_from_repr(self, sample_connection_config):
+        cfg = OdooBoostConfig(connection=sample_connection_config, mcp_token="super-secret")
+        assert "super-secret" not in repr(cfg)
+
+    def test_security_fields_roundtrip(self, sample_connection_config):
+        cfg = OdooBoostConfig(
+            connection=sample_connection_config,
+            mcp_token="tok",
+            readonly=True,
+            allowed_roots=["/srv/addons"],
+        )
+        restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
+        assert restored.mcp_token == "tok"
+        assert restored.readonly is True
+        assert restored.allowed_roots == ["/srv/addons"]
+
 
 # ---------------------------------------------------------------------------
 # Settings (find / load / save)
@@ -145,3 +204,13 @@ class TestLoadSaveConfig:
         result = save_config(sample_config)
         assert result.name == CONFIG_FILENAME
         assert result.exists()
+
+    def test_save_restricts_permissions_on_posix(self, tmp_path, sample_config):
+        import os
+        import stat
+
+        path = tmp_path / CONFIG_FILENAME
+        save_config(sample_config, path)
+        if os.name == "posix":
+            mode = stat.S_IMODE(path.stat().st_mode)
+            assert mode == 0o600

@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import importlib.resources
+import logging
 import re
 from pathlib import Path
+from typing import Any
+
+import yaml
+
+logger = logging.getLogger(__name__)
 
 CORE_SKILLS = [
     "creating_models",
@@ -42,7 +48,9 @@ SKILL_CATEGORIES: dict[str, list[str]] = {
     "domain_patterns": DOMAIN_SKILLS,
 }
 
-_SKILL_DIRS = CORE_SKILLS + WORKFLOW_SKILLS + DOMAIN_SKILLS
+# Single source of truth derived from the category map, preserving order and
+# removing duplicates (e.g. the 'domain_patterns' alias).
+_SKILL_DIRS = list(dict.fromkeys(CORE_SKILLS + WORKFLOW_SKILLS + DOMAIN_SKILLS))
 
 
 def list_skills(category: str | None = None) -> list[str]:
@@ -73,26 +81,31 @@ def load_skill(skill_name: str) -> str:
 
 
 def parse_skill_metadata(skill_name: str) -> dict[str, str]:
-    """Extract metadata (name, description, globs) from a skill's frontmatter."""
+    """Extract metadata (name, description, globs) from a skill's YAML frontmatter."""
+    meta: dict[str, str] = {"name": skill_name, "description": "", "globs": ""}
     try:
         content = load_skill(skill_name)
-    except Exception:
-        return {"name": skill_name, "description": "", "globs": ""}
+    except (FileNotFoundError, TypeError, ModuleNotFoundError):
+        logger.debug("Skill '%s' could not be loaded for metadata parsing.", skill_name)
+        return meta
 
-    meta: dict[str, str] = {"name": skill_name, "description": "", "globs": ""}
-    # Extract YAML frontmatter between --- and ---
     fm_match = re.search(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
-    if fm_match:
-        fm_text = fm_match.group(1)
-        name_match = re.search(r"^name:\s*(.+)$", fm_text, re.MULTILINE)
-        if name_match:
-            meta["name"] = name_match.group(1).strip()
-        desc_match = re.search(r"^description:\s*(.+)$", fm_text, re.MULTILINE)
-        if desc_match:
-            meta["description"] = desc_match.group(1).strip()
-        globs_match = re.search(r"^globs:\s*(.+)$", fm_text, re.MULTILINE)
-        if globs_match:
-            meta["globs"] = globs_match.group(1).strip()
+    if not fm_match:
+        return meta
+
+    try:
+        data: Any = yaml.safe_load(fm_match.group(1))
+    except yaml.YAMLError:
+        logger.warning("Skill '%s' has invalid YAML frontmatter.", skill_name)
+        return meta
+
+    if not isinstance(data, dict):
+        return meta
+
+    for key in ("name", "description", "globs"):
+        value = data.get(key)
+        if value is not None:
+            meta[key] = str(value).strip()
 
     return meta
 

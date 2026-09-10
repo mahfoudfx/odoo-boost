@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
 
 
 def list_models(
@@ -34,7 +33,7 @@ def list_models(
         )
         model_ids = [d["res_id"] for d in model_data]
         if not model_ids:
-            return json.dumps({"total": 0, "models": []}, indent=2)
+            return json_response({"total": 0, "models": []})
         domain.append(("id", "in", model_ids))
 
     models = conn.search_read(
@@ -56,4 +55,4 @@ def list_models(
             for m in models
         ],
     }
-    return json.dumps(result, indent=2)
+    return json_response(result)

@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 from odoo_boost.ast_scanner.analyzer import scan_addon
+from odoo_boost.mcp_server.policy import enforce_path
+from odoo_boost.mcp_server.tools._common import error_response, json_response
 
 
 def inspect_local_addon(addon_path: str) -> str:
@@ -16,12 +15,10 @@ def inspect_local_addon(addon_path: str) -> str:
     Args:
         addon_path: Absolute or relative path to the local addon directory.
     """
-    path = Path(addon_path)
-    if not path.is_absolute():
-        path = (Path.cwd() / path).resolve()
+    path = enforce_path(addon_path)
 
     if not path.exists():
-        return json.dumps({"error": f"Path '{addon_path}' does not exist."}, indent=2)
+        return error_response(f"Path '{addon_path}' does not exist.")
 
     scanned = scan_addon(path)
-    return json.dumps(scanned, indent=2, default=str)
+    return json_response(scanned)

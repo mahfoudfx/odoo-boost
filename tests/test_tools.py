@@ -282,6 +282,18 @@ class TestSearchDocs:
         assert "results" in result
         assert any("/17/" in r["url"] for r in result["results"])
 
+    def test_patch_version_normalized(self):
+        result = json.loads(search_docs(topic="views", version="18.0.1"))
+        assert any("/18/" in r["url"] for r in result["results"])
+
+    def test_two_digit_major_version(self):
+        result = json.loads(search_docs(topic="views", version="10.0"))
+        assert any("/10/" in r["url"] for r in result["results"])
+
+    def test_invalid_version_defaults_to_18(self):
+        result = json.loads(search_docs(topic="views", version="latest"))
+        assert any("/18/" in r["url"] for r in result["results"])
+
     def test_no_match(self):
         result = json.loads(search_docs(topic="xyznonexistent"))
         assert "message" in result
@@ -454,6 +466,7 @@ class TestMcpServerV2:
         self, monkeypatch, mock_connection, sample_config
     ):
         from unittest.mock import MagicMock
+
         from odoo_boost.mcp_server.server import create_mcp_server
 
         mock_connection.authenticate = MagicMock(
@@ -468,12 +481,12 @@ class TestMcpServerV2:
         assert len(tools) == 22
 
     @pytest.mark.anyio
-    async def test_live_tool_error_when_offline(
-        self, monkeypatch, mock_connection, sample_config
-    ):
+    async def test_live_tool_error_when_offline(self, monkeypatch, mock_connection, sample_config):
         from unittest.mock import MagicMock
-        from odoo_boost.mcp_server.server import create_mcp_server
+
         from mcp.server.mcpserver.exceptions import ToolError
+
+        from odoo_boost.mcp_server.server import create_mcp_server
 
         mock_connection.authenticate = MagicMock(
             side_effect=ConnectionError("Cannot connect to Odoo (502 Bad Gateway)")

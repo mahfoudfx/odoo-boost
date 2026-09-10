@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import (
+    compact_records,
+    json_response,
+    parse_json_arg,
+)
 
 
 def database_query(
@@ -29,8 +32,11 @@ def database_query(
     """
     conn = get_connection()
 
-    parsed_domain = json.loads(domain) if domain else []
-    parsed_fields = json.loads(fields) if fields else []
+    try:
+        parsed_domain = parse_json_arg(domain, default=[])
+        parsed_fields = parse_json_arg(fields, default=[])
+    except ValueError as exc:
+        return json_response({"error": str(exc), "model": model})
 
     records = conn.search_read(
         model,
@@ -41,19 +47,8 @@ def database_query(
         order=order or None,
     )
 
-    if compact and isinstance(records, list):
-        cleaned_records = []
-        for rec in records:
-            clean_rec = {}
-            for k, v in rec.items():
-                if v is None or v is False or v == "":
-                    continue
-                if isinstance(v, str) and len(v) > 100:
-                    clean_rec[k] = f"{v[:97]}..."
-                else:
-                    clean_rec[k] = v
-            cleaned_records.append(clean_rec)
-        records = cleaned_records
+    if compact:
+        records = compact_records(records)
 
     total = conn.search_count(model, domain=parsed_domain)
 
@@ -65,4 +60,4 @@ def database_query(
         "limit": limit,
         "records": records,
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

@@ -11,6 +11,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  UV_FROZEN: "1"
+
 jobs:
   lint:
     name: Lint & Format
@@ -20,13 +23,13 @@ jobs:
       - uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
+          cache-dependency-glob: "uv.lock"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: uv pip install --system -e ".[dev]"
-      - run: ruff check src/ tests/
-      - run: ruff format --check src/ tests/
+      - run: uv sync --extra dev
+      - run: .venv/bin/ruff check src/ tests/
+      - run: .venv/bin/ruff format --check src/ tests/
 
   typecheck:
     name: Type Check
@@ -36,12 +39,12 @@ jobs:
       - uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
+          cache-dependency-glob: "uv.lock"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: uv pip install --system -e ".[dev]"
-      - run: mypy src/odoo_boost/
+      - run: uv sync --extra dev
+      - run: .venv/bin/mypy src/odoo_boost/
 
   test:
     name: Test (Python ${{ matrix.python-version }})
@@ -49,15 +52,50 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
+          cache-dependency-glob: "uv.lock"
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: uv pip install --system -e ".[dev]"
-      - run: pytest --cov --cov-report=term-missing
+      - run: uv sync --extra dev --python ${{ matrix.python-version }}
+      - run: .venv/bin/python -m pytest --cov --cov-report=term-missing
+
+  build:
+    name: Build & Wheel Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv build
+      - run: uv venv /tmp/smoke
+      - run: uv pip install --python /tmp/smoke/bin/python dist/*.whl
+      - name: Smoke test installed wheel (package data + entry point)
+        run: |
+          /tmp/smoke/bin/python - <<'PY'
+          import importlib.resources
+          import odoo_boost
+          from odoo_boost.skills.loader import list_skills
+          from odoo_boost.mcp_server.server import create_mcp_server  # noqa: F401
+
+          assert odoo_boost.__version__, "missing version"
+          assert len(list_skills()) == 20, f"expected 20 skills, got {len(list_skills())}"
+          for rel in (
+              ("guidelines", "core", "coding_style.md"),
+              ("guidelines", "core", "versions", "v18.md"),
+              ("skills", "creating_models", "SKILL.md"),
+          ):
+              assert importlib.resources.files("odoo_boost").joinpath(*rel).is_file(), rel
+          print("wheel smoke OK")
+          PY
+      - run: /tmp/smoke/bin/odoo-boost --version

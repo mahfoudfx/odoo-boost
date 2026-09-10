@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
+import logging
 
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
+
+logger = logging.getLogger(__name__)
 
 
 def list_routes(
@@ -43,8 +46,8 @@ def list_routes(
                     "published": p.get("is_published", False),
                 }
             )
-    except Exception:
-        pass  # website module not installed
+    except Exception as exc:  # website module not installed
+        logger.debug("website.page unavailable: %s", exc)
 
     # 2. Try ir.http routing rules (available on all versions)
     try:
@@ -67,11 +70,11 @@ def list_routes(
                     "name": r.get("name", ""),
                 }
             )
-    except Exception:
-        pass  # model may not exist
+    except Exception as exc:  # model may not exist
+        logger.debug("website.rewrite unavailable: %s", exc)
 
     result = {
         "total": len(routes),
         "routes": routes,
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

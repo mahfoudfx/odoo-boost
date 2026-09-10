@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
 
 
 def list_access_rights(
@@ -97,4 +96,4 @@ def list_access_rights(
             for r in rules
         ],
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

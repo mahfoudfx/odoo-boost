@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
 
 
 def get_model_inheritance(model: str) -> str:
@@ -25,9 +25,8 @@ def get_model_inheritance(model: str) -> str:
     )
 
     if not models:
-        return json.dumps(
-            {"found": False, "model": model, "message": f"Model '{model}' not found in ir.model."},
-            indent=2,
+        return json_response(
+            {"found": False, "model": model, "message": f"Model '{model}' not found in ir.model."}
         )
 
     model_data = models[0]
@@ -63,4 +62,4 @@ def get_model_inheritance(model: str) -> str:
         "contributing_modules": sorted(contributing_modules),
     }
 
-    return json.dumps(result, indent=2)
+    return json_response(result)

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response, parse_json_arg
 
 
 def search_records(
@@ -27,8 +26,11 @@ def search_records(
     """
     conn = get_connection()
 
-    parsed_domain = json.loads(domain) if domain else []
-    parsed_fields = json.loads(fields) if fields else []
+    try:
+        parsed_domain = parse_json_arg(domain, default=[])
+        parsed_fields = parse_json_arg(fields, default=[])
+    except ValueError as exc:
+        return json_response({"error": str(exc), "model": model})
 
     records = conn.search_read(
         model,
@@ -49,4 +51,4 @@ def search_records(
         "limit": limit,
         "records": records,
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

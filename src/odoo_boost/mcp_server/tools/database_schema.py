@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import error_response, json_response
 
 
 def database_schema(model_name: str) -> str:
@@ -23,7 +22,7 @@ def database_schema(model_name: str) -> str:
         limit=1,
     )
     if not models:
-        return json.dumps({"error": f"Model '{model_name}' not found."})
+        return error_response(f"Model '{model_name}' not found.")
 
     ir_model = models[0]
 
@@ -66,4 +65,4 @@ def database_schema(model_name: str) -> str:
             for f in fields
         ],
     }
-    return json.dumps(result, indent=2)
+    return json_response(result)

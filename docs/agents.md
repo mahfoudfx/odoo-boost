@@ -22,13 +22,18 @@ Odoo Boost supports 11 modern AI coding agents. For each agent, Odoo Boost gener
   "mcpServers": {
     "odoo-boost": {
       "command": "/path/to/python",
-      "args": ["-m", "odoo_boost", "mcp"]
+      "args": ["-m", "odoo_boost", "mcp", "-c", "/path/to/odoo-boost.json"]
     }
   }
 }
 ```
 
 Antigravity auto-discovers workspace customizations in `.agents/`, reading `mcp_config.json`, `AGENTS.md`, and skills in `.agents/skills/`.
+
+> **Windows IDE?** When `mcp_target` is `"auto"` (default), a
+> `.agents/mcp_config.windows.json` companion is also generated with
+> `"command": "wsl.exe"` so a Windows-native Antigravity can launch the WSL
+> server. See [Configuration → WSL + Windows IDEs](configuration.md#wsl--windows-ides).
 
 ---
 

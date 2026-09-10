@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
+import os
 from pathlib import Path
 
 from odoo_boost.config.schema import OdooBoostConfig
@@ -34,11 +36,18 @@ def load_config(path: Path | None = None) -> OdooBoostConfig:
 
 
 def save_config(config: OdooBoostConfig, path: Path | None = None) -> Path:
-    """Persist config to *path* (defaults to ./odoo-boost.json)."""
+    """Persist config to *path* (defaults to ./odoo-boost.json).
+
+    The file contains credentials and an optional bearer token, so it is
+    restricted to the owner on POSIX systems where possible.
+    """
     if path is None:
         path = Path.cwd() / CONFIG_FILENAME
     path.write_text(
         config.model_dump_json(indent=2) + "\n",
         encoding="utf-8",
     )
+    if os.name == "posix":
+        with contextlib.suppress(OSError):  # best effort on exotic filesystems
+            os.chmod(path, 0o600)
     return path

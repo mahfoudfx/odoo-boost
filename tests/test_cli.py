@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
@@ -54,6 +55,46 @@ class TestCheckCommand:
         assert result.exit_code == 0
         assert "18.0" in result.output
 
+    def test_check_with_mcp_probe(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(sample_config.model_dump_json(indent=2))
+
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0"}
+        mock_conn.authenticate.return_value = 2
+        mock_conn.search_count.return_value = 10
+
+        with (
+            patch("odoo_boost.cli.check.create_connection", return_value=mock_conn),
+            patch(
+                "odoo_boost.cli.check._probe_stdio",
+                return_value=(True, "MCP server responded to initialize"),
+            ) as probe,
+        ):
+            result = runner.invoke(app, ["check", "--config", str(cfg_path), "--mcp"])
+
+        assert result.exit_code == 0
+        assert "MCP server responded" in result.output
+        probe.assert_called_once()
+
+    def test_check_mcp_without_config_warns(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0"}
+        mock_conn.authenticate.return_value = 2
+        mock_conn.search_count.return_value = 10
+
+        with patch("odoo_boost.cli.check.create_connection", return_value=mock_conn):
+            result = runner.invoke(
+                app,
+                ["check", "--url", "http://localhost:8069", "--database", "db", "--mcp"],
+            )
+
+        assert result.exit_code == 0
+        assert "requires an odoo-boost.json" in result.output
+
 
 class TestUpdateCommand:
     def test_update_no_config(self, tmp_path, monkeypatch):
@@ -61,12 +102,210 @@ class TestUpdateCommand:
         result = runner.invoke(app, ["update"])
         assert result.exit_code == 1
 
+    def test_update_regenerates_files(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+
+        result = runner.invoke(app, ["update", "--config", str(cfg_path)])
+
+        assert result.exit_code == 0
+        assert (tmp_path / "AGENTS.md").exists()
+        assert (tmp_path / ".agents" / "mcp_config.json").exists()
+        skill_files = list((tmp_path / ".agents" / "skills").rglob("SKILL.md"))
+        assert len(skill_files) == 20
+
+    def test_update_is_idempotent(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+
+        assert runner.invoke(app, ["update", "--config", str(cfg_path)]).exit_code == 0
+        content_first = (tmp_path / ".agents" / "mcp_config.json").read_text()
+        assert runner.invoke(app, ["update", "--config", str(cfg_path)]).exit_code == 0
+        assert (tmp_path / ".agents" / "mcp_config.json").read_text() == content_first
+
+
+class TestInstallWizard:
+    def test_minimal_install(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {
+            "server_version": "18.0",
+            "server_serie": "18.0",
+        }
+        mock_conn.authenticate.return_value = 2
+
+        # url, database, username, password, agent #1, generate_mcp=n, generate_ai=n
+        user_input = "\ndb\n\n\n1\nn\nn\n"
+        with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
+            result = runner.invoke(app, ["install"], input=user_input)
+
+        assert result.exit_code == 0, result.output
+        assert (tmp_path / "odoo-boost.json").exists()
+        assert not (tmp_path / "AGENTS.md").exists()
+
 
 class TestMcpCommand:
     def test_mcp_no_config(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         result = runner.invoke(app, ["mcp"])
         assert result.exit_code == 1
+
+    def test_mcp_http_refuses_remote_bind_without_token(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(sample_config.model_dump_json(indent=2))
+        result = runner.invoke(
+            app,
+            ["mcp", "--config", str(cfg_path), "--transport", "http", "--host", "0.0.0.0"],
+        )
+        assert result.exit_code == 1
+
+    def test_mcp_rejects_unknown_transport(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(sample_config.model_dump_json(indent=2))
+        result = runner.invoke(
+            app, ["mcp", "--config", str(cfg_path), "--transport", "carrier-pigeon"]
+        )
+        assert result.exit_code == 1
+
+
+class TestCheckMcpHttp:
+    def test_check_mcp_http_passes_token(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={"mcp_transport": "http", "mcp_token": "tok", "generate_ai_files": False}
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0"}
+        mock_conn.authenticate.return_value = 2
+        mock_conn.search_count.return_value = 10
+
+        with (
+            patch("odoo_boost.cli.check.create_connection", return_value=mock_conn),
+            patch(
+                "odoo_boost.cli.check._probe_http",
+                return_value=(True, "reachable"),
+            ) as probe,
+        ):
+            result = runner.invoke(app, ["check", "--config", str(cfg_path), "--mcp"])
+
+        assert result.exit_code == 0
+        probe.assert_called_once()
+        assert probe.call_args.kwargs.get("token") == "tok"
+
+
+class TestMcpConfigCommand:
+    def _write_config(self, tmp_path, sample_config):
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(sample_config.model_dump_json(indent=2))
+        return cfg_path
+
+    def test_native_writes_primary_only(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = self._write_config(tmp_path, sample_config)
+        result = runner.invoke(
+            app,
+            [
+                "mcp-config",
+                "--config",
+                str(cfg_path),
+                "--platform",
+                "native",
+                "--agents",
+                "antigravity",
+            ],
+        )
+        assert result.exit_code == 0
+        agents_dir = tmp_path / ".agents"
+        assert (agents_dir / "mcp_config.json").exists()
+        assert not (agents_dir / "mcp_config.windows.json").exists()
+
+    def test_windows_emits_wsl_launcher(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = self._write_config(tmp_path, sample_config)
+        result = runner.invoke(
+            app,
+            [
+                "mcp-config",
+                "--config",
+                str(cfg_path),
+                "--platform",
+                "windows",
+                "--agents",
+                "antigravity",
+            ],
+        )
+        assert result.exit_code == 0
+        data = json.loads((tmp_path / ".agents" / "mcp_config.json").read_text())
+        assert data["mcpServers"]["odoo-boost"]["command"] == "wsl.exe"
+
+    def test_http_emits_url(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = self._write_config(tmp_path, sample_config)
+        result = runner.invoke(
+            app,
+            [
+                "mcp-config",
+                "--config",
+                str(cfg_path),
+                "--platform",
+                "http",
+                "--agents",
+                "antigravity",
+            ],
+        )
+        assert result.exit_code == 0
+        data = json.loads((tmp_path / ".agents" / "mcp_config.json").read_text())
+        assert "url" in data["mcpServers"]["odoo-boost"]
+
+    def test_unknown_platform_rejected(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg_path = self._write_config(tmp_path, sample_config)
+        result = runner.invoke(
+            app, ["mcp-config", "--config", str(cfg_path), "--platform", "amiga"]
+        )
+        assert result.exit_code == 1
+
+
+class TestEnsureGitignore:
+    def test_appends_config_entry_once(self, tmp_path):
+        from odoo_boost.cli.install import _ensure_gitignore
+
+        gitignore = tmp_path / ".gitignore"
+        gitignore.write_text("__pycache__/\n")
+        _ensure_gitignore(tmp_path)
+        first = gitignore.read_text()
+        assert "odoo-boost.json" in first
+
+        _ensure_gitignore(tmp_path)
+        assert gitignore.read_text() == first
+
+    def test_no_gitignore_is_noop(self, tmp_path):
+        from odoo_boost.cli.install import _ensure_gitignore
+
+        _ensure_gitignore(tmp_path)
+        assert not (tmp_path / ".gitignore").exists()
 
 
 class TestLintCommand:

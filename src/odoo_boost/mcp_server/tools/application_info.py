@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
 
 
 def application_info() -> str:
@@ -37,4 +36,4 @@ def application_info() -> str:
             for m in modules
         ],
     }
-    return json.dumps(result, indent=2)
+    return json_response(result)

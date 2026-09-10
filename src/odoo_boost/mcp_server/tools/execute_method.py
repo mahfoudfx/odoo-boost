@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.policy import enforce_method
+from odoo_boost.mcp_server.tools._common import json_response, parse_json_arg
 
 
 def execute_method(
@@ -24,11 +24,16 @@ def execute_method(
         args: Positional arguments as JSON list, e.g. '[[1, 2, 3]]' for record IDs.
         kwargs: Keyword arguments as JSON object, e.g. '{"fields": ["name"]}'.
     """
+    enforce_method(method)
+
     conn = get_connection()
 
-    parsed_args = json.loads(args) if args else []
-    parsed_kwargs = json.loads(kwargs) if kwargs else {}
+    try:
+        parsed_args = parse_json_arg(args, default=[])
+        parsed_kwargs = parse_json_arg(kwargs, default={})
+    except ValueError as exc:
+        return json_response({"error": str(exc), "model": model, "method": method})
 
     result = conn.execute(model, method, *parsed_args, **parsed_kwargs)
 
-    return json.dumps({"model": model, "method": method, "result": result}, indent=2, default=str)
+    return json_response({"model": model, "method": method, "result": result})

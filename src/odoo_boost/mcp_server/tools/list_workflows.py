@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
+import logging
 
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
+
+logger = logging.getLogger(__name__)
 
 
 def list_workflows(
@@ -46,8 +49,8 @@ def list_workflows(
                     "server_action_count": len(a.get("action_server_ids", [])),
                 }
             )
-    except Exception:
-        pass  # base_automation module may not be installed
+    except Exception as exc:  # base_automation module may not be installed
+        logger.debug("base.automation unavailable: %s", exc)
 
     # 2. ir.actions.server
     sa_domain: list = []
@@ -73,12 +76,12 @@ def list_workflows(
                     "sequence": a.get("sequence", 5),
                 }
             )
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("ir.actions.server unavailable: %s", exc)
 
     result = {
         "model_filter": model_name or "(all)",
         "automated_actions": automations,
         "server_actions": server_actions,
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 from dataclasses import dataclass
 
 from odoo_boost.config.schema import OdooBoostConfig
@@ -16,19 +17,25 @@ class ServerContext:
     config: OdooBoostConfig
 
 
-# Module-level singleton set at server start.
-_ctx: ServerContext | None = None
+# Context-local singleton set at server start. Using a ContextVar keeps state
+# isolated per async task and avoids leaking between tests or server instances.
+_ctx: ContextVar[ServerContext | None] = ContextVar("odoo_boost_context", default=None)
 
 
 def set_context(ctx: ServerContext) -> None:
-    global _ctx
-    _ctx = ctx
+    _ctx.set(ctx)
+
+
+def reset_context() -> None:
+    """Clear the active context (mainly useful for tests)."""
+    _ctx.set(None)
 
 
 def get_context() -> ServerContext:
-    if _ctx is None:
+    ctx = _ctx.get()
+    if ctx is None:
         raise RuntimeError("Server context not initialised.")
-    return _ctx
+    return ctx
 
 
 def get_connection() -> OdooConnection:

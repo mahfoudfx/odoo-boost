@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-import json
+import re
+
+from odoo_boost.mcp_server.tools._common import json_response
 
 # Static map of documentation topics to URLs.
 # This covers the most common Odoo dev doc sections.
@@ -87,6 +89,12 @@ _TOPICS: dict[str, dict[str, str]] = {
 }
 
 
+def _normalize_version(version: str) -> str:
+    """Extract the major version from user input ('18.0.1' -> '18')."""
+    match = re.match(r"\s*(\d+)", version or "")
+    return match.group(1) if match else "18"
+
+
 def search_docs(
     topic: str = "",
     version: str = "",
@@ -98,7 +106,7 @@ def search_docs(
                Leave empty to list all available topics.
         version: Odoo version (e.g. '17.0', '18.0', '19.0'). Defaults to latest.
     """
-    ver = version.replace(".0", "") if version else "18"
+    ver = _normalize_version(version)
 
     if not topic:
         # Return all topics
@@ -106,7 +114,7 @@ def search_docs(
             {"topic": k, "title": v["title"], "description": v["description"]}
             for k, v in _TOPICS.items()
         ]
-        return json.dumps({"available_topics": all_topics}, indent=2)
+        return json_response({"available_topics": all_topics})
 
     # Search by keyword
     matches = []
@@ -128,12 +136,11 @@ def search_docs(
             )
 
     if not matches:
-        return json.dumps(
+        return json_response(
             {
                 "message": f"No documentation found for '{topic}'.",
                 "available_topics": list(_TOPICS.keys()),
-            },
-            indent=2,
+            }
         )
 
-    return json.dumps({"results": matches}, indent=2)
+    return json_response({"results": matches})

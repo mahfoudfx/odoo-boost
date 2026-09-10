@@ -4,10 +4,16 @@ from __future__ import annotations
 
 import ast
 import json
+import logging
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+from odoo_boost.mcp_server.policy import enforce_path
+from odoo_boost.mcp_server.tools._common import error_response, json_response
+
+logger = logging.getLogger(__name__)
 
 
 def _run_pylint_odoo(target_path: Path) -> dict[str, Any]:
@@ -55,6 +61,7 @@ def _run_pylint_odoo(target_path: Path) -> dict[str, Any]:
     except subprocess.TimeoutExpired:
         return {"error": "Linter timed out after 60s."}
     except Exception as exc:
+        logger.warning("Failed running pylint-odoo: %s", exc)
         return {"error": f"Failed running pylint-odoo: {exc}"}
 
 
@@ -68,6 +75,7 @@ def _run_fallback_ast_lint(target_path: Path) -> dict[str, Any]:
             content = py_file.read_text(encoding="utf-8", errors="replace")
             tree = ast.parse(content, filename=str(py_file))
         except Exception as exc:
+            logger.debug("Could not parse %s: %s", py_file, exc)
             issues.append(
                 {
                     "type": "error",
@@ -130,12 +138,10 @@ def lint_odoo_code(path: str) -> str:
     Args:
         path: Path to file or addon directory to lint.
     """
-    target = Path(path)
-    if not target.is_absolute():
-        target = (Path.cwd() / target).resolve()
+    target = enforce_path(path)
 
     if not target.exists():
-        return json.dumps({"error": f"Path '{path}' does not exist."}, indent=2)
+        return error_response(f"Path '{path}' does not exist.")
 
     # Check if pylint_odoo is available
     has_pylint_odoo = False
@@ -148,4 +154,4 @@ def lint_odoo_code(path: str) -> str:
 
     res = _run_pylint_odoo(target) if has_pylint_odoo else _run_fallback_ast_lint(target)
 
-    return json.dumps(res, indent=2)
+    return json_response(res)

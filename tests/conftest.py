@@ -155,10 +155,10 @@ def server_context(mock_connection: MockOdooConnection, sample_config: OdooBoost
     set_context(ctx)
     yield ctx
 
-    # Reset global context
-    import odoo_boost.mcp_server.context as ctx_mod
+    # Reset context
+    from odoo_boost.mcp_server.context import reset_context
 
-    ctx_mod._ctx = None
+    reset_context()
 
 
 def _seed_default_data(conn: MockOdooConnection) -> None:

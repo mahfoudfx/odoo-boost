@@ -67,7 +67,9 @@ The wizard will:
    - Windsurf
    - Cline
    - Junie
-4. **Generate files**: Creates guidelines, MCP configs, 20 skills, and the `SKILLS_ROUTING.md` index.
+4. **Choose the MCP transport**: stdio (default) or HTTP, and whether the same
+   project is opened from Windows IDEs while the server runs in WSL.
+5. **Generate files**: Creates guidelines, MCP configs, 20 skills, and the `SKILLS_ROUTING.md` index.
 
 ---
 
@@ -77,6 +79,29 @@ Test the live connection anytime:
 
 ```bash
 odoo-boost check
+```
+
+Verify that the generated MCP server actually starts (spawns the configured
+command and performs the MCP `initialize` handshake):
+
+```bash
+odoo-boost check --mcp
+```
+
+If you develop inside WSL but use a Windows-native IDE and the MCP server does
+not appear, regenerate a Windows-ready config (wraps the interpreter in
+`wsl.exe`):
+
+```bash
+odoo-boost mcp-config --platform windows
+```
+
+Alternatively, run the server over HTTP and point the IDE at
+`http://localhost:8765/mcp`:
+
+```bash
+# Non-loopback binds require a bearer token
+odoo-boost mcp --transport http --host 0.0.0.0 --port 8765 --token "$MCP_TOKEN"
 ```
 
 Run static linting on your local addon code:

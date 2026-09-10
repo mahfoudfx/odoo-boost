@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import ast
+import logging
 from pathlib import Path
 from typing import Any
 
 try:
     import defusedxml.ElementTree as ET
 except ImportError:
-    import xml.etree.ElementTree as ET  # type: ignore[no-redef]
+    import xml.etree.ElementTree as ET
+
+logger = logging.getLogger(__name__)
 
 
 def _get_literal_value(node: ast.AST) -> Any:
@@ -150,7 +153,8 @@ def parse_python_file(path: Path) -> list[dict[str, Any]]:
     try:
         content = path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(content, filename=str(path))
-    except Exception:
+    except Exception as exc:
+        logger.debug("Could not parse Python file %s: %s", path, exc)
         return []
 
     visitor = _ModelVisitor(filename=str(path))
@@ -169,7 +173,8 @@ def parse_xml_file(path: Path) -> dict[str, Any]:
     try:
         content = path.read_text(encoding="utf-8", errors="replace")
         root = ET.fromstring(content)
-    except Exception:
+    except Exception as exc:
+        logger.debug("Could not parse XML file %s: %s", path, exc)
         return res
 
     for elem in root.iter():
@@ -252,7 +257,8 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
                     "data": m_val.get("data", []),
                     "license": m_val.get("license"),
                 }
-        except Exception:
+        except Exception as exc:
+            logger.warning("Error evaluating manifest %s: %s", manifest_file, exc)
             result["manifest"] = {"raw": "Error evaluating manifest dictionary"}
 
     # Scan Python files

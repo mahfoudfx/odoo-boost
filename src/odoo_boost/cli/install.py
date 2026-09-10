@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
+from typing import Literal
 
 import typer
 from rich.console import Console
@@ -11,8 +13,9 @@ from rich.prompt import Confirm, Prompt
 
 from odoo_boost.agents import AGENTS, ALL_AGENT_IDS
 from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
-from odoo_boost.config.settings import save_config
+from odoo_boost.config.settings import CONFIG_FILENAME, save_config
 from odoo_boost.connection.factory import create_connection
+from odoo_boost.mcp_launcher import detect_wsl_distro, is_loopback_host, is_wsl
 
 console = Console()
 
@@ -33,7 +36,8 @@ def install() -> None:
     url = Prompt.ask("  Odoo URL", default="http://localhost:8069")
     database = Prompt.ask("  Database name")
     username = Prompt.ask("  Username", default="admin")
-    password = Prompt.ask("  Password / API key", default="admin", password=True)
+    password_default = os.environ.get("ODOO_BOOST_PASSWORD", "admin")
+    password = Prompt.ask("  Password / API key", default=password_default, password=True)
 
     conn_cfg = OdooConnection(
         url=url,
@@ -117,10 +121,70 @@ def install() -> None:
     if not generate_mcp and not generate_ai_files:
         console.print("  [dim]Both disabled — only odoo-boost.json will be created.[/]")
 
+    project_path = Path.cwd()
+
+    # --- Step 4b: MCP transport / platform ---
+    mcp_transport: Literal["stdio", "http"] = "stdio"
+    mcp_target: Literal["auto", "native", "wsl"] = "native"
+    wsl_distro: str | None = None
+    mcp_host = "127.0.0.1"
+    mcp_port = 8765
+    mcp_token: str | None = None
+
+    if generate_mcp:
+        console.print("\n[bold]Step 4b:[/] MCP transport\n")
+
+        wsl = is_wsl()
+        detected_distro = detect_wsl_distro()
+        if wsl:
+            console.print(f"  [dim]WSL detected ({detected_distro or 'default'}).[/]")
+
+        open_from_windows = Confirm.ask(
+            "  Do you also open this project from IDEs running on Windows?",
+            default=wsl,
+        )
+        if open_from_windows:
+            mcp_target = "auto"
+            wsl_distro = detected_distro or Prompt.ask("  WSL distribution", default="Ubuntu")
+
+        use_http = Confirm.ask(
+            "  Use HTTP transport instead of stdio? (shared server, best for cross-OS)",
+            default=False,
+        )
+        if use_http:
+            mcp_transport = "http"
+            mcp_host = Prompt.ask("  HTTP bind host", default="127.0.0.1")
+            port_raw = Prompt.ask("  HTTP port", default="8765")
+            try:
+                mcp_port = int(port_raw)
+            except ValueError:
+                console.print("  [yellow]Invalid port, using 8765.[/]")
+                mcp_port = 8765
+
+            if not is_loopback_host(mcp_host):
+                console.print(
+                    "  [yellow]Non-loopback bind requires a bearer token "
+                    "(it will be embedded in generated configs).[/]"
+                )
+                mcp_token = Prompt.ask("  MCP bearer token", password=True)
+
+    # --- Step 4c: Tool hardening (opt-in) ---
+    readonly = False
+    allowed_roots: list[str] = []
+    if generate_mcp:
+        console.print("\n[bold]Step 4c:[/] Tool hardening (optional)\n")
+        readonly = Confirm.ask(
+            "  Enable readonly mode? (blocks mutating execute_method calls)",
+            default=False,
+        )
+        if Confirm.ask(
+            "  Restrict local file tools to the project root?",
+            default=False,
+        ):
+            allowed_roots = [str(project_path)]
+
     # --- Step 5: Generate config + files ---
     console.print("\n[bold]Step 5:[/] Generating files…\n")
-
-    project_path = Path.cwd()
 
     config = OdooBoostConfig(
         connection=conn_cfg,
@@ -129,11 +193,23 @@ def install() -> None:
         project_path=str(project_path),
         generate_mcp=generate_mcp,
         generate_ai_files=generate_ai_files,
+        mcp_transport=mcp_transport,
+        mcp_target=mcp_target,
+        wsl_distro=wsl_distro,
+        mcp_host=mcp_host,
+        mcp_port=mcp_port,
+        mcp_token=mcp_token,
+        readonly=readonly,
+        allowed_roots=allowed_roots,
     )
 
     # Save config
     config_path = save_config(config)
     console.print(f"  [green]Created[/] {config_path.relative_to(project_path)}")
+    console.print(
+        "  [yellow]Credentials are stored in plaintext — keep odoo-boost.json out of version control.[/]"
+    )
+    _ensure_gitignore(project_path)
 
     # Install each agent
     for agent_id in selected_agents:
@@ -159,3 +235,21 @@ def install() -> None:
             border_style="green",
         )
     )
+
+
+def _ensure_gitignore(project_path: Path) -> None:
+    """Add odoo-boost.json to an existing .gitignore (best-effort)."""
+    gitignore = project_path / ".gitignore"
+    if not gitignore.is_file():
+        return
+    try:
+        content = gitignore.read_text(encoding="utf-8")
+    except OSError:  # pragma: no cover - defensive
+        return
+    if any(line.strip() == CONFIG_FILENAME for line in content.splitlines()):
+        return
+    separator = "" if content.endswith("\n") else "\n"
+    gitignore.write_text(
+        f"{content}{separator}\n# Odoo Boost\n{CONFIG_FILENAME}\n", encoding="utf-8"
+    )
+    console.print(f"  [green]Updated[/] .gitignore (added {CONFIG_FILENAME})")

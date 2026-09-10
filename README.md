@@ -1,5 +1,10 @@
 # Odoo Boost
 
+[![CI](https://github.com/havmedia/odoo-boost/actions/workflows/ci.yml/badge.svg)](https://github.com/havmedia/odoo-boost/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/odoo-boost)](https://pypi.org/project/odoo-boost/)
+[![Python versions](https://img.shields.io/pypi/pyversions/odoo-boost)](https://pypi.org/project/odoo-boost/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 AI coding agents with deep runtime introspection and static analysis for Odoo instances and addons.
 
 Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips your AI coding assistants with deep knowledge of your Odoo project — live models, views, records, access rights, configuration, and offline AST/XML scanning — plus Odoo-specific development guidelines, OCA standards, and step-by-step skills.
@@ -94,10 +99,11 @@ Your AI assistant is now configured. The MCP server starts automatically when yo
 | Command | Description |
 |---|---|
 | `odoo-boost install` | Interactive setup wizard with agent configuration |
-| `odoo-boost check` | Test connection to Odoo instance |
+| `odoo-boost check [--mcp]` | Test connection to Odoo instance (and the MCP server handshake) |
 | `odoo-boost lint [path]` | Run OCA/pylint-odoo or AST static checks on local addons |
 | `odoo-boost update` | Re-generate guidelines, configs, and skills from saved config |
-| `odoo-boost mcp` | Start the MCP server (stdio transport) |
+| `odoo-boost mcp [--transport stdio\|http] [--token …]` | Start the MCP server (stdio by default, HTTP optional with bearer auth) |
+| `odoo-boost mcp-config [--platform …]` | Regenerate only MCP configs (native/windows/http) |
 | `odoo-boost --version` | Show installed version |
 
 You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_boost lint .`.
@@ -146,6 +152,32 @@ This guarantees that:
 - No dependency on environment variable activation or shell state
 - Seamless execution inside VS Code, Cursor, Antigravity, OpenCode, or CLI agents
 
+### Cross-OS: WSL server + Windows IDE
+
+When your project lives in WSL but the IDE runs natively on Windows, the
+generated configs handle it two ways:
+
+- **stdio with `mcp_target: "auto"`** — the native config is written for
+  WSL-native IDEs, plus a `*.windows.*` companion that wraps the interpreter in
+  `wsl.exe` (`command: "wsl.exe"`) for Windows IDEs.
+- **HTTP transport** — `odoo-boost mcp --transport http` serves a single
+  Streamable HTTP endpoint (default `http://127.0.0.1:8765/mcp`) that Windows
+  IDEs reach through WSL2 `localhost` forwarding, no process spawning required.
+  Non-loopback binds require `--token` / `mcp_token`; generated configs embed
+  the `Authorization: Bearer` header.
+
+Security guardrails: `odoo-boost.json` is written `0600`, `readonly` blocks
+mutating `execute_method` calls, and `allowed_roots` confines the local file
+tools. See [Configuration](docs/configuration.md#security-notes).
+
+Regenerate for a specific platform at any time:
+
+```bash
+odoo-boost mcp-config --platform windows   # wsl.exe wrapper
+odoo-boost mcp-config --platform http      # URL-based configs
+odoo-boost check --mcp                     # verify the server starts
+```
+
 ## .gitignore
 
 Generated files contain environment-specific paths and local configs. Add the following to your project `.gitignore`:
@@ -173,6 +205,11 @@ opencode.json
 .windsurf/
 .cline/
 .junie/
+
+# Windows/WSL companion MCP configs (mcp_target: "auto")
+*.windows.json
+*.windows.yaml
+*.windows.toml
 ```
 
 > **Note:** Directories like `.github/` and `.vscode/` may contain existing project files — ignore only the generated sub-files/directories.
@@ -201,8 +238,12 @@ opencode.json
 - [Skills Catalog](https://github.com/havmedia/odoo-boost/blob/main/docs/skills.md) — 20 progressive skills and routing table
 - [Guidelines](https://github.com/havmedia/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v19 and OCA rules)
 - [Configuration Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
+- [Architecture](https://github.com/havmedia/odoo-boost/blob/main/docs/architecture.md) — Components, tool-call lifecycle, and extension points
+- [Troubleshooting](https://github.com/havmedia/odoo-boost/blob/main/docs/troubleshooting.md) — WSL/Windows, HTTP auth, connection, and logging issues
+- [Security Policy](https://github.com/havmedia/odoo-boost/blob/main/SECURITY.md) — Vulnerability reporting and security model
+- [Changelog](https://github.com/havmedia/odoo-boost/blob/main/CHANGELOG.md) — Release history
 - [Contributing](https://github.com/havmedia/odoo-boost/blob/main/CONTRIBUTING.md) — Developer guide and tool authoring
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).

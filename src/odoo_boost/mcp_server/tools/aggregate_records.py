@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import (
+    error_response,
+    json_response,
+    parse_json_arg,
+)
 
 
 def aggregate_records(
@@ -29,9 +32,12 @@ def aggregate_records(
     """
     conn = get_connection()
 
-    parsed_domain = json.loads(domain) if domain else []
-    parsed_fields = json.loads(fields) if fields else []
-    parsed_groupby = json.loads(groupby) if groupby else []
+    try:
+        parsed_domain = parse_json_arg(domain, default=[])
+        parsed_fields = parse_json_arg(fields, default=[])
+        parsed_groupby = parse_json_arg(groupby, default=[])
+    except ValueError as exc:
+        return error_response(str(exc), model=model)
 
     try:
         groups = conn.execute(
@@ -45,7 +51,7 @@ def aggregate_records(
             orderby or False,
         )
     except Exception as exc:
-        return json.dumps({"error": str(exc), "model": model}, indent=2)
+        return error_response(str(exc), model=model)
 
     result = {
         "model": model,
@@ -55,4 +61,4 @@ def aggregate_records(
         "limit": limit,
         "groups": groups,
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

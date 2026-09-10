@@ -2,64 +2,66 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from mcp.server import MCPServer
+from mcp.server.auth.settings import AuthSettings
+from pydantic import AnyHttpUrl
 
+from odoo_boost.__version__ import __version__
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.connection.factory import create_connection
 from odoo_boost.guidelines.composer import compose_guidelines
+from odoo_boost.logging_config import configure_logging
+from odoo_boost.mcp_launcher import build_http_url
+from odoo_boost.mcp_server.auth import StaticTokenVerifier
 from odoo_boost.mcp_server.context import ServerContext, set_context
-
-# Live XML-RPC tools
-from odoo_boost.mcp_server.tools.aggregate_records import aggregate_records
-from odoo_boost.mcp_server.tools.application_info import application_info
-from odoo_boost.mcp_server.tools.check_odoo_ls import check_odoo_ls
-from odoo_boost.mcp_server.tools.database_query import database_query
+from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, resilient_live_tool
 from odoo_boost.mcp_server.tools.database_schema import database_schema
-from odoo_boost.mcp_server.tools.execute_method import execute_method
-from odoo_boost.mcp_server.tools.get_config import get_config
-from odoo_boost.mcp_server.tools.get_model_inheritance import get_model_inheritance
-from odoo_boost.mcp_server.tools.get_module_info import get_module_info
-from odoo_boost.mcp_server.tools.inspect_local_addon import inspect_local_addon
-from odoo_boost.mcp_server.tools.lint_odoo_code import lint_odoo_code
-from odoo_boost.mcp_server.tools.list_access_rights import list_access_rights
-from odoo_boost.mcp_server.tools.list_menus import list_menus
-from odoo_boost.mcp_server.tools.list_models import list_models
-from odoo_boost.mcp_server.tools.list_routes import list_routes
-from odoo_boost.mcp_server.tools.list_views import list_views
-from odoo_boost.mcp_server.tools.list_workflows import list_workflows
-from odoo_boost.mcp_server.tools.read_log_entries import read_log_entries
-from odoo_boost.mcp_server.tools.resolve_local_xml_id import resolve_local_xml_id
-from odoo_boost.mcp_server.tools.resolve_xml_id import resolve_xml_id
-from odoo_boost.mcp_server.tools.search_docs import search_docs
-from odoo_boost.mcp_server.tools.search_records import search_records
 from odoo_boost.skills.loader import generate_skills_routing
+
+logger = logging.getLogger(__name__)
 
 
 def create_mcp_server(config: OdooBoostConfig) -> Any:
     """Build an MCP v2 server wired to a live Odoo connection and local workspace tools."""
+    configure_logging()
 
     # Establish connection
     conn = create_connection(config.connection)
     try:
         conn.authenticate()
     except Exception as exc:
-        import sys
-
-        print(
-            f"[odoo-boost] Warning: Could not pre-authenticate with Odoo at {config.connection.url} ({exc}).",
-            file=sys.stderr,
+        logger.warning(
+            "Could not pre-authenticate with Odoo at %s (%s).",
+            config.connection.url,
+            exc,
         )
-        print(
-            "[odoo-boost] MCP server running in resilient mode. Live tools will connect on demand.",
-            file=sys.stderr,
-        )
+        logger.warning("MCP server running in resilient mode. Live tools will connect on demand.")
 
     set_context(ServerContext(connection=conn, config=config))
 
+    token_verifier = None
+    auth_settings = None
+    if config.mcp_token:
+        endpoint = AnyHttpUrl(build_http_url(config))
+        token_verifier = StaticTokenVerifier(config.mcp_token)
+        # The SDK requires auth settings alongside a token verifier. Static
+        # tokens do not use the OAuth issuer, so it mirrors the resource URL.
+        # Audience validation is disabled because the verifier already compares
+        # the token exactly; this also future-proofs the 3.0 default change.
+        auth_settings = AuthSettings(
+            issuer_url=endpoint,
+            resource_server_url=endpoint,
+            validate_token_resource=False,
+        )
+
     mcp = MCPServer(
         "odoo-boost",
+        version=__version__,
+        auth=auth_settings,
+        token_verifier=token_verifier,
         instructions=(
             "Odoo Boost MCP server – provides deep introspection into running Odoo "
             "instances, local uncommitted custom addons, AST scanning, and OCA quality linting. "
@@ -109,46 +111,11 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
         )
 
     # -------------------------------------------------------------------------
-    # Tools Registration (22 tools)
+    # Tools Registration (see mcp_server/registry.py for the tool inventory)
     # -------------------------------------------------------------------------
-    def _resilient_live_tool(fn: Any) -> Any:
-        """Wrap live tool so ConnectionError / offline Odoo produces clear ToolError messages."""
-        import functools
-        from mcp.server.mcpserver.exceptions import ToolError
-
-        @functools.wraps(fn)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            try:
-                return fn(*args, **kwargs)
-            except ConnectionError as exc:
-                raise ToolError(str(exc)) from exc
-
-        return wrapper
-
-    # Live database tools (resilient to offline server)
-    mcp.tool()(_resilient_live_tool(application_info))
-    mcp.tool()(_resilient_live_tool(database_schema))
-    mcp.tool()(_resilient_live_tool(database_query))
-    mcp.tool()(_resilient_live_tool(list_models))
-    mcp.tool()(_resilient_live_tool(list_views))
-    mcp.tool()(_resilient_live_tool(list_menus))
-    mcp.tool()(_resilient_live_tool(list_routes))
-    mcp.tool()(_resilient_live_tool(list_access_rights))
-    mcp.tool()(_resilient_live_tool(get_config))
-    mcp.tool()(_resilient_live_tool(get_module_info))
-    mcp.tool()(_resilient_live_tool(search_records))
-    mcp.tool()(_resilient_live_tool(execute_method))
-    mcp.tool()(_resilient_live_tool(read_log_entries))
-    mcp.tool()(_resilient_live_tool(search_docs))
-    mcp.tool()(_resilient_live_tool(list_workflows))
-    mcp.tool()(_resilient_live_tool(aggregate_records))
-    mcp.tool()(_resilient_live_tool(resolve_xml_id))
-    mcp.tool()(_resilient_live_tool(get_model_inheritance))
-
-    # Local AST, verification, and diagnostics tools
-    mcp.tool()(inspect_local_addon)
-    mcp.tool()(resolve_local_xml_id)
-    mcp.tool()(lint_odoo_code)
-    mcp.tool()(check_odoo_ls)
+    for tool in LIVE_TOOLS:
+        mcp.tool()(resilient_live_tool(tool))
+    for local_tool in LOCAL_TOOLS:
+        mcp.tool()(local_tool)
 
     return mcp

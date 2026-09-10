@@ -20,6 +20,7 @@ from odoo_boost.agents.hermes import HermesAgent
 from odoo_boost.agents.junie import JunieAgent
 from odoo_boost.agents.opencode import OpenCodeAgent
 from odoo_boost.agents.pi import PiAgent
+from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.agents.windsurf import WindsurfAgent
 from odoo_boost.config.schema import OdooBoostConfig
 
@@ -51,6 +52,21 @@ class TestAgentRegistry:
         ]
         for agent_id in expected_ids:
             assert agent_id in AGENTS
+
+    def test_registry_matches_specs(self):
+        assert set(AGENTS) == set(AGENT_SPECS)
+
+    def test_class_attrs_derived_from_spec(self):
+        for agent_id, cls in AGENTS.items():
+            assert cls.id == agent_id
+            assert cls.display_name == AGENT_SPECS[agent_id].display_name
+
+    def test_missing_spec_raises(self, sample_config, tmp_path):
+        class BrokenAgent(Agent):
+            pass
+
+        with pytest.raises(TypeError):
+            BrokenAgent(config=sample_config, project_path=tmp_path)
 
 
 # ---------------------------------------------------------------------------
@@ -131,7 +147,49 @@ class TestAgentContracts:
     def test_mcp_command(self, agent: Agent):
         cmd = agent._mcp_command()
         assert cmd[0] == sys.executable
-        assert cmd[1:] == ["-m", "odoo_boost", "mcp"]
+        assert cmd[1:4] == ["-m", "odoo_boost", "mcp"]
+        assert cmd[4] == "-c"
+        assert cmd[5].endswith("odoo-boost.json")
+
+    def test_windows_command_uses_wsl_launcher(self, agent: Agent):
+        cmd = agent._mcp_command(windows=True)
+        assert cmd[0] == "wsl.exe"
+        assert "--cd" in cmd
+        assert sys.executable in cmd
+        assert cmd[-1].endswith("odoo-boost.json")
+
+    def test_auto_emits_windows_companion(self, agent: Agent):
+        agent.install()
+        assert agent.mcp_config_path.exists()
+        assert agent.windows_mcp_config_path.exists()
+        assert agent.windows_mcp_config_path.name.endswith(
+            ".windows" + agent.mcp_config_path.suffix
+        )
+
+    def test_native_target_skips_windows_companion(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_target": "native"})
+        a = ClaudeCodeAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        assert a.mcp_config_path.exists()
+        assert not a.windows_mcp_config_path.exists()
+
+    def test_http_transport_emits_url(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_port": 9000})
+        a = AntigravityAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        data = json.loads(a.mcp_config_path.read_text())
+        assert data["mcpServers"]["odoo-boost"]["url"] == "http://127.0.0.1:9000/mcp"
+        assert not a.windows_mcp_config_path.exists()
+
+    def test_custom_command_override(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(
+            update={"mcp_command": ["docker", "run", "odoo-boost", "mcp"]}
+        )
+        a = AntigravityAgent(config=cfg, project_path=tmp_path)
+        cmd = a._mcp_command()
+        assert cmd == ["docker", "run", "odoo-boost", "mcp"]
+        a.install()
+        assert not a.windows_mcp_config_path.exists()
 
 
 # ---------------------------------------------------------------------------
@@ -231,6 +289,59 @@ class TestJunieAgent:
         assert ".junie" in str(a.guidelines_path)
         assert ".junie" in str(a.mcp_config_path)
         assert ".junie" in str(a.skills_dir)
+
+
+# ---------------------------------------------------------------------------
+# HTTP transport config variants
+# ---------------------------------------------------------------------------
+
+
+class TestHttpConfigVariants:
+    def test_json_agents_without_token_have_no_headers(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http"})
+        a = AntigravityAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        data = json.loads(a.mcp_config_path.read_text())
+        assert "headers" not in data["mcpServers"]["odoo-boost"]
+
+    def test_json_agents_embed_bearer_token(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        a = AntigravityAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        data = json.loads(a.mcp_config_path.read_text())
+        assert data["mcpServers"]["odoo-boost"]["headers"] == {"Authorization": "Bearer tok123"}
+
+    def test_copilot_http_uses_type_and_headers(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        a = CopilotAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        server = json.loads(a.mcp_config_path.read_text())["servers"]["odoo-boost"]
+        assert server["type"] == "http"
+        assert server["headers"]["Authorization"] == "Bearer tok123"
+
+    def test_opencode_http_remote_with_headers(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        a = OpenCodeAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        server = json.loads(a.mcp_config_path.read_text())["mcp"]["odoo-boost"]
+        assert server["type"] == "remote"
+        assert server["enabled"] is True
+        assert server["headers"]["Authorization"] == "Bearer tok123"
+
+    def test_codex_http_uses_http_headers(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        a = CodexAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        content = a.mcp_config_path.read_text()
+        assert 'url = "http://127.0.0.1:8765/mcp"' in content
+        assert 'http_headers = { Authorization = "Bearer tok123" }' in content
+
+    def test_hermes_http_token_in_yaml(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        a = HermesAgent(config=cfg, project_path=tmp_path)
+        a.install()
+        server = yaml.safe_load(a.mcp_config_path.read_text())["mcp_servers"]["odoo-boost"]
+        assert server["headers"]["Authorization"] == "Bearer tok123"
 
 
 # ---------------------------------------------------------------------------

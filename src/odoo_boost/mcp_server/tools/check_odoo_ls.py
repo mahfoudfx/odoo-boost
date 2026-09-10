@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
-import json
+import logging
 import shutil
 import subprocess
-from pathlib import Path
+
+from odoo_boost.mcp_server.policy import enforce_path
+from odoo_boost.mcp_server.tools._common import error_response, json_response
+
+logger = logging.getLogger(__name__)
 
 
 def check_odoo_ls(path: str = ".") -> str:
@@ -16,7 +20,7 @@ def check_odoo_ls(path: str = ".") -> str:
     """
     ls_bin = shutil.which("odoo-ls")
     if not ls_bin:
-        return json.dumps(
+        return json_response(
             {
                 "installed": False,
                 "message": (
@@ -24,11 +28,10 @@ def check_odoo_ls(path: str = ".") -> str:
                     "Odoo Boost is using built-in pure-Python AST scanner and OCA linter instead."
                 ),
                 "suggestion": "To install Odoo Language Server, visit https://github.com/odoo/odoo-ls",
-            },
-            indent=2,
+            }
         )
 
-    target = Path(path).resolve()
+    target = enforce_path(path)
     try:
         proc = subprocess.run(
             [ls_bin, "check", str(target)],
@@ -36,22 +39,15 @@ def check_odoo_ls(path: str = ".") -> str:
             text=True,
             timeout=30,
         )
-        return json.dumps(
+        return json_response(
             {
                 "installed": True,
                 "binary": ls_bin,
                 "exit_code": proc.returncode,
                 "output": proc.stdout.strip(),
                 "stderr": proc.stderr.strip(),
-            },
-            indent=2,
+            }
         )
     except Exception as exc:
-        return json.dumps(
-            {
-                "installed": True,
-                "binary": ls_bin,
-                "error": f"Error running odoo-ls: {exc}",
-            },
-            indent=2,
-        )
+        logger.warning("Error running odoo-ls: %s", exc)
+        return error_response(f"Error running odoo-ls: {exc}", installed=True, binary=ls_bin)

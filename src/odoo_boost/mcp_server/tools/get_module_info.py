@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import error_response, json_response
 
 
 def get_module_info(module_name: str) -> str:
@@ -35,7 +34,7 @@ def get_module_info(module_name: str) -> str:
         limit=1,
     )
     if not modules:
-        return json.dumps({"error": f"Module '{module_name}' not found."})
+        return error_response(f"Module '{module_name}' not found.")
 
     mod = modules[0]
 
@@ -84,4 +83,4 @@ def get_module_info(module_name: str) -> str:
         ],
         "models": [{"model": m["model"], "name": m["name"]} for m in models],
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

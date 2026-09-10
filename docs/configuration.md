@@ -15,7 +15,12 @@ Odoo Boost stores project configuration in `odoo-boost.json` at your project roo
   },
   "odoo_version": "18.0",
   "agents": ["antigravity", "claude_code", "cursor"],
-  "project_path": "."
+  "project_path": ".",
+  "mcp_transport": "stdio",
+  "mcp_target": "auto",
+  "wsl_distro": "Ubuntu",
+  "mcp_host": "127.0.0.1",
+  "mcp_port": 8765
 }
 ```
 
@@ -55,9 +60,83 @@ Default: `[]` (all configured agents).
 
 Path to the project root directory. Default: `"."`.
 
+### MCP options (optional)
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `mcp_transport` | `"stdio"` \| `"http"` | `"stdio"` | How clients talk to the server. `http` emits URL-based configs. |
+| `mcp_target` | `"auto"` \| `"native"` \| `"wsl"` | `"auto"` | How the stdio process is launched. `auto` writes the native config plus a `*.windows` companion that wraps the interpreter in `wsl.exe`. |
+| `wsl_distro` | string | — | WSL distribution used by the `wsl` target. |
+| `mcp_host` | string | `"127.0.0.1"` | Bind host for HTTP transport. |
+| `mcp_port` | number | `8765` | Bind port for HTTP transport. |
+| `mcp_command` | string[] | — | Advanced: full stdio command override, used verbatim. |
+| `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
+| `readonly` | bool | `false` | When true, `execute_method` refuses mutating/private methods. Defense-in-depth, not a sandbox. |
+| `allowed_roots` | string[] | `[]` | Restrict `inspect_local_addon` and `lint_odoo_code` to these roots. Empty means no confinement. |
+
+Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
+so the server works regardless of the working directory the IDE chooses.
+
+### WSL + Windows IDEs
+
+When you develop inside WSL but launch the IDE from Windows (Antigravity,
+Cursor, VS Code, Windsurf, …), a Windows IDE cannot execute a Linux interpreter
+path. Two supported setups:
+
+1. **stdio with a WSL wrapper** — set `mcp_target` to `"auto"` (default) or
+   `"wsl"` and, if needed, `wsl_distro`. Generated configs become:
+
+   ```json
+   {
+     "mcpServers": {
+       "odoo-boost": {
+         "command": "wsl.exe",
+         "args": ["-d", "Ubuntu", "--cd", "/home/you/project", "--",
+                  "/usr/bin/python3", "-m", "odoo_boost", "mcp",
+                  "-c", "/home/you/project/odoo-boost.json"]
+       }
+     }
+   }
+   ```
+
+   With `mcp_target: "auto"` the normal config is kept for WSL-native IDEs and a
+   `mcp_config.windows.json` companion (same directory) is written for Windows.
+
+2. **HTTP transport** — run the server once with `--transport http` and point
+   every IDE at `http://localhost:8765/mcp`. WSL2 forwards `localhost`, so
+   Windows IDEs reach the WSL server without spawning a process. Use this when
+   you want to share one server across IDEs. Bind to `0.0.0.0` only if you need
+   access from outside the machine — and always set `mcp_token` (or
+   `ODOO_BOOST_MCP_TOKEN`) when you do. The server refuses non-loopback binds
+   without a token, and generated HTTP configs automatically include the
+   `Authorization: Bearer <token>` header.
+
+### Security notes
+
+- `odoo-boost.json` is written with owner-only permissions (`0600`) on POSIX and
+  contains the Odoo password plus any MCP token in plaintext. Keep it out of
+  version control (`odoo-boost install` appends it to an existing `.gitignore`).
+- Prefer an Odoo API key over a password and use a dedicated technical user.
+- `readonly` and `allowed_roots` are guardrails against accidental destructive
+  agent calls. They are **not** a sandbox; Odoo access rights remain the source
+  of truth for ORM operations.
+- The token may be embedded in generated MCP config files (`.vscode/mcp.json`,
+  `.cursor/mcp.json`, …). Those paths are gitignored by default; verify before
+  committing.
+
 ---
 
 ## CLI Commands Reference
+
+### Global options
+
+| Option | Description |
+|---|---|
+| `--version`, `-v` | Show version and exit |
+| `--log-level` | `DEBUG`, `INFO`, `WARNING`, `ERROR` (default: `$ODOO_BOOST_LOG_LEVEL` or `WARNING`) |
+
+Logs are written to **stderr** so the stdio MCP protocol stream on stdout stays
+clean.
 
 ### `odoo-boost install`
 Interactive setup wizard. Discovers connection details, checks versions and tools, and installs agent guidelines and skills.
@@ -72,6 +151,7 @@ Verifies live connection and prints server diagnostics.
 | `--username` | Username (overrides config) |
 | `--password` | Password or API key (overrides config) |
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
+| `--mcp` | Also spawn the configured MCP server and verify the `initialize` handshake |
 
 ### `odoo-boost lint [path]`
 Runs static checks on local addons or files using `pylint-odoo` (if installed) or the built-in AST safety scanner (checking for missing ACLs, SQL injections, commit violations, and deprecated tags).
@@ -88,11 +168,35 @@ Regenerates guidelines, MCP configs, and skill files from the saved `odoo-boost.
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
 
 ### `odoo-boost mcp`
-Starts the stdio MCP server for agent communication.
+Starts the MCP server for agent communication. Uses stdio by default.
 
 | Option | Description |
 |---|---|
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
+| `--transport`, `-t` | `stdio` (default), `http`/`streamable-http`, or `sse` |
+| `--host` | Bind host for HTTP transports (defaults to `mcp_host`) |
+| `--port` | Bind port for HTTP transports (defaults to `mcp_port`) |
+| `--token` | Bearer token for HTTP clients (or `$ODOO_BOOST_MCP_TOKEN`) |
+
+```bash
+# Cross-OS setup: server in WSL, IDE on Windows
+odoo-boost mcp --transport http --host 0.0.0.0 --port 8765 --token "$MCP_TOKEN"
+```
+
+### `odoo-boost mcp-config`
+Regenerates only the MCP config files for a given platform, without touching
+guidelines or skills.
+
+| Option | Description |
+|---|---|
+| `--config`, `-c` | Explicit path to `odoo-boost.json` |
+| `--platform`, `-p` | `auto` (native + Windows companion), `native`, `windows`, or `http` |
+| `--agents` | Comma-separated agent ids (default: all agents in the config) |
+
+```bash
+odoo-boost mcp-config --platform windows
+odoo-boost mcp-config --platform http --agents antigravity,cursor
+```
 
 ---
 

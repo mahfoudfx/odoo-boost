@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
+import logging
 
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import json_response
+
+logger = logging.getLogger(__name__)
 
 
 def resolve_xml_id(xml_id: str) -> str:
@@ -29,13 +32,12 @@ def resolve_xml_id(xml_id: str) -> str:
     )
 
     if not records:
-        return json.dumps(
+        return json_response(
             {
                 "found": False,
                 "xml_id": xml_id,
                 "message": f"External ID '{xml_id}' not found in ir.model.data.",
-            },
-            indent=2,
+            }
         )
 
     item = records[0]
@@ -65,7 +67,7 @@ def resolve_xml_id(xml_id: str) -> str:
             )
             if target_data:
                 result["target_record"] = target_data[0]
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Could not resolve display name for %s: %s", item.get("model"), exc)
 
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)

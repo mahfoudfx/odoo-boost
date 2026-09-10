@@ -64,6 +64,21 @@ class TestListSkills:
         a.append("fake")
         assert "fake" not in list_skills()
 
+    def test_no_duplicate_dirs(self):
+        assert len(_SKILL_DIRS) == len(set(_SKILL_DIRS))
+
+    def test_filesystem_matches_categories(self):
+        """Every skill directory on disk must be categorized (drift guard)."""
+        import importlib.resources
+
+        root = importlib.resources.files("odoo_boost.skills")
+        on_disk = sorted(
+            entry.name
+            for entry in root.iterdir()
+            if entry.is_dir() and not entry.name.startswith("__")
+        )
+        assert on_disk == sorted(_SKILL_DIRS)
+
 
 class TestSkillMetadataAndRouting:
     def test_get_skill_category(self):

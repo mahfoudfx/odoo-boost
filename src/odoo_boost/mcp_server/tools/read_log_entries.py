@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import json
+import logging
 
 from odoo_boost.mcp_server.context import get_connection
+from odoo_boost.mcp_server.tools._common import error_response, json_response
+
+logger = logging.getLogger(__name__)
 
 
 def read_log_entries(
@@ -36,11 +39,9 @@ def read_log_entries(
             order="create_date desc",
         )
     except Exception as exc:
-        return json.dumps(
-            {
-                "error": f"Cannot read ir.logging: {exc}. "
-                "Ensure log_db is configured in odoo.conf.",
-            }
+        logger.debug("Cannot read ir.logging: %s", exc)
+        return error_response(
+            f"Cannot read ir.logging: {exc}. Ensure log_db is configured in odoo.conf."
         )
 
     result = {
@@ -58,4 +59,4 @@ def read_log_entries(
             for entry in logs
         ],
     }
-    return json.dumps(result, indent=2, default=str)
+    return json_response(result)
