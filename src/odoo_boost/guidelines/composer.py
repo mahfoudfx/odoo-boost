@@ -27,6 +27,40 @@ def _read_resource(subpath: str) -> str:
     return ref.read_text(encoding="utf-8")
 
 
+def compose_guidelines_index(version: str | None = None) -> str:
+    """Return a compact index (titles and top headings) of the guidelines.
+
+    Useful when an agent wants an overview without loading the full text.
+    """
+    lines = [
+        "# Odoo Boost Guidelines Index",
+        "",
+        "Compact index. Load the full guidelines from the `odoo://guidelines/oca`",
+        "resource or the generated `AGENTS.md`.",
+        "",
+    ]
+
+    for filename in _CORE_FILES:
+        content = _read_resource(filename)
+        title = ""
+        headings: list[str] = []
+        for line in content.splitlines():
+            if line.startswith("# "):
+                title = line[2:].strip()
+            elif line.startswith("## ") and len(headings) < 8:
+                headings.append(line[3:].strip())
+        if title:
+            lines.append(f"## {title}")
+            lines.extend(f"- {heading}" for heading in headings)
+            lines.append("")
+
+    if version:
+        lines.append(f"Version-specific notes: Odoo {version}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 def compose_guidelines(version: str | None = None) -> str:
     """Assemble all core guideline files plus a version-specific addendum.
 

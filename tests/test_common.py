@@ -50,8 +50,9 @@ class TestCompactRecords:
     def test_truncates_long_strings(self):
         records = [{"body": "a" * 200}]
         compacted = compact_records(records, max_string=50)
-        assert len(compacted[0]["body"]) == 50
-        assert compacted[0]["body"].endswith("...")
+        assert compacted[0]["body"].startswith("a" * 50)
+        assert "truncated" in compacted[0]["body"]
+        assert "200 chars total" in compacted[0]["body"]
 
     def test_non_list_passthrough(self):
         assert compact_records("nope") == "nope"

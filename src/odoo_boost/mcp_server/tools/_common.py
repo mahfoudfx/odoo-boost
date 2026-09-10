@@ -1,18 +1,85 @@
 """Shared helpers for MCP tool implementations.
 
-Centralises response serialization, JSON argument parsing, and record
-compaction so every tool returns a consistent shape.
+Centralises response serialization, token-efficient compaction, JSON argument
+parsing, secret redaction, and the global response-size safety net so every
+tool returns a consistent shape.
 """
 
 from __future__ import annotations
 
 import json
+import os
+import re
 from typing import Any
 
+from odoo_boost.config.schema import OdooBoostConfig
 
-def json_response(payload: Any) -> str:
-    """Serialize a tool payload with stable formatting."""
-    return json.dumps(payload, indent=2, default=str)
+DEFAULT_MAX_RESPONSE_CHARS = 40000
+
+# Config keys that commonly hold secrets. Used to redact get_config output.
+_SECRET_KEY_RE = re.compile(
+    r"(password|passwd|secret|token|api[_-]?key|private[_-]?key|smtp_pass|auth)",
+    re.IGNORECASE,
+)
+
+
+def active_config() -> OdooBoostConfig | None:
+    """Return the active server config, or None outside an MCP server (CLI)."""
+    try:
+        from odoo_boost.mcp_server.context import get_context
+
+        return get_context().config
+    except RuntimeError:
+        return None
+
+
+def resolve_full(response_format: str | None) -> bool:
+    """Resolve the compact/full decision with per-call > config > default precedence."""
+    if response_format:
+        return response_format.strip().lower() == "full"
+    config = active_config()
+    if config is not None:
+        return not config.compact_responses
+    return False
+
+
+def max_response_chars() -> int:
+    """Return the configured response budget (0 = unlimited)."""
+    config = active_config()
+    if config is not None:
+        return config.max_response_chars
+    raw = os.environ.get("ODOO_BOOST_MAX_RESPONSE_CHARS")
+    if not raw:
+        return DEFAULT_MAX_RESPONSE_CHARS
+    try:
+        return int(raw)
+    except ValueError:
+        return DEFAULT_MAX_RESPONSE_CHARS
+
+
+def json_response(payload: Any, *, bypass_budget: bool = False) -> str:
+    """Serialize a tool payload, enforcing the global response budget."""
+    text = json.dumps(payload, indent=2, default=str)
+    if bypass_budget:
+        return text
+
+    limit = max_response_chars()
+    if limit > 0 and len(text) > limit:
+        preview = text[: max(0, limit - 500)]
+        return json.dumps(
+            {
+                "truncated": True,
+                "full_length": len(text),
+                "message": (
+                    "Response exceeded max_response_chars. Use response_format='full', "
+                    "narrower filters, or a lower limit."
+                ),
+                "preview": preview,
+            },
+            indent=2,
+            default=str,
+        )
+    return text
 
 
 def error_response(message: str, **extra: Any) -> str:
@@ -50,8 +117,29 @@ def compact_records(records: Any, *, max_string: int = 100) -> Any:
             if value is None or value is False or value == "":
                 continue
             if isinstance(value, str) and len(value) > max_string:
-                clean[key] = f"{value[: max_string - 3]}..."
+                clean[key] = compact_text(value, max_string)
             else:
                 clean[key] = value
         compacted.append(clean)
     return compacted
+
+
+def compact_text(value: str | None, max_chars: int) -> str:
+    """Truncate a string with an explicit, machine-readable marker."""
+    if not value:
+        return ""
+    if max_chars <= 0 or len(value) <= max_chars:
+        return value
+    return f"{value[:max_chars]}… [truncated, {len(value)} chars total]"
+
+
+def is_secret_key(key: str) -> bool:
+    """Return True when a config key likely holds a secret."""
+    return bool(_SECRET_KEY_RE.search(key or ""))
+
+
+def redact(value: str, *, reveal: bool) -> tuple[str, bool]:
+    """Return ``(value, redacted)`` redacting the value unless *reveal* is True."""
+    if reveal or not value:
+        return value, False
+    return "***redacted***", True

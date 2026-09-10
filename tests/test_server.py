@@ -15,6 +15,7 @@ class _FakeMCPServer:
     def __init__(self, *args, **kwargs) -> None:
         self.args = args
         self.kwargs = kwargs
+        self.registered = []
 
     def resource(self, *args, **kwargs):
         return lambda fn: fn
@@ -23,7 +24,11 @@ class _FakeMCPServer:
         return lambda fn: fn
 
     def tool(self, *args, **kwargs):
-        return lambda fn: fn
+        def decorator(fn):
+            self.registered.append(fn)
+            return fn
+
+        return decorator
 
 
 def _run_create(monkeypatch, sample_config, **config_updates):
@@ -65,3 +70,14 @@ class TestCreateMcpServer:
 
         assert asyncio.run(verifier.verify_token("tok")) is not None
         assert asyncio.run(verifier.verify_token("nope")) is None
+
+    def test_default_registers_all_tools(self, monkeypatch, sample_config):
+        server = _run_create(monkeypatch, sample_config)
+        assert len(server.registered) == 22
+
+    def test_lean_tools_registers_subset(self, monkeypatch, sample_config):
+        server = _run_create(monkeypatch, sample_config, lean_tools=True)
+        names = {fn.__name__ for fn in server.registered}
+        assert len(names) == 8
+        assert "database_query" in names
+        assert "list_views" not in names

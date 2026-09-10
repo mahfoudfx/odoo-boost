@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from odoo_boost.guidelines.composer import _CORE_FILES, compose_guidelines
+from odoo_boost.guidelines.composer import (
+    _CORE_FILES,
+    compose_guidelines,
+    compose_guidelines_index,
+)
 
 
 class TestComposeGuidelines:
@@ -59,3 +63,18 @@ class TestComposeGuidelines:
             result = compose_guidelines(version=ver)
             major = ver.split(".")[0]
             assert f"Odoo {major}" in result
+
+
+class TestComposeGuidelinesIndex:
+    def test_index_is_much_smaller_than_full(self):
+        index = compose_guidelines_index("18.0")
+        full = compose_guidelines("18.0")
+        assert len(index) < len(full) / 3
+
+    def test_index_contains_titles(self):
+        index = compose_guidelines_index()
+        assert "# Odoo Boost Guidelines Index" in index
+        assert "odoo://guidelines/oca" in index
+
+    def test_index_mentions_version(self):
+        assert "Odoo 18.0" in compose_guidelines_index("18.0")

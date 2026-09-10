@@ -8,8 +8,10 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 from odoo_boost.mcp_server.registry import (
     ALL_TOOLS,
+    LEAN_TOOL_NAMES,
     LIVE_TOOLS,
     LOCAL_TOOLS,
+    is_enabled,
     resilient_live_tool,
 )
 
@@ -37,6 +39,18 @@ class TestToolInventory:
         )
         for tool in ALL_TOOLS:
             assert tool.__name__ in docs, f"{tool.__name__} missing from docs/mcp-tools.md"
+
+
+class TestLeanProfile:
+    def test_lean_names_are_known_tools(self):
+        assert {tool.__name__ for tool in ALL_TOOLS} >= LEAN_TOOL_NAMES
+
+    def test_is_enabled(self):
+        by_name = {tool.__name__: tool for tool in ALL_TOOLS}
+        assert is_enabled(by_name["database_query"], lean=True)
+        assert is_enabled(by_name["inspect_local_addon"], lean=True)
+        assert not is_enabled(by_name["list_views"], lean=True)
+        assert is_enabled(by_name["list_views"], lean=False)
 
 
 class TestResilientLiveTool:

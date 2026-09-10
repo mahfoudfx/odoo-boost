@@ -9,14 +9,16 @@ from odoo_boost.mcp_server.tools._common import json_response
 def list_models(
     filter_name: str = "",
     filter_module: str = "",
-    limit: int = 200,
+    limit: int = 50,
+    offset: int = 0,
 ) -> str:
     """List available Odoo models with field counts.
 
     Args:
         filter_name: Optional substring filter on model technical name.
         filter_module: Optional module name filter (models belonging to a module).
-        limit: Maximum number of models to return (default 200).
+        limit: Maximum number of models to return (default 50).
+        offset: Number of models to skip (default 0).
     """
     conn = get_connection()
 
@@ -33,19 +35,24 @@ def list_models(
         )
         model_ids = [d["res_id"] for d in model_data]
         if not model_ids:
-            return json_response({"total": 0, "models": []})
+            return json_response({"total": 0, "returned": 0, "offset": offset, "models": []})
         domain.append(("id", "in", model_ids))
 
+    total = conn.search_count("ir.model", domain)
     models = conn.search_read(
         "ir.model",
         domain=domain,
         fields=["model", "name", "info", "field_id"],
         limit=limit,
+        offset=offset,
         order="model",
     )
 
     result = {
-        "total": len(models),
+        "total": total,
+        "returned": len(models),
+        "offset": offset,
+        "limit": limit,
         "models": [
             {
                 "model": m["model"],

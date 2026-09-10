@@ -88,3 +88,29 @@ class OdooBoostConfig(BaseModel):
             "roots. Empty means no confinement (default)."
         ),
     )
+    compact_responses: bool = Field(
+        default=True,
+        description=(
+            "Return token-efficient tool responses by default. Every heavy tool still "
+            "accepts response_format='full' per call."
+        ),
+    )
+    max_response_chars: int = Field(
+        default=40000,
+        ge=0,
+        description=(
+            "Safety cap for a single tool response (0 disables). Oversized payloads are "
+            "replaced by a truncated envelope instead of blowing up the agent context."
+        ),
+    )
+    redact_config_secrets: bool = Field(
+        default=True,
+        description="Redact secret-looking ir.config_parameter values in get_config.",
+    )
+    lean_tools: bool = Field(
+        default=False,
+        description=(
+            "Register only a small commonly used subset of MCP tools to reduce tool-schema "
+            "overhead per model turn."
+        ),
+    )

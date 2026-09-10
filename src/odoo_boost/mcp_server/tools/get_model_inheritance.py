@@ -5,15 +5,20 @@ from __future__ import annotations
 from typing import Any
 
 from odoo_boost.mcp_server.context import get_connection
-from odoo_boost.mcp_server.tools._common import json_response
+from odoo_boost.mcp_server.tools._common import json_response, resolve_full
 
 
-def get_model_inheritance(model: str) -> str:
+def get_model_inheritance(model: str, response_format: str | None = None) -> str:
     """Inspect the inheritance structure, parent models, and modules contributing to a model.
+
+    Compact mode returns a sample of custom fields; ``response_format="full"``
+    returns up to the first 50.
 
     Args:
         model: Technical model name, e.g. 'res.partner'.
+        response_format: 'compact' (default) or 'full'.
     """
+    full = resolve_full(response_format)
     conn = get_connection()
 
     # Look up model in ir.model
@@ -58,8 +63,9 @@ def get_model_inheritance(model: str) -> str:
         "state": model_data.get("state"),
         "total_fields": len(field_data),
         "custom_fields_count": len(custom_fields),
-        "custom_fields": custom_fields[:50],
+        "custom_fields": custom_fields[:50] if full else custom_fields[:20],
         "contributing_modules": sorted(contributing_modules),
+        "response_format": "full" if full else "compact",
     }
 
     return json_response(result)

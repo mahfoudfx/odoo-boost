@@ -42,7 +42,7 @@ classifiers = [
 dependencies = [
     "typer>=0.15.0",
     "rich>=13.9.0",
-    "mcp>=2.1.0",
+    "mcp>=2.1.0,<3",
     "pydantic>=2.10.0",
     "httpx>=0.28.0",
     "pyyaml>=6.0",
@@ -77,8 +77,10 @@ all = [
 odoo-boost = "odoo_boost.cli.app:main"
 
 [project.urls]
-Homepage = "https://github.com/havmedia/odoo-boost"
-Repository = "https://github.com/havmedia/odoo-boost"
+Homepage = "https://github.com/mahfoudfx/odoo-boost"
+Repository = "https://github.com/mahfoudfx/odoo-boost"
+Issues = "https://github.com/mahfoudfx/odoo-boost/issues"
+Changelog = "https://github.com/mahfoudfx/odoo-boost/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "src/odoo_boost/__version__.py"

@@ -3,7 +3,7 @@
 ## Development Setup
 
 ```bash
-git clone https://github.com/havmedia/odoo-boost.git
+git clone https://github.com/mahfoudfx/odoo-boost.git
 cd odoo-boost
 
 # Create the venv and install the locked development dependencies
@@ -80,6 +80,15 @@ def my_tool(param1: str, limit: int = 10) -> str:
 
 Use `error_response(...)` for error payloads and `parse_json_arg(...)` for JSON
 string arguments so every tool returns a consistent shape.
+
+**Token efficiency:** new listing tools should accept
+`response_format: str | None = None` and use `resolve_full(...)` to decide
+between a compact summary (default) and full detail, plus `limit`/`offset` and
+`total`/`returned` counters. Use `compact_text(...)` for truncation (never
+silently cut), `compact_records(...)` for record lists, and respect the global
+`max_response_chars` budget automatically via `json_response(...)` (pass
+`bypass_budget=True` only for tools where full fidelity is the point, e.g.
+`execute_method`).
 
 2. **Register the tool** in `src/odoo_boost/mcp_server/registry.py`:
 
@@ -180,8 +189,14 @@ Releases use PyPI Trusted Publishing (OIDC) — no API tokens are stored.
    - runs CI,
    - verifies the tag matches `__version__`,
    - builds the sdist/wheel and smoke-tests the installed wheel,
-   - publishes to PyPI via Trusted Publishing (with attestations),
+   - publishes to PyPI via Trusted Publishing (with attestations) **only when
+     the repository variable `PUBLISH_TO_PYPI` is `true`**,
    - creates a GitHub Release with generated notes.
 
-One-time setup: configure a [PyPI trusted publisher](https://docs.pypi.org/trusted-publishers/)
-for the repository, workflow `release.yml`, and environment `pypi`.
+PyPI publishing is gated so version bumps are safe before the publisher is
+configured. To enable it:
+
+1. Configure a [PyPI trusted publisher](https://docs.pypi.org/trusted-publishers/)
+   for the repository, workflow `release.yml`, and environment `pypi`.
+2. Set the repository variable `PUBLISH_TO_PYPI` to `true`
+   (Settings → Secrets and variables → Actions → Variables).

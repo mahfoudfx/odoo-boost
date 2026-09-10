@@ -3,15 +3,24 @@
 from __future__ import annotations
 
 from odoo_boost.mcp_server.context import get_connection
-from odoo_boost.mcp_server.tools._common import error_response, json_response
+from odoo_boost.mcp_server.tools._common import error_response, json_response, resolve_full
 
 
-def get_module_info(module_name: str) -> str:
+def get_module_info(
+    module_name: str,
+    limit: int = 50,
+    offset: int = 0,
+    response_format: str | None = None,
+) -> str:
     """Get detailed information about an Odoo module including dependencies and models.
 
     Args:
         module_name: Technical module name, e.g. 'sale' or 'account'.
+        limit: Maximum models to return (default 50).
+        offset: Number of models to skip (default 0).
+        response_format: 'compact' (default) or 'full' (limit ignored).
     """
+    full = resolve_full(response_format)
     conn = get_connection()
 
     # Module record
@@ -54,11 +63,14 @@ def get_module_info(module_name: str) -> str:
         fields=["res_id"],
     )
     model_ids = [d["res_id"] for d in model_data]
+    models_total = len(model_ids)
     if model_ids:
         models = conn.search_read(
             "ir.model",
             [("id", "in", model_ids)],
             fields=["model", "name"],
+            limit=None if full else limit,
+            offset=offset,
             order="model",
         )
     else:
@@ -81,6 +93,11 @@ def get_module_info(module_name: str) -> str:
             {"name": d["name"], "auto_install_required": d.get("auto_install_required", False)}
             for d in deps
         ],
+        "models_total": models_total,
+        "models_returned": len(models),
+        "offset": offset,
+        "limit": limit,
+        "response_format": "full" if full else "compact",
         "models": [{"model": m["model"], "name": m["name"]} for m in models],
     }
     return json_response(result)

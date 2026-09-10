@@ -12,12 +12,12 @@ from pydantic import AnyHttpUrl
 from odoo_boost.__version__ import __version__
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.connection.factory import create_connection
-from odoo_boost.guidelines.composer import compose_guidelines
+from odoo_boost.guidelines.composer import compose_guidelines, compose_guidelines_index
 from odoo_boost.logging_config import configure_logging
 from odoo_boost.mcp_launcher import build_http_url
 from odoo_boost.mcp_server.auth import StaticTokenVerifier
 from odoo_boost.mcp_server.context import ServerContext, set_context
-from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, resilient_live_tool
+from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, is_enabled, resilient_live_tool
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.skills.loader import generate_skills_routing
 
@@ -75,8 +75,13 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # -------------------------------------------------------------------------
     @mcp.resource("odoo://guidelines/oca")
     def resource_oca_guidelines() -> str:
-        """OCA standards and development guidelines."""
+        """OCA standards and development guidelines (full text)."""
         return compose_guidelines(version=config.odoo_version)
+
+    @mcp.resource("odoo://guidelines/oca/compact")
+    def resource_oca_guidelines_index() -> str:
+        """Compact index of the OCA guidelines (titles and headings only)."""
+        return compose_guidelines_index(version=config.odoo_version)
 
     @mcp.resource("odoo://skills/catalog")
     def resource_skills_catalog() -> str:
@@ -113,9 +118,12 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # -------------------------------------------------------------------------
     # Tools Registration (see mcp_server/registry.py for the tool inventory)
     # -------------------------------------------------------------------------
+    lean = config.lean_tools
     for tool in LIVE_TOOLS:
-        mcp.tool()(resilient_live_tool(tool))
+        if is_enabled(tool, lean=lean):
+            mcp.tool()(resilient_live_tool(tool))
     for local_tool in LOCAL_TOOLS:
-        mcp.tool()(local_tool)
+        if is_enabled(local_tool, lean=lean):
+            mcp.tool()(local_tool)
 
     return mcp

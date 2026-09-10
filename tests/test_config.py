@@ -152,6 +152,27 @@ class TestOdooBoostConfig:
         cfg = OdooBoostConfig(connection=sample_connection_config, mcp_token="super-secret")
         assert "super-secret" not in repr(cfg)
 
+    def test_compaction_defaults(self, sample_connection_config):
+        cfg = OdooBoostConfig(connection=sample_connection_config)
+        assert cfg.compact_responses is True
+        assert cfg.max_response_chars == 40000
+        assert cfg.redact_config_secrets is True
+        assert cfg.lean_tools is False
+
+    def test_compaction_fields_roundtrip(self, sample_connection_config):
+        cfg = OdooBoostConfig(
+            connection=sample_connection_config,
+            compact_responses=False,
+            max_response_chars=1000,
+            redact_config_secrets=False,
+            lean_tools=True,
+        )
+        restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
+        assert restored.compact_responses is False
+        assert restored.max_response_chars == 1000
+        assert restored.redact_config_secrets is False
+        assert restored.lean_tools is True
+
     def test_security_fields_roundtrip(self, sample_connection_config):
         cfg = OdooBoostConfig(
             connection=sample_connection_config,

@@ -1,6 +1,6 @@
 # Odoo Boost
 
-[![CI](https://github.com/havmedia/odoo-boost/actions/workflows/ci.yml/badge.svg)](https://github.com/havmedia/odoo-boost/actions/workflows/ci.yml)
+[![CI](https://github.com/mahfoudfx/odoo-boost/actions/workflows/ci.yml/badge.svg)](https://github.com/mahfoudfx/odoo-boost/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/odoo-boost)](https://pypi.org/project/odoo-boost/)
 [![Python versions](https://img.shields.io/pypi/pyversions/odoo-boost)](https://pypi.org/project/odoo-boost/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -18,6 +18,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 - **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, and 19.
 - **Optional Static Linting & LSP** — Seamless integration with `OCA/pylint-odoo` and `odoo/odoo-ls` with automatic graceful fallbacks.
 - **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
+- **Token-Efficient by Default** — Compact tool responses with `response_format="full"` for detail, a configurable response budget, secret redaction, and an optional lean tool profile.
 
 ## Installation
 
@@ -232,17 +233,17 @@ opencode.json
 
 ## Documentation
 
-- [Getting Started](https://github.com/havmedia/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
-- [MCP Tools Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 22 tools with examples
-- [Agent Configuration](https://github.com/havmedia/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 11 supported agents
-- [Skills Catalog](https://github.com/havmedia/odoo-boost/blob/main/docs/skills.md) — 20 progressive skills and routing table
-- [Guidelines](https://github.com/havmedia/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v19 and OCA rules)
-- [Configuration Reference](https://github.com/havmedia/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
-- [Architecture](https://github.com/havmedia/odoo-boost/blob/main/docs/architecture.md) — Components, tool-call lifecycle, and extension points
-- [Troubleshooting](https://github.com/havmedia/odoo-boost/blob/main/docs/troubleshooting.md) — WSL/Windows, HTTP auth, connection, and logging issues
-- [Security Policy](https://github.com/havmedia/odoo-boost/blob/main/SECURITY.md) — Vulnerability reporting and security model
-- [Changelog](https://github.com/havmedia/odoo-boost/blob/main/CHANGELOG.md) — Release history
-- [Contributing](https://github.com/havmedia/odoo-boost/blob/main/CONTRIBUTING.md) — Developer guide and tool authoring
+- [Getting Started](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
+- [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 22 tools with examples
+- [Agent Configuration](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 11 supported agents
+- [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 20 progressive skills and routing table
+- [Guidelines](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v19 and OCA rules)
+- [Configuration Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
+- [Architecture](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/architecture.md) — Components, tool-call lifecycle, and extension points
+- [Troubleshooting](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/troubleshooting.md) — WSL/Windows, HTTP auth, connection, and logging issues
+- [Security Policy](https://github.com/mahfoudfx/odoo-boost/blob/main/SECURITY.md) — Vulnerability reporting and security model
+- [Changelog](https://github.com/mahfoudfx/odoo-boost/blob/main/CHANGELOG.md) — Release history
+- [Contributing](https://github.com/mahfoudfx/odoo-boost/blob/main/CONTRIBUTING.md) — Developer guide and tool authoring
 
 ## License
 

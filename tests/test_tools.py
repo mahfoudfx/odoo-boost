@@ -44,11 +44,16 @@ class TestApplicationInfo:
         assert result["server_version"] == "18.0"
 
     def test_installed_modules(self):
-        result = json.loads(application_info())
+        result = json.loads(application_info(include_modules=True))
         assert result["installed_modules_count"] == 2  # base + sale (installed)
         names = [m["name"] for m in result["installed_modules"]]
         assert "base" in names
         assert "sale" in names
+
+    def test_compact_omits_module_list(self):
+        result = json.loads(application_info())
+        assert result["installed_modules_count"] == 2
+        assert "installed_modules" not in result
 
 
 # ---------------------------------------------------------------------------

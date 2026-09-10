@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-11
+
 ### Added
 
 - Cross-OS MCP startup: generated configs now work from Windows-native IDEs while
@@ -23,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Central tool registry, shared tool helpers, stderr-only logging with
   `--log-level`, and a declarative agent spec registry.
 - `uv.lock`, pre-commit hooks, Dependabot, and a wheel smoke-test CI job.
+- Token-efficient tool responses: compact by default with per-call
+  `response_format="full"`, pagination, secret redaction, a global
+  `max_response_chars` budget, a `lean_tools` profile, and a compact
+  `odoo://guidelines/oca/compact` resource.
 
 ### Security
 
@@ -86,11 +92,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementation: connection layer, core MCP server, guidelines, and the
   install wizard.
 
-[Unreleased]: https://github.com/havmedia/odoo-boost/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/havmedia/odoo-boost/compare/v0.4.1...v0.5.0
-[0.4.1]: https://github.com/havmedia/odoo-boost/compare/v0.4.0...v0.4.1
-[0.4.0]: https://github.com/havmedia/odoo-boost/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/havmedia/odoo-boost/compare/v0.2.1...v0.3.0
-[0.2.1]: https://github.com/havmedia/odoo-boost/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/havmedia/odoo-boost/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/havmedia/odoo-boost/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.4.1...v0.5.0
+[0.4.1]: https://github.com/mahfoudfx/odoo-boost/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/mahfoudfx/odoo-boost/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/mahfoudfx/odoo-boost/releases/tag/v0.1.0

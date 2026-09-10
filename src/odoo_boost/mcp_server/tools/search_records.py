@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from odoo_boost.mcp_server.context import get_connection
-from odoo_boost.mcp_server.tools._common import json_response, parse_json_arg
+from odoo_boost.mcp_server.tools._common import compact_records, json_response, parse_json_arg
 
 
 def search_records(
@@ -13,8 +13,13 @@ def search_records(
     limit: int = 20,
     offset: int = 0,
     order: str = "",
+    compact: bool = False,
 ) -> str:
     """Search and read records from any Odoo model with domain filtering and pagination.
+
+    Values are returned verbatim by default to preserve data fidelity. Set
+    ``compact=true`` to drop empty values and truncate long strings when
+    skimming. Always pass ``fields`` to keep responses small.
 
     Args:
         model: Technical model name, e.g. 'res.partner'.
@@ -23,6 +28,7 @@ def search_records(
         limit: Maximum records to return (default 20).
         offset: Number of records to skip (default 0).
         order: Sort order, e.g. 'name asc, id desc'.
+        compact: Strip empty values and truncate long strings (default false).
     """
     conn = get_connection()
 
@@ -42,6 +48,9 @@ def search_records(
     )
 
     total = conn.search_count(model, domain=parsed_domain)
+
+    if compact:
+        records = compact_records(records)
 
     result = {
         "model": model,

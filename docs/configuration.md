@@ -73,6 +73,19 @@ Path to the project root directory. Default: `"."`.
 | `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
 | `readonly` | bool | `false` | When true, `execute_method` refuses mutating/private methods. Defense-in-depth, not a sandbox. |
 | `allowed_roots` | string[] | `[]` | Restrict `inspect_local_addon` and `lint_odoo_code` to these roots. Empty means no confinement. |
+| `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
+| `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
+| `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
+| `lean_tools` | bool | `false` | Register only 8 commonly used tools to reduce tool-schema overhead per model turn. |
+
+### Token efficiency
+
+Broad tools (`list_views`, `inspect_local_addon`, `application_info`,
+`database_schema`, `get_config`, `read_log_entries`, `list_access_rights`,
+`list_workflows`, `get_module_info`) return summaries by default and accept
+`response_format: "full"` for detail. Data tools (`search_records`,
+`database_query`, `execute_method`) return values verbatim by default; pass
+`compact=true` to skim. See [MCP Tools → Token efficiency](mcp-tools.md#token-efficiency-compact-by-default).
 
 Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
 so the server works regardless of the working directory the IDE chooses.

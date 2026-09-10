@@ -67,9 +67,15 @@ jobs:
           /tmp/smoke/bin/odoo-boost --version
 
       - name: Publish to PyPI (Trusted Publishing)
+        if: vars.PUBLISH_TO_PYPI == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true
+
+      - name: PyPI publish skipped
+        if: vars.PUBLISH_TO_PYPI != 'true'
+        run: |
+          echo "::notice::Skipping PyPI publish. Set the repository variable PUBLISH_TO_PYPI=true once the trusted publisher is configured."
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

@@ -12,7 +12,7 @@ Only the latest released minor version receives security fixes.
 ## Reporting a Vulnerability
 
 Please report suspected vulnerabilities privately through
-[GitHub Security Advisories](https://github.com/havmedia/odoo-boost/security/advisories/new).
+[GitHub Security Advisories](https://github.com/mahfoudfx/odoo-boost/security/advisories/new).
 Do **not** open a public issue for security reports.
 
 Include:
