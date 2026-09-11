@@ -8,6 +8,7 @@ from packaging.version import InvalidVersion, Version
 from packaging.version import parse as parse_version
 
 _CORE_FILES = [
+    "operating_rules.md",
     "odoo_general.md",
     "module_structure.md",
     "orm_best_practices.md",

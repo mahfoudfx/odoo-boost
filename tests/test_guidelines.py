@@ -50,8 +50,16 @@ class TestComposeGuidelines:
         assert "# Odoo Development Guidelines" in result
 
     def test_core_files_list_not_empty(self):
-        assert len(_CORE_FILES) == 10
+        assert len(_CORE_FILES) == 11
+        assert "operating_rules.md" in _CORE_FILES
         assert "oca_standards.md" in _CORE_FILES
+
+    def test_includes_agent_operating_rules(self):
+        result = compose_guidelines()
+        assert "Agent Operating Rules & Boundaries" in result
+        assert "Direct Implementation (Default - Fast & Token-Efficient)" in result
+        assert "No Unsolicited Live Commands" in result
+        assert "Scope Restraint" in result
 
     def test_includes_oca_standards(self):
         result = compose_guidelines()

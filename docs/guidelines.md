@@ -4,12 +4,13 @@ Odoo Boost bundles comprehensive Odoo development guidelines injected into your 
 
 ## What's Included
 
-Guidelines are composed from 10 core files plus a version-specific addendum:
+Guidelines are composed from 11 core files plus a version-specific addendum:
 
-### Core Guidelines (10 Topics)
+### Core Guidelines (11 Topics)
 
 | File | Topic | Covers |
 |---|---|---|
+| `operating_rules.md` | Operating Rules & Boundaries | Workflow modes (Direct vs Plan), command boundaries, scope restraint |
 | `odoo_general.md` | General Principles | Architecture, module lifecycle, dependencies |
 | `module_structure.md` | Module Structure | Directory layout, `__manifest__.py`, file naming |
 | `orm_best_practices.md` | ORM Best Practices | Models, fields, CRUD, domains, performance, batched queries |
@@ -43,7 +44,7 @@ During `odoo-boost install`, Odoo Boost detects your server version and writes i
 ```
 
 When building agent guidelines, the composer:
-1. Concatenates all 10 core guideline files (including OCA standards).
+1. Concatenates all 11 core guideline files (including OCA standards).
 2. Appends the version-specific file (e.g. `v18.md` for Odoo 18).
 3. Writes the document directly into the target agent's guidelines file.
 
