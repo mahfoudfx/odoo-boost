@@ -57,13 +57,30 @@ class Agent(ABC):
             created.extend(self._write_mcp_config())
         return created
 
-    def uninstall(self) -> None:
-        """Remove generated files (best-effort)."""
+    def uninstall(self) -> list[Path]:
+        """Remove generated files (best-effort). Returns paths removed."""
+        removed: list[Path] = []
         for path in [self.guidelines_path, self.mcp_config_path, self.windows_mcp_config_path]:
             if path.is_file():
                 path.unlink()
+                removed.append(path)
         if self.skills_dir.is_dir():
             shutil.rmtree(self.skills_dir)
+            removed.append(self.skills_dir)
+
+        # Clean up empty parent directories (e.g. .agents/, .cursor/rules/)
+        for candidate in [self.skills_dir.parent, self.mcp_config_path.parent, self.guidelines_path.parent]:
+            curr = candidate
+            while curr != self.project_path and curr.is_relative_to(self.project_path) and curr != curr.parent:
+                try:
+                    if curr.is_dir() and not any(curr.iterdir()):
+                        curr.rmdir()
+                        curr = curr.parent
+                    else:
+                        break
+                except OSError:
+                    break
+        return removed
 
     # -- paths derived from the spec -----------------------------------------
 

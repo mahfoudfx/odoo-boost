@@ -139,6 +139,100 @@ class TestUpdateCommand:
         assert runner.invoke(app, ["update", "--config", str(cfg_path)]).exit_code == 0
         assert (tmp_path / ".agents" / "mcp_config.json").read_text() == content_first
 
+    def test_update_cleans_orphaned_agents(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        # 1. Install with antigravity and claude_code
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity", "claude_code"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        res = runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert res.exit_code == 0
+        assert (tmp_path / "AGENTS.md").exists()
+        assert (tmp_path / "CLAUDE.md").exists()
+        assert (tmp_path / ".mcp.json").exists()
+
+        # 2. Update config to only have antigravity
+        cfg_updated = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path.write_text(cfg_updated.model_dump_json(indent=2))
+
+        # 3. Run update -y (should clean claude_code files)
+        res_update = runner.invoke(app, ["update", "--config", str(cfg_path), "-y"])
+        assert res_update.exit_code == 0
+        assert (tmp_path / "AGENTS.md").exists()
+        assert not (tmp_path / "CLAUDE.md").exists()
+        assert not (tmp_path / ".mcp.json").exists()
+
+    def test_update_keep_orphans_flag(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity", "claude_code"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+
+        # Remove claude_code but pass --keep-orphans
+        cfg_updated = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path.write_text(cfg_updated.model_dump_json(indent=2))
+        res_update = runner.invoke(app, ["update", "--config", str(cfg_path), "--keep-orphans"])
+        assert res_update.exit_code == 0
+        assert (tmp_path / "CLAUDE.md").exists()
+        assert (tmp_path / ".mcp.json").exists()
+
+    def test_update_preserves_shared_files(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        # antigravity and codex both use AGENTS.md and .agents/skills
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity", "codex"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert (tmp_path / ".codex" / "config.toml").exists()
+        assert (tmp_path / "AGENTS.md").exists()
+
+        # Remove codex
+        cfg_updated = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path.write_text(cfg_updated.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path), "-y"])
+
+        # Codex config should be removed, but AGENTS.md and skills must be kept!
+        assert not (tmp_path / ".codex" / "config.toml").exists()
+        assert (tmp_path / "AGENTS.md").exists()
+        assert (tmp_path / ".agents" / "skills").is_dir()
+
 
 class TestInstallWizard:
     def test_minimal_install(self, tmp_path, monkeypatch):
@@ -327,3 +421,98 @@ class TestLintCommand:
         result = runner.invoke(app, ["lint", str(bad_file)])
         assert result.exit_code == 1
         assert "Linter Results" in result.output or "issues found" in result.output
+
+
+class TestUninstallCommand:
+    def test_uninstall_no_config(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        result = runner.invoke(app, ["uninstall"])
+        assert result.exit_code == 1
+        assert "No odoo-boost.json found" in result.output
+
+    def test_uninstall_abort_when_keeping_files(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert (tmp_path / "AGENTS.md").exists()
+
+        # Input 'y' to "Do you want to keep generated agent files?"
+        result = runner.invoke(app, ["uninstall", "--config", str(cfg_path)], input="y\n")
+        assert result.exit_code == 0
+        assert "Aborted uninstall. Keeping all files." in result.output
+        assert (tmp_path / "AGENTS.md").exists()
+        assert cfg_path.exists()
+
+    def test_uninstall_default_enter_deletes_all(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert (tmp_path / "AGENTS.md").exists()
+
+        # Two enters = default 'N' (don't keep agent files) and default 'N' (don't keep config)
+        result = runner.invoke(app, ["uninstall", "--config", str(cfg_path)], input="\n\n")
+        assert result.exit_code == 0
+        assert "Uninstall complete!" in result.output
+        assert not (tmp_path / "AGENTS.md").exists()
+        assert not (tmp_path / ".agents").exists()
+        assert not cfg_path.exists()
+
+    def test_uninstall_yes_flag(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity", "claude_code"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert (tmp_path / "AGENTS.md").exists()
+        assert (tmp_path / "CLAUDE.md").exists()
+
+        result = runner.invoke(app, ["uninstall", "--config", str(cfg_path), "-y"])
+        assert result.exit_code == 0
+        assert not (tmp_path / "AGENTS.md").exists()
+        assert not (tmp_path / "CLAUDE.md").exists()
+        assert not (tmp_path / ".mcp.json").exists()
+        assert not (tmp_path / ".agents").exists()
+        assert not cfg_path.exists()
+
+    def test_uninstall_keep_config_flag(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "agents": ["antigravity"],
+                "mcp_target": "native",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        runner.invoke(app, ["update", "--config", str(cfg_path)])
+        assert (tmp_path / "AGENTS.md").exists()
+
+        result = runner.invoke(
+            app, ["uninstall", "--config", str(cfg_path), "-y", "--keep-config"]
+        )
+        assert result.exit_code == 0
+        assert not (tmp_path / "AGENTS.md").exists()
+        assert cfg_path.exists()

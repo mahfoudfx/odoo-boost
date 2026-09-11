@@ -102,7 +102,8 @@ Your AI assistant is now configured. The MCP server starts automatically when yo
 | `odoo-boost install` | Interactive setup wizard with agent configuration |
 | `odoo-boost check [--mcp]` | Test connection to Odoo instance (and the MCP server handshake) |
 | `odoo-boost lint [path]` | Run OCA/pylint-odoo or AST static checks on local addons |
-| `odoo-boost update` | Re-generate guidelines, configs, and skills from saved config |
+| `odoo-boost update` | Re-sync guidelines, configs, and skills (cleans up removed agents) |
+| `odoo-boost uninstall` | Remove generated agent files and optionally purge config |
 | `odoo-boost mcp [--transport stdio\|http] [--token …]` | Start the MCP server (stdio by default, HTTP optional with bearer auth) |
 | `odoo-boost mcp-config [--platform …]` | Regenerate only MCP configs (native/windows/http) |
 | `odoo-boost --version` | Show installed version |

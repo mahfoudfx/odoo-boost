@@ -174,11 +174,30 @@ Runs static checks on local addons or files using `pylint-odoo` (if installed) o
 | `path` | Path to module or file (defaults to `.`) |
 
 ### `odoo-boost update`
-Regenerates guidelines, MCP configs, and skill files from the saved `odoo-boost.json`.
+Regenerates guidelines, MCP configs, and skill files from the saved `odoo-boost.json`. Automatically detects and cleans up orphaned files from agents removed from your configuration.
 
 | Option | Description |
 |---|---|
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
+| `--keep-orphans` | Keep files from removed agents instead of cleaning them up |
+| `--yes`, `-y` | Skip confirmation prompt when cleaning orphaned files |
+
+### `odoo-boost uninstall`
+Removes generated agent files (`AGENTS.md`, `CLAUDE.md`, `.agents/`, `.mcp.json`, skills, etc.) and empty config directories. Interactively asks whether to keep files or the configuration (default is to delete them).
+
+| Option | Description |
+|---|---|
+| `--config`, `-c` | Explicit path to `odoo-boost.json` |
+| `--keep-config` | Keep `odoo-boost.json` and remove only generated agent files |
+| `--yes`, `-y` | Skip confirmation prompts and delete files |
+
+```bash
+# Non-interactive complete removal (files + config)
+odoo-boost uninstall -y
+
+# Keep odoo-boost.json so you can reinstall later
+odoo-boost uninstall --keep-config -y
+```
 
 ### `odoo-boost mcp`
 Starts the MCP server for agent communication. Uses stdio by default.

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-11
+
+### Added
+
+- `odoo-boost uninstall`: New CLI command to cleanly remove generated agent files
+  (`AGENTS.md`, `CLAUDE.md`, `.mcp.json`, skills) and empty directories, with options
+  to keep config (`--keep-config`) or run non-interactively (`-y`).
+- Orphan agent reconciliation in `odoo-boost update`: Automatically detects and cleans up
+  files from removed agents, while preserving shared files like `AGENTS.md`.
+- Agent Operating Rules & Boundaries in core guidelines (`operating_rules.md`) defining
+  workflow modes (direct implementation vs. plan & walkthrough), command boundaries,
+  and scope restraint.
+
 ## [0.6.0] - 2026-09-11
 
 ### Added
@@ -92,7 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementation: connection layer, core MCP server, guidelines, and the
   install wizard.
 
-[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mahfoudfx/odoo-boost/compare/v0.4.0...v0.4.1
