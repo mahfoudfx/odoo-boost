@@ -11,9 +11,11 @@
     3. Complex multi-model business logic redesigns or breaking database schema migrations.
     4. When explicitly requested by the user (e.g. *"plan this"*, `/plan`).
 
-### 2. Execution Boundaries: Code Authoring vs. Live Commands
-- **Code Authoring (Default):** The agent's core responsibility is writing clean, idiomatic code and modifying files.
-- **No Unsolicited Live Commands:** Do **not** automatically execute `odoo-bin` module upgrades (`-u`), reboot running servers/daemons, or run verification scripts in `odoo shell` unless the user explicitly asks (e.g. *"upgrade the module"*, *"test this in db"*, *"run verification"*).
+### 2. Strict Prohibition on Live Environment Execution
+- **NEVER use `odoo-bin shell`** or live Python diagnostic scripts unless the user explicitly writes *"launch a shell"* or *"check in database"* (*"lance un shell"* or *"vérifie en base"*).
+- Codebase analysis must be performed **exclusively by reading code files** (`view_file`, `grep_search`).
+- When a modification is requested, proceed directly to editing the target files without any unsolicited live testing or verification phase.
+- **No Unsolicited Live Commands:** The agent's core responsibility is writing clean, idiomatic code and editing files. Do **not** automatically execute `odoo-bin` module upgrades (`-u`), reboot running servers/daemons, or run live verification scripts in `odoo shell` unless the user explicitly asks (e.g. *"upgrade the module"*, *"test this in db"*, *"run verification"*).
 - **No Unsolicited Automated Tests:** Do not generate or execute automated tests unless explicitly instructed.
 
 ### 3. Scope Restraint

@@ -10,7 +10,7 @@ Guidelines are composed from 11 core files plus a version-specific addendum:
 
 | File | Topic | Covers |
 |---|---|---|
-| `operating_rules.md` | Operating Rules & Boundaries | Workflow modes (Direct vs Plan), command boundaries, scope restraint |
+| `operating_rules.md` | Operating Rules & Boundaries | Workflow modes (Direct vs Plan), strict prohibition on live execution, scope restraint |
 | `odoo_general.md` | General Principles | Architecture, module lifecycle, dependencies |
 | `module_structure.md` | Module Structure | Directory layout, `__manifest__.py`, file naming |
 | `orm_best_practices.md` | ORM Best Practices | Models, fields, CRUD, domains, performance, batched queries |

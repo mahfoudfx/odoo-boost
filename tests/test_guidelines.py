@@ -58,6 +58,9 @@ class TestComposeGuidelines:
         result = compose_guidelines()
         assert "Agent Operating Rules & Boundaries" in result
         assert "Direct Implementation (Default - Fast & Token-Efficient)" in result
+        assert "Strict Prohibition on Live Environment Execution" in result
+        assert "odoo-bin shell" in result
+        assert "exclusively by reading code files" in result
         assert "No Unsolicited Live Commands" in result
         assert "Scope Restraint" in result
 

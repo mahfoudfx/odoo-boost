@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enhanced Agent Operating Rules (`operating_rules.md`) with a strict prohibition on live environment execution: never run `odoo-bin shell` or live Python diagnostic scripts without explicit user request, require code analysis exclusively via file reading (`view_file`, `grep_search`), and require direct file edits without unsolicited live verification. Included across all generated agent guidelines (`AGENTS.md`, `CLAUDE.md`, etc.).
+
 ## [0.7.0] - 2026-09-11
 
 ### Added
