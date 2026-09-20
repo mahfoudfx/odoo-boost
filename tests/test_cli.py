@@ -510,9 +510,7 @@ class TestUninstallCommand:
         runner.invoke(app, ["update", "--config", str(cfg_path)])
         assert (tmp_path / "AGENTS.md").exists()
 
-        result = runner.invoke(
-            app, ["uninstall", "--config", str(cfg_path), "-y", "--keep-config"]
-        )
+        result = runner.invoke(app, ["uninstall", "--config", str(cfg_path), "-y", "--keep-config"])
         assert result.exit_code == 0
         assert not (tmp_path / "AGENTS.md").exists()
         assert cfg_path.exists()

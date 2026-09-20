@@ -1,4 +1,4 @@
-"""XML-RPC client for Odoo 17/18/19."""
+"""XML-RPC client for Odoo instances exposing the external RPC API."""
 
 from __future__ import annotations
 

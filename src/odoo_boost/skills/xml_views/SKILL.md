@@ -6,6 +6,12 @@ globs: ["views/**/*.xml", "__manifest__.py"]
 
 # Creating XML Views
 
+## Small edits to an existing view
+
+For a label or title change, find the existing view and change its `string` attribute (or the action/menu `name` if that is the requested title). For column order, move the existing `<field>` elements within the list view. Keep their attributes and surrounding XPath inheritance intact. Use the configured version notes before changing root tags or dynamic attributes. Read the matching XML and inspect the diff; no database inspection or new view scaffold is needed unless the target cannot be identified from source.
+
+The creation examples and checklist below apply when creating a new view, action, or menu. They are not requirements for a small edit to an existing view.
+
 ## Steps
 
 ### 1. Form View

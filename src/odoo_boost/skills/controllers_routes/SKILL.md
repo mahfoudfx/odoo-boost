@@ -8,6 +8,9 @@ globs: ["controllers/**/*.py", "__manifest__.py"]
 
 ## Steps
 
+Load the configured version notes before copying route decorators; route types and
+response handling are version-sensitive.
+
 ### 1. Create Controller File (`controllers/main.py`)
 ```python
 from odoo import http
@@ -56,7 +59,7 @@ class MyController(http.Controller):
     @http.route("/webhook/my-event", type="json", auth="none", methods=["POST"], csrf=False)
     def webhook(self, **kwargs):
         data = request.get_json_data()
-        # Process webhook payload
+        # Verify the provider signature before processing `data`.
         return {"received": True}
 ```
 
@@ -102,6 +105,8 @@ from . import models
 - [ ] Controller inherits from `http.Controller`
 - [ ] Routes have appropriate `auth` level
 - [ ] `csrf=False` only on webhook endpoints
+- [ ] Public or unauthenticated endpoints authenticate the caller (for example, with a
+  verified provider signature) and expose only the intended operation
 - [ ] Business logic delegated to model methods
 - [ ] Input parameters validated
 - [ ] Controller registered in `__init__.py` chain

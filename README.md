@@ -11,14 +11,14 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 
 ## Highlights
 
-- **22 MCP Tools, Resources & Prompts** — Built natively on MCP v2 with live introspection, static AST scanning, dynamic resources (`odoo://schema/{model}`), and pre-built prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **22 MCP Tools, Resources & Prompts** — All tools are available by default; opt into an 8-tool profile with `lean_tools=true`. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **11 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie.
-- **Pure-Python & 100% Docker-Free** — Fast local AST and hardened XML scanning (`defusedxml`) runs in sub-50ms without Docker, Doodba, or heavy external daemons.
+- **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **20 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
 - **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, and 19.
 - **Optional Static Linting & LSP** — Seamless integration with `OCA/pylint-odoo` and `odoo/odoo-ls` with automatic graceful fallbacks.
 - **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
-- **Token-Efficient by Default** — Compact tool responses with `response_format="full"` for detail, a configurable response budget, secret redaction, and an optional lean tool profile.
+- **Progressive Context** — Compact tool responses and short generated agent instructions lead to detailed topic files and skills on demand. Use `response_format="full"` on tools that support it, or `lean_tools=true` to reduce the advertised tool set.
 
 ## Installation
 
@@ -62,7 +62,7 @@ odoo-boost install
 
 The wizard will:
 - Collect your Odoo connection details (URL, database, username, password/API key)
-- Test the connection and detect the Odoo version (supports v14 through v19)
+- Test the connection and detect the Odoo version (registered series 14.0–19.0; [version support](docs/versions.md))
 - Check for optional tools like `odoo-ls`
 - Let you select which AI agents to configure (from 11 supported agents)
 - Generate guidelines, MCP server configs, skills catalog, and `SKILLS_ROUTING.md`
@@ -132,7 +132,13 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 Odoo Boost sits between your AI agent and your Odoo instance / codebase:
 1. **22 MCP Tools** — Real-time database queries, schema inspection, local AST parsing, and validation.
 2. **OCA Guidelines** — Version-specific guidelines (v14-v19) and OCA architectural rules.
-3. **20 Progressive Skills** — Step-by-step checklists indexed in `SKILLS_ROUTING.md` for low-token, on-demand loading.
+3. **20 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
+
+The recommended agent workflow is to understand the business requirement, inspect
+local code and configuration, load the relevant version note or skill, and call
+live MCP tools only for runtime facts. Start with small filtered results and
+expand when needed. Unknown Odoo versions require source or runtime verification
+for version-specific behavior; see [version support](docs/versions.md).
 
 ### Robust MCP Server Resolution
 

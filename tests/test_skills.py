@@ -100,6 +100,11 @@ class TestSkillMetadataAndRouting:
         assert "`domain_accounting`" in routing
         assert "`creating_models`" in routing
 
+    def test_generate_category_routing_only_lists_installed_category(self):
+        routing = generate_skills_routing(category="workflows")
+        assert "`code_review`" in routing
+        assert "`creating_models`" not in routing
+
 
 class TestLoadSkill:
     def test_load_each_skill(self):
@@ -112,6 +117,15 @@ class TestLoadSkill:
     def test_unknown_skill_raises(self):
         with pytest.raises((FileNotFoundError, TypeError, ModuleNotFoundError)):
             load_skill("nonexistent_skill_xyz")
+
+    def test_rejects_path_like_skill_name(self):
+        with pytest.raises(FileNotFoundError, match="Unknown bundled skill"):
+            load_skill("../guidelines/core/security.md")
+
+    def test_routing_formats_glob_lists_for_readability(self):
+        routing = generate_skills_routing()
+        assert "`models/**/*.py, __manifest__.py`" in routing
+        assert "['models/**/*.py'" not in routing
 
 
 class TestInstallSkills:
@@ -140,6 +154,13 @@ class TestInstallSkills:
         assert len(created) == 4
         subdirs = sorted(d.name for d in target.iterdir() if d.is_dir())
         assert subdirs == sorted(WORKFLOW_SKILLS)
+
+    def test_category_routing_matches_installed_skills(self, tmp_path):
+        target = tmp_path / "skills"
+        install_skills(target, category="workflows")
+        routing = (target / "SKILLS_ROUTING.md").read_text(encoding="utf-8")
+        assert "`code_review`" in routing
+        assert "`creating_models`" not in routing
 
     def test_target_dir_created(self, tmp_path):
         target = tmp_path / "new" / "nested" / "skills"

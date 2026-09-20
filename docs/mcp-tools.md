@@ -9,14 +9,14 @@ All tools return JSON strings.
 ## Token efficiency (compact by default)
 
 Broad listing tools return **compact** responses by default to keep agent
-contexts small. Every heavy tool accepts `response_format: "compact" | "full"`;
-full fidelity is always available for the cases that need it.
+contexts small. Tools with `response_format` accept `"compact"` or `"full"`;
+check the individual tool signature for full-output support.
 
 | Tool | Compact (default) | Full |
 |---|---|---|
 | `list_views` | no `arch` XML; returns `arch_length`/`has_arch` | includes `arch` (use `view_id` for one view) |
 | `inspect_local_addon` | manifest + counts + per-model field/method counts | full models, fields, methods, records, templates, menus |
-| `application_info` | version + module count (no module query) | module list (`include_modules=true`, paginated) |
+| `application_info` | version + module count (no module list query) | module list (`include_modules=true`, paginated) |
 | `database_schema` | name/type/relation/flags | adds label/help/indexed (`include_help=true`) |
 | `execute_method` | capped by `max_response_chars` | uncapped result |
 | `get_config` | values truncated (~200 chars), secrets redacted | full values (`reveal_secrets=true` for secrets) |
@@ -32,9 +32,11 @@ Targeted single-object queries (e.g. `list_views(view_id=…)`,
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
 `max_response_chars` (default 40000, `0` disables), `redact_config_secrets`
-(default `true`), and `lean_tools` (default `false`, registers a small tool
-subset). Per-call `response_format` always wins. Oversized responses are
-replaced by a `{ "truncated": true, "full_length": …, "preview": … }` envelope.
+(default `true`), and `lean_tools` (default `false`, all 22 tools registered;
+`true` opts into 8 common tools). Per-call `response_format` controls detail
+where supported. Oversized responses are replaced by a bounded
+`{ "truncated": true, "full_length": …, "preview": … }` envelope. Narrow the
+query or increase `max_response_chars` to see more.
 
 ---
 
@@ -102,7 +104,7 @@ Get the field definitions (schema) of an Odoo model.
 
 ## 3. database_query
 
-Execute an ORM `search_read` on any Odoo model. Safe — goes through Odoo access rights. Supports an optional `compact` mode to preserve AI token context.
+Compatibility alias for `search_records` with a default limit of 80 instead of 20. Both perform the same ORM `search_read`; use `search_records` for new calls. Odoo access rights apply.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -209,7 +211,7 @@ Inspect an Odoo model's inheritance hierarchy, including `_inherit` extension ch
 
 ## 7. inspect_local_addon
 
-Fast, sub-50ms offline static scanner. Uses Python's standard `ast` and `xml.etree` libraries to inspect uncommitted or local addon directories without needing Docker or a live database.
+Offline static scanner for uncommitted or local addon directories. It uses Python AST and hardened XML parsing without needing Docker or a live database.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -260,7 +262,7 @@ Find and locate where an XML ID is declared or referenced within local addon fil
 
 ## 9. lint_odoo_code
 
-Lint an Odoo module or file against OCA standards. Uses `pylint-odoo` if installed, or falls back to an intelligent built-in AST safety scanner (checking for missing ACLs, SQL injections, `self.env.cr.commit()`, and deprecated `<tree>` tags).
+Lint an Odoo module or file with `pylint-odoo` when installed. Its fallback AST scan reports Python syntax errors, direct cursor commits, and `name_get` definitions when the configured, registered Odoo version deprecates them. The fallback does not check ACL completeness, SQL injection, or XML view tags.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -269,16 +271,16 @@ Lint an Odoo module or file against OCA standards. Uses `pylint-odoo` if install
 **Returns:**
 ```json
 {
-  "path": "addons/custom_sale",
-  "tool": "pylint-odoo",
-  "passed": false,
-  "issues_count": 1,
+  "success": false,
+  "engine": "ast-fallback",
+  "total_issues": 1,
   "issues": [
     {
       "file": "models/order.py",
       "line": 42,
-      "symbol": "sql-injection",
-      "message": "Possible SQL injection using string formatting"
+      "type": "error",
+      "code": "E8102",
+      "message": "Avoid calling cr.commit() directly."
     }
   ]
 }
@@ -288,16 +290,19 @@ Lint an Odoo module or file against OCA standards. Uses `pylint-odoo` if install
 
 ## 10. check_odoo_ls
 
-Check if the official Odoo Language Server (`odoo-ls`) is installed, executable, and available in your environment.
+Run `odoo-ls check` on a local path if the executable is installed; otherwise report that it is unavailable.
 
-**Parameters:** None
+Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"`).
 
 **Returns:**
 ```json
 {
-  "available": true,
-  "path": "/usr/local/bin/odoo-ls",
-  "version": "odoo-ls 0.1.0"
+  "installed": true,
+  "binary": "/usr/local/bin/odoo-ls",
+  "exit_code": 0,
+  "output": "",
+  "stderr": "",
+  "response_format": "compact"
 }
 ```
 
@@ -345,7 +350,7 @@ List Odoo menu items (`ir.ui.menu`).
 
 ## 14. list_routes
 
-List website pages and known controller routes.
+List `website.page` and `website.rewrite` ORM records. This does not enumerate Python controller routes. The result includes `complete` and `unavailable` fields when a model is missing or access is denied; connection failures surface as tool errors.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -414,7 +419,7 @@ Search and read records from any Odoo model with domain filtering and pagination
 
 ## 19. execute_method
 
-Execute an arbitrary ORM method on an Odoo model (similar to Laravel Tinker).
+Execute a public ORM method on an Odoo model. With `readonly=true`, only known read and metadata methods are allowed; other public methods may mutate data when readonly is disabled. Odoo access rights still apply.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -443,7 +448,7 @@ Read Odoo log entries from `ir.logging`. Requires `log_db` to be configured in `
 
 ## 21. search_docs
 
-Search Odoo documentation topics and return official documentation links.
+Look up curated official Odoo documentation links by topic and registered version. This is an offline link catalog, not a live documentation search. Unknown versions return no guessed version-specific links; see [version support](versions.md).
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -489,8 +494,8 @@ Pre-populates an architectural review prompt instructing the AI assistant to aud
   - `path` (string, required): Directory path of the addon to review.
 
 ### 2. `upgrade_odoo_addon`
-Pre-populates an upgrade and migration analysis prompt instructing the AI assistant to check an addon for breaking changes, deprecated XML tags (e.g. `<tree>` vs `<list>`), obsolete `attrs`, and ORM updates for a target Odoo version.
+Pre-populates a migration analysis prompt that asks the agent to verify view, ORM, and frontend changes against the target version.
 
 - **Arguments**:
   - `path` (string, required): Directory path of the addon to analyze.
-  - `target_version` (string, optional, default `"18.0"`): Target Odoo version (e.g. `"17.0"`, `"18.0"`, `"19.0"`).
+  - `target_version` (string, optional, defaults to configured `odoo_version`): Target Odoo version.

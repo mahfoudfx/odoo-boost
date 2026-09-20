@@ -48,6 +48,11 @@ class TestEnforceMethod:
         enforce_method("search_read")
         enforce_method("fields_get")
 
+    def test_readonly_blocks_unknown_public_methods(self, policy_config):
+        policy_config(readonly=True)
+        with pytest.raises(ToolError, match="readonly allowlist"):
+            enforce_method("action_mark_paid")
+
 
 class TestEnforcePath:
     def test_no_roots_allows_anything(self, policy_config, tmp_path: Path):

@@ -65,20 +65,29 @@ def json_response(payload: Any, *, bypass_budget: bool = False) -> str:
 
     limit = max_response_chars()
     if limit > 0 and len(text) > limit:
-        preview = text[: max(0, limit - 500)]
-        return json.dumps(
-            {
-                "truncated": True,
-                "full_length": len(text),
-                "message": (
-                    "Response exceeded max_response_chars. Use response_format='full', "
-                    "narrower filters, or a lower limit."
-                ),
-                "preview": preview,
-            },
-            indent=2,
-            default=str,
-        )
+        envelope = {
+            "truncated": True,
+            "full_length": len(text),
+            "message": "Narrow filters or increase max_response_chars to see more.",
+            "preview": "",
+        }
+        serialized = json.dumps(envelope)
+        if len(serialized) > limit:
+            # A tiny configured budget cannot fit the normal envelope.
+            for fallback in ('{"truncated":true}', "{}", "0"):
+                if len(fallback) <= limit:
+                    return fallback
+            return ""
+        low, high = 0, len(text)
+        while low < high:
+            middle = (low + high + 1) // 2
+            envelope["preview"] = text[:middle]
+            if len(json.dumps(envelope)) <= limit:
+                low = middle
+            else:
+                high = middle - 1
+        envelope["preview"] = text[:low]
+        return json.dumps(envelope)
     return text
 
 

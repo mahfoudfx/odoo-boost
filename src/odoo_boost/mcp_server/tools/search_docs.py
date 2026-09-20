@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-import re
+from contextlib import suppress
 
+from odoo_boost.mcp_server.context import get_context
 from odoo_boost.mcp_server.tools._common import json_response
+from odoo_boost.versions import DOC_BASE, get_version_profile, normalize_version, version_guidance
 
 # Static map of documentation topics to URLs.
 # This covers the most common Odoo dev doc sections.
-_DOC_BASE = "https://www.odoo.com/documentation"
+_DOC_BASE = DOC_BASE
 
 _TOPICS: dict[str, dict[str, str]] = {
     "orm": {
@@ -89,24 +91,28 @@ _TOPICS: dict[str, dict[str, str]] = {
 }
 
 
-def _normalize_version(version: str) -> str:
-    """Extract the major version from user input ('18.0.1' -> '18')."""
-    match = re.match(r"\s*(\d+)", version or "")
-    return match.group(1) if match else "18"
-
-
 def search_docs(
     topic: str = "",
     version: str = "",
 ) -> str:
-    """Search Odoo documentation and return relevant links.
+    """Look up curated documentation links offline; does not fetch page contents.
 
     Args:
         topic: Topic keyword (e.g. 'orm', 'views', 'security', 'owl', 'testing').
                Leave empty to list all available topics.
-        version: Odoo version (e.g. '17.0', '18.0', '19.0'). Defaults to latest.
+        version: Target series; defaults to configured project version, never to latest.
     """
-    ver = _normalize_version(version)
+    if not version:
+        with suppress(RuntimeError):
+            version = get_context().config.odoo_version or ""
+    profile = get_version_profile(version)
+    metadata = {
+        "version": normalize_version(version),
+        "supported": profile is not None,
+        "lookup": "curated_links",
+    }
+    if profile is None:
+        metadata["warning"] = version_guidance(version)
 
     if not topic:
         # Return all topics
@@ -114,7 +120,7 @@ def search_docs(
             {"topic": k, "title": v["title"], "description": v["description"]}
             for k, v in _TOPICS.items()
         ]
-        return json_response({"available_topics": all_topics})
+        return json_response({**metadata, "available_topics": all_topics})
 
     # Search by keyword
     matches = []
@@ -125,7 +131,9 @@ def search_docs(
             or topic_lower in info["title"].lower()
             or topic_lower in info["description"].lower()
         ):
-            url = f"{_DOC_BASE}/{ver}{info['path']}"
+            if profile is None:
+                continue
+            url = profile.documentation_url(key, info["path"])
             matches.append(
                 {
                     "topic": key,
@@ -135,12 +143,16 @@ def search_docs(
                 }
             )
 
+    if profile is None:
+        return json_response({**metadata, "results": [], "documentation_root": _DOC_BASE})
+
     if not matches:
         return json_response(
             {
+                **metadata,
                 "message": f"No documentation found for '{topic}'.",
                 "available_topics": list(_TOPICS.keys()),
             }
         )
 
-    return json_response({"results": matches})
+    return json_response({**metadata, "results": matches})

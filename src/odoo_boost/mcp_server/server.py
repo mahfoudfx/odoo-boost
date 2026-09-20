@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import functools
 import logging
+from collections.abc import Callable
 from typing import Any
 
 from mcp.server import MCPServer
@@ -16,12 +18,23 @@ from odoo_boost.guidelines.composer import compose_guidelines, compose_guideline
 from odoo_boost.logging_config import configure_logging
 from odoo_boost.mcp_launcher import build_http_url
 from odoo_boost.mcp_server.auth import StaticTokenVerifier
-from odoo_boost.mcp_server.context import ServerContext, set_context
+from odoo_boost.mcp_server.context import ServerContext, bound_context, set_context
 from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, is_enabled, resilient_live_tool
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.skills.loader import generate_skills_routing
 
 logger = logging.getLogger(__name__)
+
+
+def _bind_handler(fn: Callable[..., Any], context: ServerContext) -> Callable[..., Any]:
+    """Keep a registered handler attached to its originating server instance."""
+
+    @functools.wraps(fn)
+    def wrapped(*args: Any, **kwargs: Any) -> Any:
+        with bound_context(context):
+            return fn(*args, **kwargs)
+
+    return wrapped
 
 
 def create_mcp_server(config: OdooBoostConfig) -> Any:
@@ -40,7 +53,8 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
         )
         logger.warning("MCP server running in resilient mode. Live tools will connect on demand.")
 
-    set_context(ServerContext(connection=conn, config=config))
+    context = ServerContext(connection=conn, config=config)
+    set_context(context)
 
     token_verifier = None
     auth_settings = None
@@ -66,7 +80,10 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
             "Odoo Boost MCP server – provides deep introspection into running Odoo "
             "instances, local uncommitted custom addons, AST scanning, and OCA quality linting. "
             "Use these tools to explore models, views, records, configuration, access rights, "
-            "inspect local code on disk, and validate code against OCA standards."
+            "inspect local code on disk, and validate code against OCA standards. "
+            "Use live tools only when the task depends on current Odoo state. "
+            "If a live call reports an access denial, do not retry it or investigate "
+            "permissions unless the user asked for that."
         ),
     )
 
@@ -91,7 +108,8 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     @mcp.resource("odoo://schema/{model_name}")
     def resource_model_schema(model_name: str) -> str:
         """Dynamic schema resource for a given Odoo model."""
-        return database_schema(model_name)
+        with bound_context(context):
+            return database_schema(model_name)
 
     # -------------------------------------------------------------------------
     # Native MCP Prompts
@@ -107,12 +125,13 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
         )
 
     @mcp.prompt("upgrade_odoo_addon")
-    def prompt_upgrade_addon(path: str, target_version: str = "18.0") -> str:
+    def prompt_upgrade_addon(path: str, target_version: str = "") -> str:
         """Prompt to analyze migration and upgrade steps for an Odoo addon."""
+        version = target_version or config.odoo_version
         return (
-            f"Please analyze the Odoo addon at '{path}' for migration to Odoo {target_version}. "
-            "Identify deprecated view tags (e.g. <tree> vs <list>), obsolete attrs attributes, "
-            "outdated relational Command tuples, and any breaking Python/ORM changes."
+            f"Please analyze the Odoo addon at '{path}' for migration to Odoo {version or '(target not configured)'}. "
+            "Check version-specific view syntax, ORM and frontend API changes against "
+            "documentation for the target version before recommending changes."
         )
 
     # -------------------------------------------------------------------------
@@ -121,9 +140,9 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     lean = config.lean_tools
     for tool in LIVE_TOOLS:
         if is_enabled(tool, lean=lean):
-            mcp.tool()(resilient_live_tool(tool))
+            mcp.tool()(_bind_handler(resilient_live_tool(tool), context))
     for local_tool in LOCAL_TOOLS:
         if is_enabled(local_tool, lean=lean):
-            mcp.tool()(local_tool)
+            mcp.tool()(_bind_handler(local_tool, context))
 
     return mcp

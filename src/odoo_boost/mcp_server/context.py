@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 
@@ -24,6 +26,16 @@ _ctx: ContextVar[ServerContext | None] = ContextVar("odoo_boost_context", defaul
 
 def set_context(ctx: ServerContext) -> None:
     _ctx.set(ctx)
+
+
+@contextmanager
+def bound_context(ctx: ServerContext) -> Iterator[None]:
+    """Temporarily use one server's context for a handler invocation."""
+    token = _ctx.set(ctx)
+    try:
+        yield
+    finally:
+        _ctx.reset(token)
 
 
 def reset_context() -> None:

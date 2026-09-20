@@ -43,6 +43,7 @@ src/odoo_boost/
 │   ├── composer.py         # Assembles markdown into unified agent prompt
 │   └── core/               # 10 core markdown topics + versions (v14-v19)
 ├── skills/                 # 20 skills (Core, Workflows, Domain Patterns) + routing
+├── versions.py             # Registered series, inherited compatibility facts and doc paths
 ├── logging_config.py       # stderr-only logging (stdout is the MCP wire)
 └── mcp_launcher.py         # native/WSL/HTTP command + URL resolution
 ```
@@ -79,7 +80,8 @@ def my_tool(param1: str, limit: int = 10) -> str:
 ```
 
 Use `error_response(...)` for error payloads and `parse_json_arg(...)` for JSON
-string arguments so every tool returns a consistent shape.
+string arguments; validate parsed shapes before passing them to Odoo. Prefer
+extending a suitable existing tool when its call and response serve the same use.
 
 **Token efficiency:** new listing tools should accept
 `response_format: str | None = None` and use `resolve_full(...)` to decide
@@ -101,9 +103,19 @@ LIVE_TOOLS = (..., my_tool)
 
 `server.py` iterates the registry automatically; live tools are wrapped so
 connection failures become clear `ToolError` messages.
+All 22 tools are registered by default; `lean_tools=true` opts into the curated
+8-tool profile. Choose `LOCAL_TOOLS` for bundled documentation or filesystem
+tools that do not need a running Odoo connection.
 
 3. **Add unit tests** in `tests/test_tools.py`. The suite asserts the total tool
 count in `tests/test_registry.py`, so update it deliberately when adding tools.
+
+## Adding an Odoo Version
+
+Follow the [version support and onboarding guide](docs/versions.md). Register
+only changed compatibility facts and documentation paths in `versions.py`, add
+the version note, then test isolation from earlier releases and unknown newer
+series. Keep shared guidance in core topics.
 
 ## Adding a New MCP Resource or Prompt
 

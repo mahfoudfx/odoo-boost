@@ -20,7 +20,8 @@
 - `self` in model methods is always a recordset (zero or more records).
 - Use `self.ensure_one()` when the method expects exactly one record.
 - Prefer `self.filtered()`, `self.mapped()`, `self.sorted()` over manual loops.
-- Use `create()`, `write()`, `unlink()` — never raw SQL.
+- Prefer `create()`, `write()`, and `unlink()` to raw SQL. If raw SQL is necessary,
+  parameterize it and preserve ORM cache and security considerations.
 - Override `create()` / `write()` for custom logic, always calling `super()`.
 - When overriding `unlink()`, handle cascading cleanup before `super().unlink()`.
 

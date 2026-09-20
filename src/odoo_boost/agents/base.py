@@ -3,16 +3,24 @@
 from __future__ import annotations
 
 import json
-import shutil
 from abc import ABC
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from odoo_boost.agents.files import (
+    assert_safe_path,
+    remove_generated_skills,
+    update_guidelines,
+    update_mcp_config,
+)
 from odoo_boost.agents.spec import AgentSpec
 from odoo_boost.config.schema import OdooBoostConfig
-from odoo_boost.guidelines.composer import compose_guidelines
+from odoo_boost.guidelines.composer import (
+    compose_agent_guidelines,
+    install_guideline_references,
+)
 from odoo_boost.mcp_launcher import build_http_url, build_stdio_command
 from odoo_boost.skills.loader import install_skills
 
@@ -49,6 +57,13 @@ class Agent(ABC):
 
     def install(self) -> list[Path]:
         """Generate all files for this agent. Returns paths created."""
+        for path in (
+            self.guidelines_path,
+            self.mcp_config_path,
+            self.windows_mcp_config_path,
+            self.skills_dir,
+        ):
+            assert_safe_path(path, self.project_path)
         created: list[Path] = []
         if self.config.generate_ai_files:
             created.append(self._write_guidelines())
@@ -59,19 +74,39 @@ class Agent(ABC):
 
     def uninstall(self) -> list[Path]:
         """Remove generated files (best-effort). Returns paths removed."""
+        for path in (
+            self.guidelines_path,
+            self.mcp_config_path,
+            self.windows_mcp_config_path,
+            self.skills_dir,
+        ):
+            assert_safe_path(path, self.project_path)
         removed: list[Path] = []
-        for path in [self.guidelines_path, self.mcp_config_path, self.windows_mcp_config_path]:
-            if path.is_file():
-                path.unlink()
+        if update_guidelines(
+            self.guidelines_path,
+            self._guidelines_content(),
+            legacy=self._legacy_guidelines_content(),
+            remove=True,
+        ):
+            removed.append(self.guidelines_path)
+        for path in [self.mcp_config_path, self.windows_mcp_config_path]:
+            if update_mcp_config(path, "", self.spec.mcp_format, remove=True):
                 removed.append(path)
         if self.skills_dir.is_dir():
-            shutil.rmtree(self.skills_dir)
-            removed.append(self.skills_dir)
+            removed.extend(remove_generated_skills(self.skills_dir))
 
         # Clean up empty parent directories (e.g. .agents/, .cursor/rules/)
-        for candidate in [self.skills_dir.parent, self.mcp_config_path.parent, self.guidelines_path.parent]:
+        for candidate in [
+            self.skills_dir.parent,
+            self.mcp_config_path.parent,
+            self.guidelines_path.parent,
+        ]:
             curr = candidate
-            while curr != self.project_path and curr.is_relative_to(self.project_path) and curr != curr.parent:
+            while (
+                curr != self.project_path
+                and curr.is_relative_to(self.project_path)
+                and curr != curr.parent
+            ):
                 try:
                     if curr.is_dir() and not any(curr.iterdir()):
                         curr.rmdir()
@@ -146,8 +181,22 @@ class Agent(ABC):
             entry = {"type": server_type, **entry}
         return entry
 
-    def _write_guidelines(self) -> Path:
-        """Compose and write the guidelines file."""
+    def _guidelines_content(self) -> str:
+        reference_dir = Path(*self.spec.skills_dir).as_posix() + "/guidelines"
+        content = compose_agent_guidelines(self.config.odoo_version, reference_dir)
+        if self.spec.cursor_rules:
+            content = (
+                "---\n"
+                "description: Odoo development guidelines from Odoo Boost\n"
+                "globs:\n"
+                "alwaysApply: true\n"
+                "---\n\n" + content
+            )
+        return content
+
+    def _legacy_guidelines_content(self) -> str:
+        from odoo_boost.guidelines.composer import compose_guidelines
+
         content = compose_guidelines(self.config.odoo_version)
         if self.spec.cursor_rules:
             content = (
@@ -157,8 +206,16 @@ class Agent(ABC):
                 "alwaysApply: true\n"
                 "---\n\n" + content
             )
-        self.guidelines_path.parent.mkdir(parents=True, exist_ok=True)
-        self.guidelines_path.write_text(content, encoding="utf-8")
+        return content
+
+    def _write_guidelines(self) -> Path:
+        """Compose and update the owned section of the guidelines file."""
+        assert_safe_path(self.guidelines_path, self.project_path)
+        update_guidelines(
+            self.guidelines_path,
+            self._guidelines_content(),
+            legacy=self._legacy_guidelines_content(),
+        )
         return self.guidelines_path
 
     def _mcp_config_content(self, *, windows: bool = False) -> str:
@@ -236,14 +293,31 @@ class Agent(ABC):
         )
 
     def _write_text(self, path: Path, content: str) -> Path:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        assert_safe_path(path, self.project_path)
+        update_mcp_config(path, content, self.spec.mcp_format)
         return path
 
     def _write_skills(self) -> list[Path]:
         """Install skill files into the skills directory."""
-        return install_skills(self.skills_dir)
+        assert_safe_path(self.skills_dir, self.project_path)
+        if self.skills_dir.is_dir():
+            for path in self.skills_dir.rglob("*"):
+                if path.is_symlink():
+                    raise ValueError(f"Skill directory contains a symlink: {path}")
+        created = install_skills(self.skills_dir)
+        created.extend(
+            install_guideline_references(self.skills_dir / "guidelines", self.config.odoo_version)
+        )
+        return created
 
 
 def _toml_escape(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"')
+    return (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+        .replace("\b", "\\b")
+        .replace("\f", "\\f")
+    )

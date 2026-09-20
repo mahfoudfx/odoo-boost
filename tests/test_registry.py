@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from xmlrpc.client import Fault
 
+import pytest
 from mcp.server.mcpserver.exceptions import ToolError
 
 from odoo_boost.mcp_server.registry import (
@@ -28,6 +30,9 @@ class TestToolInventory:
         live = {tool.__name__ for tool in LIVE_TOOLS}
         local = {tool.__name__ for tool in LOCAL_TOOLS}
         assert live.isdisjoint(local)
+
+    def test_documentation_lookup_does_not_require_live_connection(self):
+        assert "search_docs" in {tool.__name__ for tool in LOCAL_TOOLS}
 
     def test_every_tool_has_docstring(self):
         for tool in ALL_TOOLS:
@@ -84,6 +89,31 @@ class TestResilientLiveTool:
             pass
         else:  # pragma: no cover - defensive
             raise AssertionError("ValueError was swallowed")
+
+    def test_compacts_odoo_access_fault(self):
+        @resilient_live_tool
+        def boom() -> str:
+            raise Fault(
+                1,
+                "Traceback (most recent call last):\n  file.py, line 1\n"
+                "odoo.exceptions.AccessError: User has no create access to maintenance.request",
+            )
+
+        with pytest.raises(ToolError) as exc_info:
+            boom()
+        assert "maintenance.request" in str(exc_info.value)
+        assert "Traceback" not in str(exc_info.value)
+
+    def test_preserves_unrelated_xmlrpc_fault(self):
+        fault = Fault(1, "unrelated server fault")
+
+        @resilient_live_tool
+        def boom() -> str:
+            raise fault
+
+        with pytest.raises(Fault) as exc_info:
+            boom()
+        assert exc_info.value is fault
 
     def test_preserves_name_and_doc(self):
         @resilient_live_tool

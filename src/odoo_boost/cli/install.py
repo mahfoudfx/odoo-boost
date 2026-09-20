@@ -16,6 +16,7 @@ from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
 from odoo_boost.config.settings import CONFIG_FILENAME, save_config
 from odoo_boost.connection.factory import create_connection
 from odoo_boost.mcp_launcher import detect_wsl_distro, is_loopback_host, is_wsl
+from odoo_boost.versions import detect_version, get_version_profile, version_guidance
 
 console = Console()
 
@@ -66,8 +67,10 @@ def install() -> None:
         raise typer.Exit(1) from None
 
     # Detect Odoo version series (e.g. "17.0", "18.0")
-    odoo_version = version_info.get("server_serie", server_version.split("-")[0])
+    odoo_version = detect_version(version_info)
     console.print(f"  Detected Odoo version: [cyan]{odoo_version}[/]")
+    if get_version_profile(odoo_version) is None:
+        console.print(version_guidance(odoo_version), markup=False)
 
     import shutil
 

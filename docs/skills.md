@@ -24,7 +24,7 @@ To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTIN
 | Skill | Directory | Description |
 |---|---|---|
 | Code Review | `code_review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
-| Upgrade Analysis | `upgrade_analysis/` | Cross-version migration checklist (v14 to v19 breaking changes, `<tree>` to `<list>`, `attrs`) |
+| Upgrade Analysis | `upgrade_analysis/` | Migration checklist; consult the [version support guide](versions.md) and target version note for actual differences |
 | Spec-Driven Dev | `spec_driven_dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
 | Conventional Commits | `conventional_commit/` | Standardized Odoo & OCA commit formatting (`[ADD]`, `[FIX]`, `[REF]`, `[MIG]`, etc.) |
 

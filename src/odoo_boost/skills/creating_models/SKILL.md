@@ -58,7 +58,8 @@ globs: ["models/**/*.py", "__manifest__.py"]
 
 4. **Add to manifest**: Ensure `models/` is imported in the module's root `__init__.py`.
 
-5. **Add security**: Create ACL in `security/ir.model.access.csv`.
+5. **Add security**: Define least-privilege ACLs for a persistent business model. Check
+   the active version's behavior before adding ACLs for transient or abstract models.
 
 6. **Create views**: Add form and list views in `views/my_model_views.xml`.
 
@@ -68,6 +69,6 @@ globs: ["models/**/*.py", "__manifest__.py"]
 - [ ] Computed fields have `@api.depends`
 - [ ] Constraints use `@api.constrains`
 - [ ] Model registered in `__init__.py` chain
-- [ ] ACL entry in `ir.model.access.csv`
+- [ ] Intentional access policy for the model type
 - [ ] Views created (at minimum form + list)
 - [ ] Added to `__manifest__.py` data list

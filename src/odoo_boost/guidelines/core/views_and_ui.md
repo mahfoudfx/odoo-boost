@@ -2,7 +2,8 @@
 
 ### View Types
 - **Form**: detail view for a single record. Uses `<form>` root element.
-- **List/Tree**: tabular view. Uses `<list>` (v17+) or `<tree>` root element.
+- **List**: tabular view. Use the root element and dynamic-attribute syntax selected by
+  the configured Odoo version notes.
 - **Kanban**: card-based view. Uses `<kanban>` with QWeb templates inside.
 - **Search**: defines search filters and group-by options. Uses `<search>`.
 - **Pivot / Graph / Calendar / Gantt**: analytical and planning views.

@@ -12,11 +12,13 @@ from typing import Any
 
 from odoo_boost.mcp_server.policy import enforce_path
 from odoo_boost.mcp_server.tools._common import (
+    active_config,
     compact_text,
     error_response,
     json_response,
     resolve_full,
 )
+from odoo_boost.versions import get_version_profile
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +39,8 @@ def _compact_lint_result(result: dict[str, Any], *, full: bool) -> dict[str, Any
         items = result.get(key)
         if not isinstance(items, list):
             continue
-        for item in items:
+        result[key] = items[:30]
+        for item in result[key]:
             if isinstance(item, dict) and isinstance(item.get("message"), str):
                 item["message"] = compact_text(item["message"], 500)
     return result
@@ -54,20 +57,37 @@ def _run_pylint_odoo(target_path: Path) -> dict[str, Any]:
         str(target_path),
     ]
 
+    config = active_config()
+    profile = get_version_profile(config.odoo_version) if config else None
+    if profile:
+        cmd.insert(-1, f"--valid-odoo-versions={profile.series}")
+
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         output = proc.stdout.strip()
         if not output:
-            return {"success": True, "messages_count": 0, "messages": []}
+            if proc.returncode:
+                return {
+                    "success": False,
+                    "engine": "pylint-odoo",
+                    "error": f"Linter exited with status {proc.returncode}: {proc.stderr.strip()}",
+                }
+            return {"success": True, "engine": "pylint-odoo", "total_issues": 0, "messages": []}
 
         try:
             messages = json.loads(output)
         except json.JSONDecodeError:
             return {
-                "success": proc.returncode == 0,
+                "success": False,
+                "error": "Linter returned invalid JSON.",
                 "raw_output": output,
                 "stderr": proc.stderr,
             }
+
+        if not isinstance(messages, list) or any(not isinstance(m, dict) for m in messages):
+            return {"success": False, "error": "Linter returned an invalid diagnostic payload."}
+        if proc.returncode & 32:
+            return {"success": False, "error": f"Linter usage error: {proc.stderr.strip()}"}
 
         # Filter and organize messages
         errors = [m for m in messages if m.get("type") in ("error", "fatal")]
@@ -81,9 +101,9 @@ def _run_pylint_odoo(target_path: Path) -> dict[str, Any]:
             "errors_count": len(errors),
             "warnings_count": len(warnings),
             "conventions_count": len(conventions),
-            "errors": errors[:30],
-            "warnings": warnings[:30],
-            "conventions": conventions[:30],
+            "errors": errors,
+            "warnings": warnings,
+            "conventions": conventions,
         }
     except subprocess.TimeoutExpired:
         return {"error": "Linter timed out after 60s."}
@@ -95,6 +115,11 @@ def _run_pylint_odoo(target_path: Path) -> dict[str, Any]:
 def _run_fallback_ast_lint(target_path: Path) -> dict[str, Any]:
     """Basic fallback checks when pylint-odoo is not installed."""
     issues = []
+    config = active_config()
+    profile = get_version_profile(config.odoo_version) if config else None
+    name_get_deprecated = bool(
+        profile and profile.features.get("display_name") == "_compute_display_name"
+    )
     py_files = [target_path] if target_path.is_file() else list(target_path.rglob("*.py"))
 
     for py_file in py_files:
@@ -140,7 +165,11 @@ def _run_fallback_ast_lint(target_path: Path) -> dict[str, Any]:
                         )
 
             # Check for deprecated name_get
-            elif isinstance(node, ast.FunctionDef) and node.name == "name_get":
+            elif (
+                name_get_deprecated
+                and isinstance(node, ast.FunctionDef)
+                and node.name == "name_get"
+            ):
                 issues.append(
                     {
                         "type": "warning",

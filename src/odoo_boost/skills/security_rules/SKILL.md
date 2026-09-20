@@ -74,7 +74,8 @@ Ensure security files are listed before view files:
 ```
 
 ## Checklist
-- [ ] Every model has ACL entries in `ir.model.access.csv`
+- [ ] Each persistent business model has the required ACL entries; transient and abstract
+  models are reviewed according to the active Odoo version
 - [ ] Security groups defined with proper hierarchy (`implied_ids`)
 - [ ] Record rules use `noupdate="1"` (customizable by admin)
 - [ ] ACL file listed in manifest before views

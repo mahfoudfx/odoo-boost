@@ -9,6 +9,11 @@ from pathlib import Path
 import pytest
 import yaml
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
+
 from odoo_boost.agents import AGENTS, ALL_AGENT_IDS, Agent
 from odoo_boost.agents.antigravity import AntigravityAgent
 from odoo_boost.agents.claude_code import ClaudeCodeAgent
@@ -124,6 +129,10 @@ class TestAgentContracts:
         assert agent.guidelines_path.exists()
         content = agent.guidelines_path.read_text(encoding="utf-8")
         assert "Odoo" in content
+        reference_dir = agent.skills_dir / "guidelines"
+        assert (reference_dir / "security.md").exists()
+        assert (reference_dir / "versions" / "v18.md").exists()
+        assert f"{agent.spec.skills_dir[-1]}/guidelines/security.md" in content
 
     def test_mcp_config_written(self, agent: Agent):
         agent.install()
@@ -143,6 +152,107 @@ class TestAgentContracts:
         assert not agent.guidelines_path.exists()
         assert not agent.mcp_config_path.exists()
         assert not agent.skills_dir.exists()
+
+    def test_custom_skills_survive_uninstall(self, agent: Agent):
+        agent.install()
+        custom = agent.skills_dir / "my_skill" / "SKILL.md"
+        custom.parent.mkdir(parents=True, exist_ok=True)
+        custom.write_text("custom", encoding="utf-8")
+        packaged = agent.skills_dir / "creating_models" / "SKILL.md"
+        packaged.write_text("edited", encoding="utf-8")
+        agent.uninstall()
+        assert custom.read_text(encoding="utf-8") == "custom"
+        assert packaged.read_text(encoding="utf-8") == "edited"
+
+    def test_shared_mcp_config_preserves_other_entries(self, agent: Agent):
+        path = agent.mcp_config_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if agent.spec.mcp_format == "codex":
+            path.write_text('[mcp_servers.other]\ncommand = "other"\n', encoding="utf-8")
+        elif agent.spec.mcp_format == "hermes":
+            path.write_text("mcp_servers:\n  other:\n    command: other\n", encoding="utf-8")
+        else:
+            key = {"vscode": "servers", "opencode": "mcp"}.get(agent.spec.mcp_format, "mcpServers")
+            path.write_text(
+                json.dumps({key: {"other": {"command": "other"}}, "custom": True}), encoding="utf-8"
+            )
+        agent.install()
+        agent.uninstall()
+        content = path.read_text(encoding="utf-8")
+        assert "other" in content
+        assert "odoo-boost" not in content
+
+    def test_invalid_mcp_config_is_not_overwritten(self, agent: Agent):
+        path = agent.mcp_config_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("invalid [", encoding="utf-8")
+        with pytest.raises(ValueError):
+            agent.write_mcp_config()
+        assert path.read_text(encoding="utf-8") == "invalid ["
+
+    def test_codex_toml_escapes_control_characters(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(
+            update={"mcp_command": ["server", "line\nbreak", "tab\tvalue"]}
+        )
+        agent = CodexAgent(config=cfg, project_path=tmp_path)
+        agent.write_mcp_config()
+        parsed = tomllib.loads(agent.mcp_config_path.read_text(encoding="utf-8"))
+        assert parsed["mcp_servers"]["odoo-boost"]["args"] == ["line\nbreak", "tab\tvalue"]
+
+    def test_existing_guidelines_are_preserved(self, agent: Agent):
+        path = agent.guidelines_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        original = "# Team instructions\nKeep the company style.\n"
+        path.write_text(original, encoding="utf-8")
+        agent.install()
+        installed = path.read_text(encoding="utf-8")
+        assert original.strip() in installed
+        assert "<!-- odoo-boost:start" in installed
+        agent.uninstall()
+        assert original.strip() in path.read_text(encoding="utf-8")
+        assert "<!-- odoo-boost:start" not in path.read_text(encoding="utf-8")
+
+    def test_edited_generated_guidelines_survive_uninstall(self, agent: Agent):
+        agent.install()
+        path = agent.guidelines_path
+        content = path.read_text(encoding="utf-8")
+        path.write_text(
+            content.replace("# Odoo Development Guidelines", "# Team-edited Guidelines"),
+            encoding="utf-8",
+        )
+        agent.uninstall()
+        assert "Team-edited Guidelines" in path.read_text(encoding="utf-8")
+
+    def test_legacy_generated_guidelines_upgrade_without_duplication(self, agent: Agent):
+        path = agent.guidelines_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(agent._legacy_guidelines_content(), encoding="utf-8")
+        agent.install()
+        assert path.read_text(encoding="utf-8").count("<!-- odoo-boost:start") == 1
+        agent.uninstall()
+        assert not path.exists()
+
+    def test_symlinked_output_is_rejected(self, agent: Agent, tmp_path: Path):
+        external = tmp_path.parent / f"outside-{agent.id}.txt"
+        external.write_text("safe", encoding="utf-8")
+        path = agent.guidelines_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.symlink_to(external)
+        with pytest.raises(ValueError, match="symlink"):
+            agent.install()
+        assert external.read_text(encoding="utf-8") == "safe"
+
+    def test_cursor_frontmatter_remains_first(self, sample_config, tmp_path):
+        agent = CursorAgent(config=sample_config, project_path=tmp_path)
+        path = agent.guidelines_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("---\ndescription: Team rule\n---\n\nKeep this rule.\n", encoding="utf-8")
+        agent.install()
+        content = path.read_text(encoding="utf-8")
+        assert content.startswith("---\ndescription: Team rule\n---\n")
+        assert content.count("<!-- odoo-boost:start") == 1
+        agent.uninstall()
+        assert "Keep this rule." in path.read_text(encoding="utf-8")
 
     def test_mcp_command(self, agent: Agent):
         cmd = agent._mcp_command()
@@ -390,3 +500,20 @@ class TestConditionalGeneration:
         assert not a.guidelines_path.exists()
         assert not a.mcp_config_path.exists()
         assert not a.skills_dir.exists()
+
+
+@pytest.mark.parametrize(
+    "table",
+    [
+        '[mcp_servers."odoo-boost"]\ncommand = "old"\n',
+        '[mcp_servers.odoo-boost]\ncommand = "old"\n[mcp_servers.odoo-boost.env]\nKEY = "value"\n',
+    ],
+)
+def test_nonstandard_toml_is_preserved_on_regeneration(tmp_path, table):
+    from odoo_boost.agents.files import update_mcp_config
+
+    path = tmp_path / "config.toml"
+    path.write_text(table)
+    with pytest.raises(ValueError):
+        update_mcp_config(path, '[mcp_servers.odoo-boost]\ncommand = "new"\n', "codex")
+    assert path.read_text() == table

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from odoo_boost.guidelines.composer import (
     _CORE_FILES,
+    compose_agent_guidelines,
     compose_guidelines,
     compose_guidelines_index,
+    install_guideline_references,
 )
 
 
@@ -56,12 +58,9 @@ class TestComposeGuidelines:
 
     def test_includes_agent_operating_rules(self):
         result = compose_guidelines()
-        assert "Agent Operating Rules & Boundaries" in result
-        assert "Direct Implementation (Default - Fast & Token-Efficient)" in result
+        assert "Agent Operating Rules" in result
         assert "Strict Prohibition on Live Environment Execution" in result
-        assert "odoo-bin shell" in result
-        assert "exclusively by reading code files" in result
-        assert "No Unsolicited Live Commands" in result
+        assert "No Unsolicited Automated Tests" in result
         assert "Scope Restraint" in result
 
     def test_includes_oca_standards(self):
@@ -89,3 +88,17 @@ class TestComposeGuidelinesIndex:
 
     def test_index_mentions_version(self):
         assert "Odoo 18.0" in compose_guidelines_index("18.0")
+
+
+def test_generated_agent_guidelines_preserve_full_expert_content(tmp_path):
+    reference_dir = ".agents/skills/guidelines"
+    content = compose_agent_guidelines("18.0", reference_dir)
+    created = install_guideline_references(tmp_path / reference_dir, "18.0")
+
+    assert compose_guidelines("18.0").strip() in content
+    for filename in _CORE_FILES:
+        assert (tmp_path / reference_dir / filename).read_text().strip() in content
+    assert f"{reference_dir}/security.md" in content
+    assert f"{reference_dir}/versions/v18.md" in content
+    assert all(path.is_file() for path in created)
+    assert len(created) == len(_CORE_FILES) + 1

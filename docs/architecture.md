@@ -32,6 +32,7 @@ standard XML-RPC.
 | `mcp_server/auth.py` | Static bearer-token verifier for HTTP |
 | `mcp_server/policy.py` | Opt-in `readonly` / `allowed_roots` guardrails |
 | `mcp_server/tools/` | One module per tool plus `_common.py` response helpers |
+| `versions.py` | Registered Odoo series, inherited compatibility facts and documentation paths |
 | `agents/` | Declarative `AgentSpec` registry + spec-driven base class |
 | `connection/` | Abstract connection interface and the XML-RPC implementation |
 | `ast_scanner/` | Pure-Python AST/XML analysis of local addons (no Docker) |
@@ -59,6 +60,16 @@ standard XML-RPC.
 - **MCP config** — JSON/TOML/YAML in the format the agent expects.
 - **Skills** — the 20 bundled skills plus `SKILLS_ROUTING.md`.
 
+Generated guideline sections and Odoo Boost MCP entries are updated in place;
+unrelated user content and other MCP servers are preserved. Edited generated
+sections are left for the user to reconcile. Existing configurations retain
+explicit option values such as `lean_tools`.
+
+Version guidance follows shared Odoo topics → registered version facts and
+delta note → task-specific skill or tool. Unknown series receive shared topics
+and an uncertainty warning rather than inheriting the newest release. See
+[version support](versions.md) for the onboarding sequence.
+
 For stdio, `mcp_target: "auto"` writes the native config plus a `*.windows.*`
 companion that wraps the interpreter in `wsl.exe`. For `mcp_transport: "http"`,
 URL-based configs are written instead (with an `Authorization` header when a
@@ -72,6 +83,8 @@ token is configured).
 - **New agent** → add an `AgentSpec` and a thin wrapper class. `id`,
   `display_name`, paths, and serialization are derived from the spec.
 - **New transport** → extend `mcp_launcher.py` and `cli/mcp_cmd.py`.
+- **New Odoo version** → register an explicit parent and changed facts in
+  `versions.py`, then add the targeted note, docs and regression tests.
 
 ## Security boundaries
 

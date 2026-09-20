@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-import shutil
 from pathlib import Path
 
 from odoo_boost.agents import AGENTS
+from odoo_boost.agents.files import (
+    assert_safe_path,
+    remove_generated_skills,
+    update_guidelines,
+    update_mcp_config,
+)
+from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.config.schema import OdooBoostConfig
 
 
-def find_orphaned_agent_files(
-    config: OdooBoostConfig, project_path: Path
-) -> dict[str, list[Path]]:
+def find_orphaned_agent_files(config: OdooBoostConfig, project_path: Path) -> dict[str, list[Path]]:
     """Identify files on disk that belong to agents not in config.agents.
 
     Shared paths (e.g. AGENTS.md used by multiple agents) are preserved
@@ -61,22 +65,30 @@ def find_orphaned_agent_files(
     return orphans
 
 
-def clean_orphaned_agent_files(
-    orphans: dict[str, list[Path]], project_path: Path
-) -> list[Path]:
+def clean_orphaned_agent_files(orphans: dict[str, list[Path]], project_path: Path) -> list[Path]:
     """Delete orphaned files and remove any empty parent directories."""
     removed: list[Path] = []
     parents_to_check: list[Path] = []
 
-    for path_list in orphans.values():
+    for agent_id, path_list in orphans.items():
+        spec = AGENT_SPECS[agent_id]
+        mcp_path = project_path.joinpath(*spec.mcp_config_path)
+        windows_path = mcp_path.with_name(f"{mcp_path.stem}.windows{mcp_path.suffix}")
+        guideline_path = project_path.joinpath(*spec.guidelines_path)
         for path in path_list:
-            if path.is_file():
-                path.unlink()
-                removed.append(path)
-                parents_to_check.append(path.parent)
+            if path.is_symlink():
+                continue
+            assert_safe_path(path, project_path)
+            if path in (mcp_path, windows_path) and path.is_file():
+                if update_mcp_config(path, "", spec.mcp_format, remove=True):
+                    removed.append(path)
+                    parents_to_check.append(path.parent)
+            elif path == guideline_path and path.is_file():
+                if update_guidelines(path, "", remove=True):
+                    removed.append(path)
+                    parents_to_check.append(path.parent)
             elif path.is_dir():
-                shutil.rmtree(path)
-                removed.append(path)
+                removed.extend(remove_generated_skills(path))
                 parents_to_check.append(path.parent)
 
     for candidate in parents_to_check:

@@ -1,12 +1,14 @@
 ---
 name: Crons & Scheduled Actions
-description: Implementing reliable, batch-safe scheduled background actions (ir.cron) and automated tasks.
+description: Implement reliable, batch-safe recurring background jobs with ir.cron.
 globs: ["models/**/*.py", "data/**/*.xml"]
 ---
 
 # Crons & Scheduled Actions (`ir.cron`)
 
-Scheduled actions run asynchronous recurring background operations in Odoo, such as email dispatch, synchronizations, invoice generation, or maintenance jobs.
+Scheduled actions run recurring background operations in Odoo, such as email dispatch,
+synchronizations, invoice generation, or maintenance jobs. This skill covers `ir.cron`;
+use **Automated Actions** for `base.automation` and server actions tied to record events.
 
 ## 1. Defining the Cron in Data XML
 Define the XML record in `data/ir_cron_data.xml` with `noupdate="1"` so administrators can customize the schedule without module upgrades resetting it:

@@ -37,6 +37,15 @@ def execute_method(
     except ValueError as exc:
         return json_response({"error": str(exc), "model": model, "method": method})
 
+    if not isinstance(parsed_args, list) or not isinstance(parsed_kwargs, dict):
+        return json_response(
+            {
+                "error": "args must be a JSON array and kwargs must be a JSON object",
+                "model": model,
+                "method": method,
+            }
+        )
+
     result = conn.execute(model, method, *parsed_args, **parsed_kwargs)
 
     return json_response(

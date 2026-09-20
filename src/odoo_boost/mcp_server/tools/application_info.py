@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from odoo_boost.mcp_server.context import get_connection
 from odoo_boost.mcp_server.tools._common import json_response, resolve_full
+from odoo_boost.versions import detect_version, get_version_profile
 
 
 def application_info(
@@ -33,7 +34,10 @@ def application_info(
     conn = get_connection()
 
     version_info = conn.get_version()
+    series = detect_version(version_info)
     result = {
+        "odoo_series": series,
+        "version_supported": get_version_profile(series) is not None,
         "server_version": version_info.get("server_version", "unknown"),
         "server_serie": version_info.get("server_serie", "unknown"),
         "protocol_version": version_info.get("protocol_version", 1),

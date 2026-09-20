@@ -6,6 +6,10 @@ globs: ["static/src/**/*.js", "static/src/**/*.xml", "static/src/**/*.scss", "__
 
 # Creating OWL Components
 
+Load the configured version notes and inspect the component being extended before
+copying imports, hooks, services, or registry APIs. The example shows a common modern
+pattern, not a compatibility contract for every supported Odoo version.
+
 ## Steps
 
 ### 1. Create JavaScript Component (`static/src/js/my_component.js`)

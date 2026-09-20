@@ -2,12 +2,7 @@
 
 from __future__ import annotations
 
-from odoo_boost.mcp_server.context import get_connection
-from odoo_boost.mcp_server.tools._common import (
-    compact_records,
-    json_response,
-    parse_json_arg,
-)
+from odoo_boost.mcp_server.tools.search_records import search_records
 
 
 def database_query(
@@ -19,7 +14,9 @@ def database_query(
     order: str = "",
     compact: bool = False,
 ) -> str:
-    """Execute an ORM search_read on any Odoo model (safe, respects access rights).
+    """Compatibility alias for search_records with a larger default limit.
+
+    Use search_records for new calls; both tools perform the same ORM search_read.
 
     Args:
         model: Technical model name, e.g. 'res.partner'.
@@ -30,34 +27,12 @@ def database_query(
         order: Sort order, e.g. 'name asc, id desc'.
         compact: When True, strips null/empty fields and truncates bulky strings to save tokens.
     """
-    conn = get_connection()
-
-    try:
-        parsed_domain = parse_json_arg(domain, default=[])
-        parsed_fields = parse_json_arg(fields, default=[])
-    except ValueError as exc:
-        return json_response({"error": str(exc), "model": model})
-
-    records = conn.search_read(
-        model,
-        domain=parsed_domain,
-        fields=parsed_fields or None,
+    return search_records(
+        model=model,
+        domain=domain,
+        fields=fields,
         limit=limit,
         offset=offset,
-        order=order or None,
+        order=order,
+        compact=compact,
     )
-
-    if compact:
-        records = compact_records(records)
-
-    total = conn.search_count(model, domain=parsed_domain)
-
-    result = {
-        "model": model,
-        "total_count": total,
-        "returned_count": len(records),
-        "offset": offset,
-        "limit": limit,
-        "records": records,
-    }
-    return json_response(result)

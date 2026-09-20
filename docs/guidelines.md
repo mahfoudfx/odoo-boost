@@ -1,6 +1,6 @@
 # Guidelines
 
-Odoo Boost bundles comprehensive Odoo development guidelines injected into your AI agent's native context. This ensures that generated code is idiomatic, clean, secure, and compliant with OCA (Odoo Community Association) standards.
+Odoo Boost bundles Odoo development guidelines. Generated agent files include the complete expert guidelines and target-version notes. Separate topic references and the skill catalog remain available for targeted lookup. The MCP resource `odoo://guidelines/oca` still provides the complete document.
 
 ## What's Included
 
@@ -29,9 +29,11 @@ Guidelines are composed from 11 core files plus a version-specific addendum:
 | `v14.md` | Odoo 14 | Legacy `attrs`, Classic `web.assets_backend`, `[(0, 0, vals)]` tuples |
 | `v15.md` | Odoo 15 | Asset bundles in manifest `assets` dict, OWL 1 introduction |
 | `v16.md` | Odoo 16 | Transition to OWL 2, performance improvements |
-| `v17.md` | Odoo 17 | `<list>` tag introduced, `attrs` deprecated, `Command` API, new dark/light UI |
-| `v18.md` | Odoo 18 | Mandatory `<list>` tag, inline view expressions, portal revamp |
-| `v19.md` | Odoo 19 | `<tree>` strictly removed, Python 3.12+ required, search view cleanups |
+| `v17.md` | Odoo 17 | Inline view modifiers and `_compute_display_name` replace older patterns |
+| `v18.md` | Odoo 18 | `<list>` replaces `<tree>` as the list view root |
+| `v19.md` | Odoo 19 | `jsonrpc` controller routes and search view differences |
+
+The [version support guide](versions.md) describes the effective version facts and how to add a release. The registry in `versions.py` is authoritative for compatibility facts; each version note provides targeted detail.
 
 ## How Version Selection Works
 
@@ -44,9 +46,9 @@ During `odoo-boost install`, Odoo Boost detects your server version and writes i
 ```
 
 When building agent guidelines, the composer:
-1. Concatenates all 11 core guideline files (including OCA standards).
-2. Appends the version-specific file (e.g. `v18.md` for Odoo 18).
-3. Writes the document directly into the target agent's guidelines file.
+1. Writes all expert guidelines, effective compatibility rules, and target-version notes to the agent's guideline file.
+2. Installs the 11 core topics and the matching version note under the agent's skills directory in `guidelines/`. Unknown series receive shared guidance and an explicit uncertainty note.
+3. Keeps the complete combined document available through the MCP resource and `compose_guidelines()` API.
 
 ## Where Guidelines Are Written
 

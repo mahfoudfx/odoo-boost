@@ -27,6 +27,12 @@ def lint(
     res_str = lint_odoo_code(str(path))
     res = json.loads(res_str)
 
+    if not isinstance(res, dict) or res.get("truncated"):
+        console.print(
+            "[bold red]Linter response was truncated; narrow the input or increase the response budget.[/]"
+        )
+        raise typer.Exit(1)
+
     if "error" in res:
         console.print(f"[bold red]Error:[/] {res['error']}")
         raise typer.Exit(1)
@@ -35,8 +41,8 @@ def lint(
     console.print(f"[dim]Linter engine: {engine}[/]")
 
     total_issues = res.get("total_issues", 0)
-    if total_issues == 0:
-        console.print("[bold green]✓ No issues found! Code satisfies OCA guidelines.[/]\n")
+    if total_issues == 0 and res.get("success") is not False:
+        console.print("[bold green]✓ No issues found by the available checks.[/]\n")
         return
 
     table = Table(title=f"Linter Results ({total_issues} issues found)")
@@ -80,5 +86,9 @@ def lint(
 
     console.print(table)
 
-    if res.get("errors_count", 0) > 0 or (strict and total_issues > 0):
+    if (
+        res.get("success") is False
+        or res.get("errors_count", 0) > 0
+        or (strict and total_issues > 0)
+    ):
         raise typer.Exit(1)

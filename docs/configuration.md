@@ -36,7 +36,7 @@ Odoo Boost stores project configuration in `odoo-boost.json` at your project roo
 
 ### `odoo_version` (optional)
 
-Detected Odoo version string (e.g. `"14.0"`, `"15.0"`, `"16.0"`, `"17.0"`, `"18.0"`, `"19.0"`). Auto-detected during `odoo-boost install`.
+Detected Odoo version string. Registered series are 14.0 through 19.0; see [version support](versions.md) for the registration and unknown-version rules. The install wizard detects it from the server when available.
 
 ### `agents` (optional)
 
@@ -71,12 +71,12 @@ Path to the project root directory. Default: `"."`.
 | `mcp_port` | number | `8765` | Bind port for HTTP transport. |
 | `mcp_command` | string[] | — | Advanced: full stdio command override, used verbatim. |
 | `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
-| `readonly` | bool | `false` | When true, `execute_method` refuses mutating/private methods. Defense-in-depth, not a sandbox. |
+| `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |
 | `allowed_roots` | string[] | `[]` | Restrict `inspect_local_addon` and `lint_odoo_code` to these roots. Empty means no confinement. |
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
-| `lean_tools` | bool | `false` | Register only 8 commonly used tools to reduce tool-schema overhead per model turn. |
+| `lean_tools` | bool | `false` | Register all 22 tools by default. Set `true` to advertise only 8 common tools. Saved explicit values are preserved. |
 
 ### Token efficiency
 
@@ -84,8 +84,10 @@ Broad tools (`list_views`, `inspect_local_addon`, `application_info`,
 `database_schema`, `get_config`, `read_log_entries`, `list_access_rights`,
 `list_workflows`, `get_module_info`) return summaries by default and accept
 `response_format: "full"` for detail. Data tools (`search_records`,
-`database_query`, `execute_method`) return values verbatim by default; pass
-`compact=true` to skim. See [MCP Tools → Token efficiency](mcp-tools.md#token-efficiency-compact-by-default).
+`database_query`) return values verbatim by default; pass `compact=true` to
+skim. `execute_method` returns the method result under the response budget;
+its `response_format="full"` explicitly bypasses that cap. See
+[MCP Tools → Token efficiency](mcp-tools.md#token-efficiency-compact-by-default).
 
 Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
 so the server works regardless of the working directory the IDE chooses.
@@ -167,7 +169,7 @@ Verifies live connection and prints server diagnostics.
 | `--mcp` | Also spawn the configured MCP server and verify the `initialize` handshake |
 
 ### `odoo-boost lint [path]`
-Runs static checks on local addons or files using `pylint-odoo` (if installed) or the built-in AST safety scanner (checking for missing ACLs, SQL injections, commit violations, and deprecated tags).
+Runs static checks on local addons or files using `pylint-odoo` (if installed). The fallback AST scanner detects Python syntax errors, direct cursor commits, and version-aware `name_get` deprecation.
 
 | Option | Description |
 |---|---|

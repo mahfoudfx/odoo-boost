@@ -22,6 +22,16 @@ class TestJsonResponse:
     def test_indented(self):
         assert "\n" in json_response({"a": 1})
 
+    def test_escaped_preview_stays_within_budget(self, monkeypatch):
+        monkeypatch.setattr("odoo_boost.mcp_server.tools._common.max_response_chars", lambda: 190)
+        text = json_response({"body": '\\"' * 1000})
+        assert len(text) <= 190
+        assert json.loads(text)["truncated"] is True
+
+    def test_tiny_budget_stays_bounded(self, monkeypatch):
+        monkeypatch.setattr("odoo_boost.mcp_server.tools._common.max_response_chars", lambda: 20)
+        assert len(json_response({"body": "x" * 100})) <= 20
+
 
 class TestErrorResponse:
     def test_shape(self):

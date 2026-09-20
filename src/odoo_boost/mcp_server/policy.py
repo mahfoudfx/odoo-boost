@@ -14,23 +14,25 @@ from mcp.server.mcpserver.exceptions import ToolError
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.mcp_server.context import get_context
 
-# Methods that mutate state. ``readonly`` blocks these (and any private method).
-MUTATING_METHODS: frozenset[str] = frozenset(
+# Common ORM introspection methods allowed through execute_method in readonly mode.
+# Public addon methods can mutate state regardless of their name, so a blacklist
+# cannot provide a meaningful readonly boundary.
+READONLY_METHODS: frozenset[str] = frozenset(
     {
-        "create",
-        "write",
-        "unlink",
-        "copy",
-        "toggle_active",
-        "action_confirm",
-        "action_cancel",
-        "action_done",
-        "button_confirm",
-        "button_validate",
-        "commit",
-        "rollback",
-        "flush",
-        "_sql",
+        "search",
+        "read",
+        "search_read",
+        "search_count",
+        "read_group",
+        "fields_get",
+        "default_get",
+        "name_search",
+        "name_get",
+        "get_view",
+        "get_views",
+        "fields_view_get",
+        "check_access_rights",
+        "check_access_rule",
     }
 )
 
@@ -44,14 +46,14 @@ def _current_config() -> OdooBoostConfig | None:
 
 
 def enforce_method(method: str) -> None:
-    """Reject mutating ORM methods when readonly mode is enabled."""
+    """Allow only known read methods through arbitrary execution in readonly mode."""
     config = _current_config()
     if config is None or not config.readonly:
         return
     name = method.strip()
-    if name.startswith("_") or name in MUTATING_METHODS:
+    if name not in READONLY_METHODS:
         raise ToolError(
-            f"Method '{method}' is blocked because readonly mode is enabled. "
+            f"Method '{method}' is not on the readonly allowlist. "
             "Set 'readonly' to false in odoo-boost.json to allow it."
         )
 

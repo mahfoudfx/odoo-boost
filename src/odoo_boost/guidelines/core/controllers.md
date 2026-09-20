@@ -7,6 +7,9 @@
 - Always specify `website=True` for website-integrated routes.
 
 ### Route Definition
+Choose route type, response helpers, and decorator options from the configured Odoo
+version notes. The JSON example below applies where that version supports `type="json"`.
+
 ```python
 from odoo import http
 from odoo.http import request
@@ -23,8 +26,8 @@ class MyController(http.Controller):
         )
 
     @http.route("/api/data", type="json", auth="user")
-    def api_data(self, model_name, domain=None):
-        records = request.env[model_name].search_read(domain or [])
+    def api_data(self):
+        records = request.env["my.model"].search_read([], ["name"])
         return {"records": records}
 ```
 
@@ -32,7 +35,8 @@ class MyController(http.Controller):
 - Use `request.env` to access the ORM environment — it's pre-configured with the current user.
 - Return `request.render()` for HTML, return a dict for JSON routes.
 - Use `request.redirect()` for redirects.
-- Validate and sanitize all input parameters — controllers are the system boundary.
+- Validate and bound all input parameters — controllers are the system boundary. Never
+  accept an arbitrary model name, fields, domain, or sudo flag from a client.
 - Use `csrf=False` only for webhook endpoints that receive external POST requests.
 - Don't put business logic in controllers — call model methods instead.
 - Use `methods=['POST']` to restrict routes to specific HTTP methods when appropriate.

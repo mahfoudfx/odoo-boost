@@ -72,7 +72,7 @@ def uninstall(
 
         agent = agent_cls(config=cfg, project_path=project_path)
         removed_paths = agent.uninstall()
-        for p in (removed_paths or []):
+        for p in removed_paths or []:
             try:
                 rel = p.relative_to(project_path)
             except ValueError:

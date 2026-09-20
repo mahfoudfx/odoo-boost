@@ -8,6 +8,7 @@ local filesystem or spawn a local linter; they do not need a database.
 from __future__ import annotations
 
 import functools
+import xmlrpc.client
 from collections.abc import Callable
 from typing import Any
 
@@ -51,6 +52,14 @@ def resilient_live_tool(fn: ToolFn) -> ToolFn:
             return fn(*args, **kwargs)
         except ConnectionError as exc:
             raise ToolError(str(exc)) from exc
+        except xmlrpc.client.Fault as exc:
+            # Odoo XML-RPC faults include a Python traceback. Keep the useful
+            # access denial while avoiding a large traceback in the agent context.
+            marker = "odoo.exceptions.AccessError:"
+            if marker not in exc.faultString:
+                raise
+            message = exc.faultString.rsplit(marker, 1)[1].strip()
+            raise ToolError(f"Odoo access denied: {message[:500]}") from exc
 
     return wrapper
 
@@ -69,7 +78,6 @@ LIVE_TOOLS: tuple[ToolFn, ...] = (
     search_records,
     execute_method,
     read_log_entries,
-    search_docs,
     list_workflows,
     aggregate_records,
     resolve_xml_id,
@@ -81,6 +89,7 @@ LOCAL_TOOLS: tuple[ToolFn, ...] = (
     resolve_local_xml_id,
     lint_odoo_code,
     check_odoo_ls,
+    search_docs,
 )
 
 ALL_TOOLS: tuple[ToolFn, ...] = LIVE_TOOLS + LOCAL_TOOLS

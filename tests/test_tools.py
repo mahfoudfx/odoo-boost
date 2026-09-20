@@ -173,6 +173,41 @@ class TestListRoutes:
         result = json.loads(list_routes())
         assert "total" in result
         assert "routes" in result
+        assert "scope" in result
+
+    def test_rewrite_filter_uses_existing_fields(self, monkeypatch):
+        from unittest.mock import MagicMock
+
+        conn = MagicMock()
+        conn.search_read.return_value = []
+        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
+        list_routes(filter_url="shop")
+        rewrite_call = conn.search_read.call_args_list[1]
+        assert rewrite_call.kwargs["domain"] == [
+            "|",
+            ("url_from", "ilike", "shop"),
+            ("url_to", "ilike", "shop"),
+        ]
+
+    def test_unavailable_source_reported(self, monkeypatch):
+        from unittest.mock import MagicMock
+        from xmlrpc.client import Fault
+
+        conn = MagicMock()
+        conn.search_read.side_effect = [Fault(1, "AccessError: forbidden"), []]
+        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
+        result = json.loads(list_routes())
+        assert result["complete"] is False
+        assert result["unavailable"]["website.page"] == "access denied"
+
+    def test_connection_failure_is_not_reported_as_empty(self, monkeypatch):
+        from unittest.mock import MagicMock
+
+        conn = MagicMock()
+        conn.search_read.side_effect = ConnectionError("Odoo offline")
+        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
+        with pytest.raises(ConnectionError, match="Odoo offline"):
+            list_routes()
 
 
 # ---------------------------------------------------------------------------
@@ -252,6 +287,14 @@ class TestExecuteMethod:
         assert result["method"] == "name_search"
         assert "result" in result
 
+    @pytest.mark.parametrize(
+        ("args", "kwargs"),
+        [('"not an array"', "{}"), ("[]", '"not an object"')],
+    )
+    def test_rejects_invalid_argument_shapes(self, args, kwargs):
+        result = json.loads(execute_method("res.partner", "name_search", args=args, kwargs=kwargs))
+        assert "error" in result
+
 
 # ---------------------------------------------------------------------------
 # read_log_entries
@@ -285,19 +328,22 @@ class TestSearchDocs:
     def test_search_with_version(self):
         result = json.loads(search_docs(topic="views", version="17.0"))
         assert "results" in result
-        assert any("/17/" in r["url"] for r in result["results"])
+        assert any("/17.0/" in r["url"] for r in result["results"])
 
     def test_patch_version_normalized(self):
         result = json.loads(search_docs(topic="views", version="18.0.1"))
-        assert any("/18/" in r["url"] for r in result["results"])
+        assert any("/18.0/" in r["url"] for r in result["results"])
 
     def test_two_digit_major_version(self):
         result = json.loads(search_docs(topic="views", version="10.0"))
-        assert any("/10/" in r["url"] for r in result["results"])
+        assert result["supported"] is False
+        assert result["results"] == []
 
-    def test_invalid_version_defaults_to_18(self):
+    def test_invalid_version_does_not_guess(self):
         result = json.loads(search_docs(topic="views", version="latest"))
-        assert any("/18/" in r["url"] for r in result["results"])
+        assert result["supported"] is False
+        assert result["results"] == []
+        assert "warning" in result
 
     def test_no_match(self):
         result = json.loads(search_docs(topic="xyznonexistent"))
@@ -401,6 +447,26 @@ class TestLocalAddonTools:
 
 
 class TestLintAndLsTools:
+    @pytest.mark.parametrize(
+        ("version", "warns"),
+        [("16.0", False), ("17.0", True), ("20.0", False)],
+    )
+    def test_name_get_warning_is_version_specific(
+        self, tmp_path, monkeypatch, sample_config, version, warns
+    ):
+        import importlib
+
+        lint_module = importlib.import_module("odoo_boost.mcp_server.tools.lint_odoo_code")
+        source = tmp_path / "model.py"
+        source.write_text("class Model:\n    def name_get(self):\n        return []\n")
+        monkeypatch.setattr(
+            lint_module,
+            "active_config",
+            lambda: sample_config.model_copy(update={"odoo_version": version}),
+        )
+        result = lint_module._run_fallback_ast_lint(source)
+        assert any(issue.get("code") == "E8146" for issue in result["issues"]) is warns
+
     def test_lint_odoo_code(self, tmp_path):
         bad_file = tmp_path / "bad.py"
         bad_file.write_text(

@@ -1,10 +1,15 @@
 ---
 name: Automated Actions
-description: Create automated actions (base.automation) and server actions in Odoo.
+description: Create record-triggered base.automation and reusable server actions in Odoo.
 globs: ["data/**/*.xml", "__manifest__.py"]
 ---
 
 # Creating Automated Actions
+
+Use this skill for server actions and actions triggered by record events or automation
+rules. Use **Crons & Scheduled Actions** for recurring background jobs implemented with
+`ir.cron`; do not duplicate a scheduled job as a time-based automation without a clear
+business reason.
 
 ## Steps
 

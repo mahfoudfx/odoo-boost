@@ -59,5 +59,5 @@ This skill provides a rigorous review methodology for Odoo addons, ensuring comp
 
 ## 5. Views and XML
 - **List vs Tree**: For Odoo 18+, ensure `<list>` is used instead of deprecated `<tree>`.
-- **Search View Attributes**: Ensure no `string` or `expand` attributes on `<group>` inside search views (v18+).
-- **Inline Expressions**: Ensure `invisible="state != 'draft'"` instead of `attrs="{'invisible': ...}"`.
+- **Search View Attributes**: Ensure no `string` or `expand` attributes on `<group>` inside search views (Odoo 19).
+- **Inline Expressions (Odoo 17+)**: Ensure `invisible="state != 'draft'"` instead of `attrs="{'invisible': ...}"`.

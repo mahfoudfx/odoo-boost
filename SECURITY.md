@@ -39,12 +39,12 @@ credentials you provide. Keep the following in mind:
   `--token` / `ODOO_BOOST_MCP_TOKEN`). Generated HTTP client configs embed the
   token, so treat those files as secrets as well.
 - **`readonly` and `allowed_roots` are guardrails, not a sandbox.** `readonly`
-  blocks known mutating/private methods on `execute_method`; `allowed_roots`
+  allows only known read/metadata methods on `execute_method`; `allowed_roots`
   confines the local file tools. Odoo access rights remain the source of truth
   for ORM operations, and the OS user governs file access.
 - **`execute_method` can call arbitrary public ORM methods** with the
   permissions of the configured Odoo user. Enable `readonly` or use a
   restricted user when running untrusted prompts.
 - **Local tools (`inspect_local_addon`, `lint_odoo_code`, `resolve_local_xml_id`,
-  `check_odoo_ls`)** read files and may spawn local processes (`pylint-odoo`,
+  `check_odoo_ls`, `search_docs`)** read bundled data or files and may spawn local processes (`pylint-odoo`,
   `odoo-ls`). Set `allowed_roots` to confine them to your project directory.

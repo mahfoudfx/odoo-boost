@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import importlib.resources
+from pathlib import Path
 
-from packaging.version import InvalidVersion, Version
-from packaging.version import parse as parse_version
+from odoo_boost.versions import get_version_profile, version_guidance
 
 _CORE_FILES = [
     "operating_rules.md",
@@ -28,6 +28,57 @@ def _read_resource(subpath: str) -> str:
     return ref.read_text(encoding="utf-8")
 
 
+def _version_file(version: str | None) -> str | None:
+    profile = get_version_profile(version)
+    return profile.guideline_file if profile else None
+
+
+def compose_agent_guidelines(version: str | None, reference_dir: str) -> str:
+    """Full expert guidelines, with a supplementary index for targeted references."""
+    lines = [
+        compose_guidelines(version).rstrip(),
+        "",
+        "## Reference files and skills",
+        "",
+        "The expert guidelines above are included in full. Topic copies are available below.",
+        "Paths below are relative to the project root.",
+        f"Skill catalog: `{Path(reference_dir).parent.as_posix()}/SKILLS_ROUTING.md`.",
+        "Load specialized skills when relevant to the task.",
+        "",
+    ]
+    for filename in _CORE_FILES:
+        if filename == "operating_rules.md":
+            continue
+        title = next(
+            (
+                line.lstrip("# ").strip()
+                for line in _read_resource(filename).splitlines()
+                if line.startswith("#")
+            ),
+            filename.removesuffix(".md"),
+        )
+        lines.append(f"- {title}: `{reference_dir}/{filename}`")
+    version_file = _version_file(version)
+    if version_file:
+        lines.append(f"- Odoo {version} version notes: `{reference_dir}/{version_file}`")
+    return "\n".join(lines) + "\n"
+
+
+def install_guideline_references(target_dir: Path, version: str | None) -> list[Path]:
+    """Write topic files used by the compact generated agent instructions."""
+    filenames = list(_CORE_FILES)
+    version_file = _version_file(version)
+    if version_file:
+        filenames.append(version_file)
+    created = []
+    for filename in filenames:
+        path = target_dir / filename
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(_read_resource(filename), encoding="utf-8")
+        created.append(path)
+    return created
+
+
 def compose_guidelines_index(version: str | None = None) -> str:
     """Return a compact index (titles and top headings) of the guidelines.
 
@@ -36,8 +87,9 @@ def compose_guidelines_index(version: str | None = None) -> str:
     lines = [
         "# Odoo Boost Guidelines Index",
         "",
-        "Compact index. Load the full guidelines from the `odoo://guidelines/oca`",
-        "resource or the generated `AGENTS.md`.",
+        "Use the generated agent instructions to find local topic references.",
+        "The `odoo://guidelines/oca` resource contains the full reference when needed.",
+        version_guidance(version),
         "",
     ]
 
@@ -85,20 +137,12 @@ def compose_guidelines(version: str | None = None) -> str:
         parts.append(content.strip())
         parts.append("")  # blank line separator
 
-    # Version-specific addendum
-    if version:
-        try:
-            parsed = parse_version(str(version))
-            major = str(parsed.major) if isinstance(parsed, Version) else str(version).split(".")[0]
-        except (InvalidVersion, TypeError):
-            major = str(version).split(".")[0]
+    parts.append(version_guidance(version))
 
-        version_file = f"versions/v{major}.md"
-        try:
-            version_content = _read_resource(version_file)
-            parts.append(version_content.strip())
-            parts.append("")
-        except (FileNotFoundError, TypeError):
-            pass  # No version-specific guidelines available
+    # Version-specific addendum
+    version_file = _version_file(version)
+    if version_file:
+        parts.append(_read_resource(version_file).strip())
+        parts.append("")
 
     return "\n\n".join(parts) + "\n"

@@ -76,6 +76,8 @@ def get_skill_category(skill_name: str) -> str:
 
 def load_skill(skill_name: str) -> str:
     """Read and return the SKILL.md content for a skill."""
+    if skill_name not in _SKILL_DIRS:
+        raise FileNotFoundError(f"Unknown bundled skill: {skill_name}")
     ref = importlib.resources.files("odoo_boost.skills") / skill_name / "SKILL.md"
     return ref.read_text(encoding="utf-8")
 
@@ -105,12 +107,15 @@ def parse_skill_metadata(skill_name: str) -> dict[str, str]:
     for key in ("name", "description", "globs"):
         value = data.get(key)
         if value is not None:
-            meta[key] = str(value).strip()
+            if key == "globs" and isinstance(value, list):
+                meta[key] = ", ".join(str(item).strip() for item in value)
+            else:
+                meta[key] = str(value).strip()
 
     return meta
 
 
-def generate_skills_routing() -> str:
+def generate_skills_routing(category: str | None = None) -> str:
     """Generate a markdown routing table summarizing all available skills.
 
     This table serves as a fast-lookup index for LLM agents to progressively
@@ -125,11 +130,11 @@ def generate_skills_routing() -> str:
         "|---|---|---|---|",
     ]
 
-    for skill_name in _SKILL_DIRS:
+    for skill_name in list_skills(category=category):
         meta = parse_skill_metadata(skill_name)
         category = get_skill_category(skill_name)
         globs = meta.get("globs", "-") or "-"
-        desc = meta.get("description", "")
+        desc = meta.get("description", "").replace("|", "\\|").replace("\n", " ")
         lines.append(f"| `{skill_name}` | {category} | `{globs}` | {desc} |")
 
     lines.append("")
@@ -160,7 +165,7 @@ def install_skills(
 
     if write_routing:
         routing_file = target_dir / "SKILLS_ROUTING.md"
-        routing_file.write_text(generate_skills_routing(), encoding="utf-8")
+        routing_file.write_text(generate_skills_routing(category=category), encoding="utf-8")
         created.append(routing_file)
 
     return created

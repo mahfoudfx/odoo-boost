@@ -1,8 +1,9 @@
-"""MCP tool: list_routes – website pages and known controller routes."""
+"""MCP tool: list_routes – website pages and URL rewrites."""
 
 from __future__ import annotations
 
 import logging
+import xmlrpc.client
 
 from odoo_boost.mcp_server.context import get_connection
 from odoo_boost.mcp_server.tools._common import json_response
@@ -14,7 +15,10 @@ def list_routes(
     filter_url: str = "",
     limit: int = 100,
 ) -> str:
-    """List website pages and known controller routes.
+    """List website pages and URL rewrites visible through the ORM.
+
+    This does not enumerate Python controller decorators. Source status reports
+    unavailable website models and permission failures explicitly.
 
     Args:
         filter_url: Optional substring filter on URL path.
@@ -23,6 +27,7 @@ def list_routes(
     conn = get_connection()
 
     routes: list[dict] = []
+    unavailable: dict[str, str] = {}
 
     # 1. Try website.page (if website module is installed)
     try:
@@ -46,14 +51,19 @@ def list_routes(
                     "published": p.get("is_published", False),
                 }
             )
-    except Exception as exc:  # website module not installed
+    except xmlrpc.client.Fault as exc:
         logger.debug("website.page unavailable: %s", exc)
+        unavailable["website.page"] = (
+            "access denied" if "AccessError" in exc.faultString else "model unavailable"
+        )
 
     # 2. Try ir.http routing rules (available on all versions)
     try:
         domain = []
         if filter_url:
-            domain.append(("url", "ilike", filter_url))
+            domain.append("|")
+            domain.append(("url_from", "ilike", filter_url))
+            domain.append(("url_to", "ilike", filter_url))
 
         url_rewrites = conn.search_read(
             "website.rewrite",
@@ -70,11 +80,17 @@ def list_routes(
                     "name": r.get("name", ""),
                 }
             )
-    except Exception as exc:  # model may not exist
+    except xmlrpc.client.Fault as exc:
         logger.debug("website.rewrite unavailable: %s", exc)
+        unavailable["website.rewrite"] = (
+            "access denied" if "AccessError" in exc.faultString else "model unavailable"
+        )
 
     result = {
         "total": len(routes),
         "routes": routes,
+        "unavailable": unavailable,
+        "complete": not unavailable,
+        "scope": "website.page and website.rewrite ORM records only; Python controllers excluded",
     }
     return json_response(result)
