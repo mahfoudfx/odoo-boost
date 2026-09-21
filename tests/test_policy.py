@@ -55,8 +55,17 @@ class TestEnforceMethod:
 
 
 class TestEnforcePath:
-    def test_no_roots_allows_anything(self, policy_config, tmp_path: Path):
-        policy_config(allowed_roots=[])
+    def test_external_paths_require_explicit_opt_in(self, policy_config, tmp_path: Path):
+        policy_config(
+            project_path=str(tmp_path),
+            allowed_roots=[],
+            allow_external_local_paths=False,
+        )
+        with pytest.raises(ToolError):
+            enforce_path("/etc/hosts")
+
+    def test_external_path_opt_in_allows_anything(self, policy_config, tmp_path: Path):
+        policy_config(allowed_roots=[], allow_external_local_paths=True)
         outside = Path("/etc/hosts")
         assert enforce_path(str(outside)) == outside.resolve()
 
@@ -85,3 +94,17 @@ class TestToolIntegration:
         policy_config(allowed_roots=[str(tmp_path)])
         with pytest.raises(ToolError):
             inspect_local_addon("/etc")
+
+    def test_inspect_refuses_directory_without_addon_manifest(
+        self, policy_config, tmp_path: Path
+    ):
+        policy_config(allowed_roots=[str(tmp_path)])
+        (tmp_path / "model.py").write_text("from odoo import models\n")
+        result = json.loads(inspect_local_addon(str(tmp_path)))
+        assert "Refusing broad recursive scan" in result["error"]
+
+    def test_collection_scan_requires_explicit_override(self, policy_config, tmp_path: Path):
+        policy_config(allowed_roots=[str(tmp_path)])
+        (tmp_path / "model.py").write_text("from odoo import models\n")
+        result = json.loads(inspect_local_addon(str(tmp_path), allow_collection_scan=True))
+        assert result["python_files_count"] == 1

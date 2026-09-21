@@ -140,6 +140,8 @@ def sample_config(sample_connection_config: OdooConnectionConfig) -> OdooBoostCo
         odoo_version="18.0",
         agents=["claude_code", "cursor"],
         project_path=".",
+        # Unit tests create temporary addon paths outside the repository.
+        allow_external_local_paths=True,
     )
 
 

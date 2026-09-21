@@ -144,7 +144,11 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # Tools Registration (see mcp_server/registry.py for the tool inventory)
     # -------------------------------------------------------------------------
     lean = config.lean_tools
-    call_guard = ConsecutiveCallGuard(config.max_consecutive_identical_calls)
+    call_guard = ConsecutiveCallGuard(
+        config.max_consecutive_identical_calls,
+        config.max_repeated_calls_per_window,
+        config.repeated_call_window_size,
+    )
     for tool in LIVE_TOOLS:
         if is_enabled(tool, lean=lean):
             mcp.tool()(_bind_handler(resilient_live_tool(tool), context, call_guard))

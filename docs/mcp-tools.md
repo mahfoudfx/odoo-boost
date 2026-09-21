@@ -29,11 +29,15 @@ check the individual tool signature for full-output support.
 
 Targeted single-object queries (e.g. `list_views(view_id=…)`,
 `inspect_local_addon(model=…)`) return full detail for the requested object.
+`inspect_local_addon` accepts an exact addon directory by default and refuses a
+recursive scan when that directory has no addon manifest. Broad collection or
+Odoo-core audits require the explicit `allow_collection_scan=true` argument and
+must still satisfy the configured filesystem boundary.
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
 `max_response_chars` (default 40000, `0` disables), `redact_config_secrets`
-(default `true`), and `lean_tools` (default `false`, all 23 tools registered;
-`true` opts into 8 common tools). Per-call `response_format` controls detail
+(default `true`), and `lean_tools` (default `true`, 8 common tools registered;
+set `false` to expose all 23 tools). Per-call `response_format` controls detail
 where supported. Oversized responses are replaced by a bounded
 `{ "truncated": true, "full_length": …, "preview": … }` envelope. Narrow the
 query or increase `max_response_chars` to see more.

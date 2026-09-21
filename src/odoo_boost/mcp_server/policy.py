@@ -61,13 +61,16 @@ def enforce_method(method: str) -> None:
 def enforce_path(raw_path: str) -> Path:
     """Resolve *raw_path* and ensure it lives under one of ``allowed_roots``.
 
-    When ``allowed_roots`` is empty (default) no confinement is applied.
+    Explicit ``allowed_roots`` take precedence. Otherwise the configured project
+    path is the boundary unless external local paths were deliberately enabled.
     """
     path = Path(raw_path).expanduser()
     path = path.resolve() if path.is_absolute() else (Path.cwd() / path).resolve()
 
     config = _current_config()
     roots = config.allowed_roots if config else []
+    if config and not roots and not config.allow_external_local_paths:
+        roots = [config.project_path]
     if not roots:
         return path
 

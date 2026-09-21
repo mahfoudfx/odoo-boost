@@ -30,6 +30,7 @@ def inspect_local_addon(
     model: str = "",
     xml_id: str = "",
     response_format: str | None = None,
+    allow_collection_scan: bool = False,
 ) -> str:
     """Analyze a local Odoo addon directory on disk without requiring database installation.
 
@@ -43,12 +44,24 @@ def inspect_local_addon(
         model: Optional technical model name to return in full detail.
         xml_id: Optional XML ID to locate in the addon's XML files.
         response_format: 'compact' (default) or 'full'.
+        allow_collection_scan: Explicitly allow recursive scanning when addon_path has no
+            __manifest__.py/__openerp__.py. Keep false for normal addon development.
     """
     full = resolve_full(response_format)
 
     path = enforce_path(addon_path)
     if not path.exists():
         return error_response(f"Path '{addon_path}' does not exist.")
+    if not path.is_dir():
+        return error_response(f"Path '{addon_path}' is not a directory.")
+
+    has_manifest = (path / "__manifest__.py").is_file() or (path / "__openerp__.py").is_file()
+    if not has_manifest and not allow_collection_scan:
+        return error_response(
+            f"Refusing broad recursive scan of '{addon_path}': no Odoo addon manifest was "
+            "found at this directory. Pass the exact addon directory. For an intentional "
+            "collection/core audit, set allow_collection_scan=true explicitly."
+        )
 
     if xml_id:
         found = find_local_xml_id(path, xml_id)

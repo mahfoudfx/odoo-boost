@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-21
+
+### Added
+
+- Three-level adaptive agent workflow: unconditional first-pass coding, medium
+  effort for bounded coupled work, and high effort for production readiness and
+  high-risk changes. Generated instructions include explicit edit-or-escalate
+  and post-edit stop conditions.
+- Rolling MCP repeated-call protection, which blocks identical requests even
+  when an agent alternates them with other tools.
+- Explicit opt-outs for deliberate broad source inspection:
+  `allow_external_local_paths` in configuration and
+  `allow_collection_scan` on `inspect_local_addon`.
+
+### Changed
+
+- New configurations advertise the lean eight-tool MCP profile by default.
+- Local MCP file tools are confined to `project_path` by default when no
+  `allowed_roots` are configured.
+- `inspect_local_addon` now requires an addon manifest by default, preventing
+  accidental recursive scans of Odoo core, addon collections, and workspace
+  roots.
+- Documentation now distinguishes advisory model workflow rules from enforceable
+  MCP limits and notes that native file, search, shell, test, and model-turn
+  activity remains outside Odoo Boost's control.
+
 ## [0.9.0] - 2026-09-21
 
 ### Changed

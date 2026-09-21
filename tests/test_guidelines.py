@@ -95,8 +95,12 @@ def test_generated_agent_guidelines_route_to_full_expert_content(tmp_path):
     content = compose_agent_guidelines("18.0", reference_dir)
     created = install_guideline_references(tmp_path / reference_dir, "18.0")
 
-    assert "Fast mode (default for small iterative edits)" in content
-    assert "## Deep mode" in content
+    assert "First-pass coding (default)" in content
+    assert "## Medium effort" in content
+    assert "## High effort" in content
+    assert "configured Odoo version" in content
+    assert "Every task starts" in content
+    assert "native file reads" in content
     assert "list_view_tag: list" in content
     assert len(content) < len(compose_guidelines("18.0")) / 3
     assert compose_guidelines("18.0").strip() not in content

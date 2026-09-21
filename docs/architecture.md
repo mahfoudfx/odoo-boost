@@ -71,11 +71,13 @@ delta note → task-specific skill or tool. Unknown series receive shared topics
 and an uncertainty warning rather than inheriting the newest release. See
 [version support](versions.md) for the onboarding sequence.
 
-The generated router selects fast mode automatically for small field, label,
-translation, and view edits. It keeps version facts active but avoids MCP calls,
-plans, broad scans, and unrelated skills. Deep mode progressively loads the same
-expert material for new modules, coupled workflows, security, migrations,
-audits, and failed simple attempts.
+The generated router selects first-pass coding automatically for small field,
+label, translation, and view edits. It keeps version facts active but avoids MCP
+calls, plans, broad scans, and unrelated skills. Medium effort covers bounded
+multi-file features, localized refactoring, and packaging with focused checks.
+High effort progressively loads expert material for broad refactors, production
+readiness, security, migrations, audits, accounting/stock integrity, and failed
+lower-effort attempts.
 
 For stdio, `mcp_target: "auto"` writes the native config plus a `*.windows.*`
 companion that wraps the interpreter in `wsl.exe`. For `mcp_transport: "http"`,

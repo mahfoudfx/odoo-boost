@@ -51,11 +51,12 @@ During `odoo-boost install`, Odoo Boost detects your server version and writes i
 ```
 
 When building agent guidelines, the composer:
-1. Writes a compact automatic mode router plus effective compatibility rules.
-2. Uses fast mode for small view, field, label, and translation edits, normally
+1. Writes a compact automatic effort router plus effective compatibility rules.
+2. Uses first-pass coding for small view, field, label, and translation edits, normally
    within two to four tool calls.
-3. Escalates new modules, cross-model logic, security, migrations, audits, and
-   failed simple attempts to deep mode.
+3. Uses medium effort for bounded cross-model features, localized refactoring,
+   and packaging; high effort covers production readiness, security, migrations,
+   audits, and failed lower-effort attempts.
 4. Installs all 11 expert topics and the matching version note under the agent's
    `guidelines/` directory for selective loading. Unknown series keep an explicit
    uncertainty notice.

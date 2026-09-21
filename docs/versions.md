@@ -14,7 +14,7 @@ explicit baseline and parent-linked `VersionSpec` entries with only changed
 compatibility facts and documentation paths. `get_version_profile()` resolves
 these into an immutable effective profile. Generated instructions always include
 the target's small effective-rule summary. Detailed expert topics, the matching
-release note, and specialized skills are loaded on demand in deep mode. Older
+release note, and specialized skills are loaded progressively in medium or high effort. Older
 release notes are not concatenated:
 that would reintroduce removed APIs as current advice.
 

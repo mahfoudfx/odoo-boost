@@ -147,6 +147,7 @@ class TestOdooBoostConfig:
         assert cfg.mcp_token is None
         assert cfg.readonly is False
         assert cfg.allowed_roots == []
+        assert cfg.allow_external_local_paths is False
         assert cfg.mcp_http_url is None
         assert cfg.odoo_ls_path is None
 
@@ -159,9 +160,11 @@ class TestOdooBoostConfig:
         assert cfg.compact_responses is True
         assert cfg.max_response_chars == 40000
         assert cfg.redact_config_secrets is True
-        assert cfg.lean_tools is False
+        assert cfg.lean_tools is True
         assert cfg.cache_local_scans is True
         assert cfg.max_consecutive_identical_calls == 2
+        assert cfg.max_repeated_calls_per_window == 2
+        assert cfg.repeated_call_window_size == 12
 
     def test_compaction_fields_roundtrip(self, sample_connection_config):
         cfg = OdooBoostConfig(
@@ -172,6 +175,8 @@ class TestOdooBoostConfig:
             lean_tools=True,
             cache_local_scans=False,
             max_consecutive_identical_calls=4,
+            max_repeated_calls_per_window=3,
+            repeated_call_window_size=10,
         )
         restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
         assert restored.compact_responses is False
@@ -180,6 +185,8 @@ class TestOdooBoostConfig:
         assert restored.lean_tools is True
         assert restored.cache_local_scans is False
         assert restored.max_consecutive_identical_calls == 4
+        assert restored.max_repeated_calls_per_window == 3
+        assert restored.repeated_call_window_size == 10
 
     def test_negative_identical_call_limit_is_rejected(self, sample_connection_config):
         with pytest.raises(ValidationError):
@@ -194,11 +201,13 @@ class TestOdooBoostConfig:
             mcp_token="tok",
             readonly=True,
             allowed_roots=["/srv/addons"],
+            allow_external_local_paths=True,
         )
         restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
         assert restored.mcp_token == "tok"
         assert restored.readonly is True
         assert restored.allowed_roots == ["/srv/addons"]
+        assert restored.allow_external_local_paths is True
 
 
 # ---------------------------------------------------------------------------

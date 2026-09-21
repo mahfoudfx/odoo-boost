@@ -11,7 +11,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 
 ## Highlights
 
-- **23 MCP Tools, Resources & Prompts** — All tools are available by default; opt into an 8-tool profile with `lean_tools=true`. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **23 MCP Tools, Resources & Prompts** — An 8-tool lean profile is advertised by default; set `lean_tools=false` to expose all 23. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **12 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie, Zed.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
@@ -103,7 +103,13 @@ odoo-boost lint ./addons/my_custom_addon
 Your AI assistant is now configured. Odoo Boost selects the appropriate depth
 from the request; no mode keyword or special prompt syntax is required.
 
-For small iterative changes, it uses **fast mode** with the active Odoo version
+Every task starts in first-pass coding. The generated router is behavioral guidance,
+not guaranteed enforcement: Gemini 3.7/3.8 may still produce heavy tool loops even
+at low effort. Odoo Boost enforces compact responses, a lean MCP surface,
+and repeated-call guards only for its own MCP server; native file/search/shell/test
+calls and total model turns remain outside its control.
+
+For small iterative changes, it uses **first-pass coding** with the active Odoo version
 rules and minimal context/tool calls. Example prompts:
 
 - "Rename the `Reference` label to `Order Reference`."
@@ -112,9 +118,11 @@ rules and minimal context/tool calls. Example prompts:
 - "Translate this label into French."
 - "Make this field readonly when the order is confirmed."
 
-For coupled or higher-risk work, it uses **deep mode** and progressively loads
-the relevant expert guidelines, skills, source context, and MCP tools. Example
-prompts:
+For bounded multi-file features, localized refactoring, and packaging it uses
+**medium effort** with focused validation. Broad refactors, production/release
+readiness, migrations, audits, accounting/stock integrity, and other high-risk
+work use **high effort** and progressively load the relevant expert guidelines,
+skills, source context, and MCP tools. Example prompts:
 
 - "Create a complete rental management module."
 - "Implement multi-company approval for purchase orders."
@@ -211,8 +219,8 @@ generated configs handle it two ways:
   localhost forwarding.
 
 Security guardrails: `odoo-boost.json` is written `0600`, `readonly` blocks
-mutating `execute_method` calls, and `allowed_roots` confines the local file
-tools. See [Configuration](docs/configuration.md#security-notes).
+mutating `execute_method` calls, and local file tools are confined to the project
+root by default. See [Configuration](docs/configuration.md#security-notes).
 
 Regenerate for a specific platform at any time:
 

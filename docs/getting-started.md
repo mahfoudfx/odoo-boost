@@ -73,10 +73,10 @@ The wizard will:
 5. **Generate files**: Creates guidelines, MCP configs, 23 skills, and the `SKILLS_ROUTING.md` index.
 
 Generated instructions choose an execution depth automatically. Small iterative
-edits use fast mode with the configured Odoo version rules and a 2–4 call target.
-Complex modules, cross-model behavior, security, migrations, and audits switch to
-deep mode and load relevant expert topics and skills progressively. No prompt
-prefix or mode keyword is required.
+edits use first-pass coding with the configured Odoo version rules and a 2–4 call
+target. Bounded multi-file work uses medium effort; production readiness, broad
+refactors, security, migrations, and audits use high effort and progressively
+load relevant expert topics and skills. No prompt prefix or mode keyword is required.
 
 ---
 

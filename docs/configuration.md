@@ -74,14 +74,17 @@ Path to the project root directory. Default: `"."`.
 | `mcp_command` | string[] | — | Advanced: full stdio command override, used verbatim. |
 | `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
 | `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |
-| `allowed_roots` | string[] | `[]` | Restrict `inspect_local_addon` and `lint_odoo_code` to these roots. Empty means no confinement. |
+| `allowed_roots` | string[] | `[]` | Restrict local file tools to these roots. Empty uses `project_path` as the effective root by default. |
+| `allow_external_local_paths` | bool | `false` | Allow file tools outside `project_path` when `allowed_roots` is empty. Enable only for deliberate shared-source inspection. |
 | `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed user-bin location. |
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
-| `lean_tools` | bool | `false` | Register all 23 tools by default. Set `true` to advertise only 8 common tools. Saved explicit values are preserved. |
+| `lean_tools` | bool | `true` | Advertise only 8 common MCP tools by default. Set `false` to register all 23. Saved explicit values are preserved. |
 | `cache_local_scans` | bool | `true` | Reuse parsed local addon results until a relevant Python/XML file timestamp or size changes. |
 | `max_consecutive_identical_calls` | int | `2` | Block a third consecutive MCP call with the same tool and arguments. Any different call resets the counter; `0` disables. |
+| `max_repeated_calls_per_window` | int | `2` | Block the third identical MCP request in the rolling window, even if the model alternates tools; `0` disables. |
+| `repeated_call_window_size` | int | `12` | Number of recent MCP calls considered by the rolling repetition guard; `0` disables it. |
 
 ### Token efficiency
 
@@ -97,12 +100,14 @@ its `response_format="full"` explicitly bypasses that cap. See
 Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
 so the server works regardless of the working directory the IDE chooses.
 
-Generated agent rules also set investigation budgets: routine work should stay
-within eight tool calls, complex work must reassess every eight calls, and work
-stops at 24 unless an exhaustive audit was requested or new evidence justifies
-continuing. These are agent instructions because Odoo Boost cannot observe an
+Generated agent rules also set investigation budgets: first-pass work normally
+uses 2-4 tool calls, medium work aims for 5-10, and high-effort work reassesses
+every eight calls and stops at 24 unless an exhaustive audit was requested or new
+evidence justifies continuing. These are agent instructions because Odoo Boost cannot observe an
 agent's native file reads or iterations. The MCP server independently enforces
-identical-call loop detection, and local addon scans are cached by file metadata.
+consecutive and rolling repeated-call detection, and local addon scans are cached
+by file metadata. It cannot observe or cap native editor reads/searches, shell
+commands, tests, model turns, or total tool calls across an agent task.
 
 ### WSL + Windows IDEs
 
@@ -144,8 +149,8 @@ path. Two supported setups:
   contains the Odoo password plus any MCP token in plaintext. Keep it out of
   version control (`odoo-boost install` appends it to an existing `.gitignore`).
 - Prefer an Odoo API key over a password and use a dedicated technical user.
-- `readonly` and `allowed_roots` are guardrails against accidental destructive
-  agent calls. They are **not** a sandbox; Odoo access rights remain the source
+- `readonly` and the project/allowed-root boundary are guardrails against accidental
+  destructive or broad file-tool calls. They are **not** a sandbox; Odoo access rights remain the source
   of truth for ORM operations.
 - The token may be embedded in generated MCP config files (`.vscode/mcp.json`,
   `.cursor/mcp.json`, …). Those paths are gitignored by default; verify before

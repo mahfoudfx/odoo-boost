@@ -188,18 +188,14 @@ def install(
 
     # --- Step 4c: Tool hardening (opt-in) ---
     readonly = False
-    allowed_roots: list[str] = []
+    allowed_roots: list[str] = [str(project_path)]
     if generate_mcp:
         console.print("\n[bold]Step 4c:[/] Tool hardening (optional)\n")
         readonly = Confirm.ask(
             "  Enable readonly mode? (blocks mutating execute_method calls)",
             default=False,
         )
-        if Confirm.ask(
-            "  Restrict local file tools to the project root?",
-            default=False,
-        ):
-            allowed_roots = [str(project_path)]
+        console.print("  Local file tools are restricted to the project root by default.")
 
     # --- Step 5: Generate config + files ---
     console.print("\n[bold]Step 5:[/] Generating files…\n")

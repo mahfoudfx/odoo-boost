@@ -4,7 +4,7 @@
 
 - Run `odoo-boost update` after upgrading the package. This refreshes the generated agent guidelines and XML view skill; existing generated files do not change by themselves.
 - For a source-only change, the agent should locate the relevant files, edit them, and inspect the diff. Live Odoo queries are useful when the task depends on current database state.
-- New configurations expose all 23 tools. Set `"lean_tools": true` to advertise 8 common tools when schema overhead matters. To use omitted tools such as `list_views` and `list_access_rights`, set it to `false`.
+- New configurations advertise 8 common tools. To use omitted tools such as `list_views` and `list_access_rights`, set `"lean_tools": false` to expose all 23.
 - `compact_responses` and `max_response_chars` limit individual MCP outputs.
   `max_consecutive_identical_calls` blocks mechanical repetition of one call,
   while generated instructions impose investigation budgets and prevent repeated
@@ -119,9 +119,10 @@ explicit `-c <path>`, so regenerate the config; or pass `--config` manually.
   them, Odoo Boost falls back
   to the built-in AST scanner. Install with `pip install "odoo-boost[lint]"` for
   `pylint-odoo`.
-- File tools respect `allowed_roots`. If a tool reports a path outside the
-  allowed roots, widen the list in `odoo-boost.json` or clear it to disable
-  confinement.
+- File tools use `project_path` as their default boundary and respect explicit
+  `allowed_roots`. If a tool reports a path outside the allowed roots, widen the
+  list in `odoo-boost.json`; use `allow_external_local_paths=true` only when
+  unrestricted shared-source inspection is intentional.
 
 ## Debugging
 

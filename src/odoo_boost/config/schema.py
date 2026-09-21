@@ -92,7 +92,14 @@ class OdooBoostConfig(BaseModel):
         default_factory=list,
         description=(
             "Restrict file-based tools (inspect_local_addon, lint_odoo_code) to these "
-            "roots. Empty means no confinement (default)."
+            "roots. Empty uses project_path unless allow_external_local_paths is enabled."
+        ),
+    )
+    allow_external_local_paths: bool = Field(
+        default=False,
+        description=(
+            "Allow local file tools outside project_path when allowed_roots is empty. "
+            "Enable only for deliberate shared-source inspection."
         ),
     )
     odoo_ls_path: str | None = Field(
@@ -119,7 +126,7 @@ class OdooBoostConfig(BaseModel):
         description="Redact secret-looking ir.config_parameter values in get_config.",
     )
     lean_tools: bool = Field(
-        default=False,
+        default=True,
         description=(
             "Register only a small commonly used subset of MCP tools to reduce tool-schema "
             "overhead per model turn."
@@ -136,4 +143,17 @@ class OdooBoostConfig(BaseModel):
             "Block an MCP tool after this many consecutive calls with identical arguments "
             "(0 disables loop detection)."
         ),
+    )
+    max_repeated_calls_per_window: int = Field(
+        default=2,
+        ge=0,
+        description=(
+            "Block an identical MCP request after this many occurrences in the recent-call "
+            "window, even when other calls occur between them (0 disables)."
+        ),
+    )
+    repeated_call_window_size: int = Field(
+        default=12,
+        ge=0,
+        description="Number of recent MCP calls used by repeated-call loop detection.",
     )

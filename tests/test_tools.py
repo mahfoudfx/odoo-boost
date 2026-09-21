@@ -530,7 +530,7 @@ class TestMcpServerV2:
 
         # Verify tools count
         tools = await server.list_tools()
-        assert len(tools) == 23
+        assert len(tools) == 8
 
     @pytest.mark.anyio
     async def test_server_resilient_when_odoo_offline(
@@ -549,7 +549,7 @@ class TestMcpServerV2:
         # Server must start successfully without crashing
         server = create_mcp_server(sample_config)
         tools = await server.list_tools()
-        assert len(tools) == 23
+        assert len(tools) == 8
 
     @pytest.mark.anyio
     async def test_live_tool_error_when_offline(self, monkeypatch, mock_connection, sample_config):
