@@ -1,5 +1,5 @@
 ---
-name: Model & View Inheritance Mechanisms
+name: domain-inheritance
 description: Detailed guide to Odoo classical inheritance, prototype inheritance, delegation inheritance, and XPath view extensions.
 globs: ["models/**/*.py", "views/**/*.xml"]
 ---

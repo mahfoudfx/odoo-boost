@@ -1,5 +1,5 @@
 ---
-name: Multi-Company Domain Patterns
+name: domain-multi-company
 description: Patterns and best practices for building multi-company aware models, record rules, and company-dependent fields.
 globs: ["models/**/*.py", "security/**/*.xml"]
 ---

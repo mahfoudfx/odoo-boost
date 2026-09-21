@@ -23,6 +23,7 @@ class AgentSpec:
     guidelines_path: tuple[str, ...]
     mcp_config_path: tuple[str, ...]
     skills_dir: tuple[str, ...]
+    legacy_skills_dirs: tuple[tuple[str, ...], ...] = ()
     mcp_format: McpFormat = "mcpServers"
     cursor_rules: bool = False
     remote_url_key: RemoteUrlKey = "url"
@@ -44,7 +45,8 @@ AGENT_SPECS: dict[str, AgentSpec] = {
         display_name="Claude Code",
         guidelines_path=("CLAUDE.md",),
         mcp_config_path=(".mcp.json",),
-        skills_dir=(".ai", "skills"),
+        skills_dir=(".claude", "skills"),
+        legacy_skills_dirs=((".ai", "skills"),),
     ),
     "cursor": AgentSpec(
         id="cursor",
@@ -67,7 +69,11 @@ AGENT_SPECS: dict[str, AgentSpec] = {
         display_name="Pi Coding Agent",
         guidelines_path=("AGENTS.md",),
         mcp_config_path=(".pi", "mcp.json"),
-        skills_dir=(".pi", "skills"),
+        # Pi discovers both .pi/skills and .agents/skills.  Keep Odoo Boost
+        # skills in the shared location so selecting Pi alongside another
+        # agent does not make Pi load every skill twice.
+        skills_dir=(".agents", "skills"),
+        legacy_skills_dirs=((".pi", "skills"),),
     ),
     "hermes": AgentSpec(
         id="hermes",

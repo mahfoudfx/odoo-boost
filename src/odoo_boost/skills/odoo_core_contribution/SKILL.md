@@ -1,5 +1,5 @@
 ---
-name: Odoo Core Contribution
+name: odoo-core-contribution
 description: Apply official Odoo house rules when changing or reviewing the upstream community or enterprise source trees; do not use stable-branch restrictions as generic custom-addon policy.
 globs: ["odoo/**/*.py", "addons/**/*", "odoo/addons/**/*"]
 ---

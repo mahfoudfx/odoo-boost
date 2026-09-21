@@ -1,5 +1,5 @@
 ---
-name: Odoo Pattern Library
+name: pattern-library
 description: Find focused implementation patterns for fields, workflows, business domains, integrations, performance, migration, and troubleshooting.
 globs: ["**/*.py", "**/*.xml", "**/*.csv", "**/*.js", "__manifest__.py"]
 ---

@@ -1,5 +1,5 @@
 ---
-name: OWL Components
+name: owl-components
 description: Create custom OWL (Odoo Web Library) frontend components.
 globs: ["static/src/**/*.js", "static/src/**/*.xml", "static/src/**/*.scss", "__manifest__.py"]
 ---

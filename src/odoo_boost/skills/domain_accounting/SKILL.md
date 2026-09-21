@@ -1,5 +1,5 @@
 ---
-name: Accounting Domain Patterns
+name: domain-accounting
 description: Core patterns for working with Odoo accounting models (account.move, account.move.line, taxes, reconciliation).
 globs: ["**/account*.py", "**/models/*.py"]
 ---

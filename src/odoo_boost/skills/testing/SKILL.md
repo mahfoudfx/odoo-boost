@@ -1,5 +1,5 @@
 ---
-name: Testing
+name: testing
 description: Write Python and JavaScript tests for Odoo modules.
 globs: ["tests/**/*.py", "static/tests/**/*.js"]
 ---

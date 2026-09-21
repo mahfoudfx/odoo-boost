@@ -19,13 +19,13 @@ To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTIN
 | Report Development | `report_development/` | Create QWeb PDF reports and report actions |
 | Automated Actions | `automated_actions/` | Create `base.automation` and server actions |
 | Testing | `testing/` | Write Python and JavaScript tests for Odoo modules |
-| Pattern Library | `pattern_library/` | Route to 52 detailed functional references without loading them globally |
+| Pattern Library | `pattern-library/` | Route to 52 detailed functional references without loading them globally |
 
 ### 2. Workflows & Engineering Standards (6 Skills)
 | Skill | Directory | Description |
 |---|---|---|
 | Source Trace | `source_trace/` | Follow entry points, overrides, views, security, and side effects for complex changes |
-| Code Review | `code_review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
+| Code Review | `code-review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
 | Odoo Core Contribution | `odoo_core_contribution/` | Official Odoo house rules, stable-branch constraints, cross-repository review, and targeted backend/web/security references |
 | Upgrade Analysis | `upgrade_analysis/` | Migration checklist; consult the [version support guide](versions.md) and target version note for actual differences |
 | Spec-Driven Dev | `spec_driven_dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
@@ -50,7 +50,7 @@ To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTIN
 When skills are installed, Odoo Boost writes a `SKILLS_ROUTING.md` table into the agent's skills directory.
 
 For example, an agent working in `.agents/skills/` reads `SKILLS_ROUTING.md` to discover:
-- What directory corresponds to an intent (e.g. "audit multi-company code" -> `code_review/SKILL.md` + `domain_multi_company/SKILL.md`)
+- What directory corresponds to an intent (e.g. "audit multi-company code" -> `code-review/SKILL.md` + `domain-multi-company/SKILL.md`)
 - File trigger patterns (globs)
 - Concise summaries
 
@@ -70,7 +70,7 @@ and license texts bundled beside the references.
 | Agent | Skills Directory |
 |---|---|
 | Antigravity (App & CLI) | `.agents/skills/` |
-| Claude Code | `.ai/skills/` |
+| Claude Code | `.claude/skills/` |
 | Cursor | `.cursor/skills/` |
 | GitHub Copilot | `.github/skills/` |
 | OpenAI Codex | `.agents/skills/` |

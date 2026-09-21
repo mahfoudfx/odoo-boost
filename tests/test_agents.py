@@ -29,6 +29,7 @@ from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.agents.windsurf import WindsurfAgent
 from odoo_boost.agents.zed import ZedAgent
 from odoo_boost.config.schema import OdooBoostConfig
+from odoo_boost.skills.loader import install_skills
 
 # ---------------------------------------------------------------------------
 # Registry
@@ -112,6 +113,28 @@ class TestAgentContracts:
         assert isinstance(agent.display_name, str)
         assert len(agent.display_name) > 0
 
+
+class TestPiAgent:
+    def test_uses_shared_skills_dir(self, sample_config, tmp_path):
+        agent = PiAgent(config=sample_config, project_path=tmp_path)
+        assert agent.skills_dir == tmp_path / ".agents" / "skills"
+
+    def test_migrates_unmodified_legacy_pi_skills(self, sample_config, tmp_path):
+        legacy_dir = tmp_path / ".pi" / "skills"
+        install_skills(legacy_dir)
+        legacy_skill = legacy_dir / "pattern-library" / "SKILL.md"
+        legacy_skill.write_text(
+            legacy_skill.read_text(encoding="utf-8").replace(
+                "name: pattern-library", "name: Odoo Pattern Library", 1
+            ),
+            encoding="utf-8",
+        )
+
+        PiAgent(config=sample_config, project_path=tmp_path).install()
+
+        assert not legacy_dir.exists()
+        assert (tmp_path / ".agents" / "skills" / "pattern-library" / "SKILL.md").is_file()
+
     def test_guidelines_path_is_absolute(self, agent: Agent):
         assert agent.guidelines_path.is_absolute()
 
@@ -161,7 +184,7 @@ class TestAgentContracts:
         custom = agent.skills_dir / "my_skill" / "SKILL.md"
         custom.parent.mkdir(parents=True, exist_ok=True)
         custom.write_text("custom", encoding="utf-8")
-        packaged = agent.skills_dir / "creating_models" / "SKILL.md"
+        packaged = agent.skills_dir / "creating-models" / "SKILL.md"
         packaged.write_text("edited", encoding="utf-8")
         agent.uninstall()
         assert custom.read_text(encoding="utf-8") == "custom"
@@ -230,14 +253,14 @@ class TestAgentContracts:
 
     def test_edited_nested_skill_reference_survives_uninstall(self, agent: Agent):
         agent.install()
-        path = agent.skills_dir / "pattern_library" / "references" / "INDEX.md"
+        path = agent.skills_dir / "pattern-library" / "references" / "INDEX.md"
         path.write_text(path.read_text(encoding="utf-8") + "\nTeam note.\n", encoding="utf-8")
 
         agent.uninstall()
 
         assert path.is_file()
         assert "Team note." in path.read_text(encoding="utf-8")
-        assert not (agent.skills_dir / "pattern_library" / "SKILL.md").exists()
+        assert not (agent.skills_dir / "pattern-library" / "SKILL.md").exists()
 
     def test_legacy_generated_guidelines_upgrade_without_duplication(self, agent: Agent):
         path = agent.guidelines_path

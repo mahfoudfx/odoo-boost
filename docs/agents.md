@@ -43,7 +43,7 @@ Antigravity auto-discovers workspace customizations in `.agents/`, reading `mcp_
 |---|---|
 | Guidelines | `CLAUDE.md` |
 | MCP Config | `.mcp.json` |
-| Skills | `.ai/skills/` |
+| Skills | `.claude/skills/` |
 
 **MCP Config format (`.mcp.json`):**
 ```json
@@ -167,6 +167,10 @@ args = ["-m", "odoo_boost", "mcp"]
 | Guidelines | `AGENTS.md` |
 | MCP Config | `.pi/mcp.json` |
 | Skills | `.agents/skills/` |
+
+Pi discovers both `.pi/skills/` and `.agents/skills/`. Odoo Boost uses the
+shared `.agents/skills/` location, preventing duplicate skills when Pi and
+another compatible agent are configured together.
 
 **MCP Config format (`.pi/mcp.json`):**
 ```json

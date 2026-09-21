@@ -1,5 +1,5 @@
 ---
-name: Automated Actions
+name: automated-actions
 description: Create record-triggered base.automation and reusable server actions in Odoo.
 globs: ["data/**/*.xml", "__manifest__.py"]
 ---

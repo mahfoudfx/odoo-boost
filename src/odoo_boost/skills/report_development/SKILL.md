@@ -1,5 +1,5 @@
 ---
-name: Report Development
+name: report-development
 description: Create QWeb PDF reports and report actions in Odoo.
 globs: ["report/**/*.xml", "report/**/*.py", "__manifest__.py"]
 ---

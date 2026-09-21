@@ -1,5 +1,5 @@
 ---
-name: Creating Models
+name: creating-models
 description: Step-by-step guide to create a new Odoo model with fields, constraints, and methods.
 globs: ["models/**/*.py", "__manifest__.py"]
 ---

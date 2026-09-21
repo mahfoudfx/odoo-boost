@@ -1,5 +1,5 @@
 ---
-name: Upgrade Analysis & Migration
+name: upgrade-analysis
 description: Systematic migration and upgrade analysis for Odoo addons between versions (v14 to v20).
 globs: ["**/*.py", "**/*.xml", "__manifest__.py"]
 ---

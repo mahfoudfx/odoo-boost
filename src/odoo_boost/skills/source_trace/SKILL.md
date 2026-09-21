@@ -1,5 +1,5 @@
 ---
-name: Odoo Source Trace
+name: source-trace
 description: Trace a complex Odoo behavior through models, inherited views, actions, security, and tests before changing it.
 globs: ["models/**/*.py", "views/**/*.xml", "security/*", "tests/**/*.py"]
 ---

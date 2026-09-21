@@ -1,5 +1,5 @@
 ---
-name: Odoo Code Review
+name: code-review
 description: Comprehensive code review checklist covering OCA standards, SQL safety, ORM anti-patterns, security, and performance.
 globs: ["**/*.py", "**/*.xml", "security/*.csv"]
 ---

@@ -243,7 +243,7 @@ AGENTS.md
 .clinerules
 .mcp.json
 opencode.json
-.ai/skills/
+.claude/skills/
 .agents/
 .cursor/rules/odoo-boost.mdc
 .cursor/mcp.json
@@ -272,7 +272,7 @@ opencode.json
 | Agent | Guidelines | MCP Config | Skills Directory |
 |---|---|---|---|
 | **Antigravity (App & CLI `agy`)** | `AGENTS.md` | `.agents/mcp_config.json` | `.agents/skills/` |
-| **Claude Code** | `CLAUDE.md` | `.mcp.json` | `.ai/skills/` |
+| **Claude Code** | `CLAUDE.md` | `.mcp.json` | `.claude/skills/` |
 | **Cursor** | `.cursor/rules/odoo-boost.mdc` | `.cursor/mcp.json` | `.cursor/skills/` |
 | **GitHub Copilot** | `.github/copilot-instructions.md` | `.vscode/mcp.json` | `.github/skills/` |
 | **OpenAI Codex** | `AGENTS.md` | `.codex/config.toml` | `.agents/skills/` |

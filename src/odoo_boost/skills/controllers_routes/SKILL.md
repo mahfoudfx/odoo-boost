@@ -1,5 +1,5 @@
 ---
-name: Controllers & Routes
+name: controllers-routes
 description: Create HTTP controllers and API endpoints in Odoo.
 globs: ["controllers/**/*.py", "__manifest__.py"]
 ---

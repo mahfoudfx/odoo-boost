@@ -1,5 +1,5 @@
 ---
-name: Stock & Inventory Domain Patterns
+name: domain-stock
 description: Core patterns for warehouse management, pickings, moves, quants, and reservation logic.
 globs: ["**/stock*.py", "**/models/*.py"]
 ---

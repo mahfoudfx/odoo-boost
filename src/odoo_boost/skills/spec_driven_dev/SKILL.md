@@ -1,5 +1,5 @@
 ---
-name: Spec-Driven Module Development
+name: spec-driven-dev
 description: End-to-end workflow to take a feature specification and produce a production-ready Odoo module.
 globs: ["__manifest__.py", "models/**/*.py", "views/**/*.xml", "security/*"]
 ---

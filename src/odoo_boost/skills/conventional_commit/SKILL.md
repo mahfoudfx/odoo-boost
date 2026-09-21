@@ -1,5 +1,5 @@
 ---
-name: Conventional Commits for Odoo
+name: conventional-commit
 description: Standardized Odoo & OCA git commit formatting with proper semantic tags and issue references.
 globs: ["*"]
 ---

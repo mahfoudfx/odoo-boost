@@ -1,5 +1,5 @@
 ---
-name: XML Views
+name: xml-views
 description: Create and customize Odoo XML views (form, list, kanban, search).
 globs: ["views/**/*.xml", "__manifest__.py"]
 ---

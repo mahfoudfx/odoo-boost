@@ -1,5 +1,5 @@
 ---
-name: Crons & Scheduled Actions
+name: domain-crons-automation
 description: Implement reliable, batch-safe recurring background jobs with ir.cron.
 globs: ["models/**/*.py", "data/**/*.xml"]
 ---

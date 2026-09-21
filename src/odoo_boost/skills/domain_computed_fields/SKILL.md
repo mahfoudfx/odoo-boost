@@ -1,5 +1,5 @@
 ---
-name: Computed Fields & Cache Invalidation
+name: domain-computed-fields
 description: Writing robust computed fields, inversions, search methods, and cache-safe dependency trees.
 globs: ["models/**/*.py"]
 ---

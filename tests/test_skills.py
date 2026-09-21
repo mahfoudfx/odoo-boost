@@ -15,6 +15,7 @@ from odoo_boost.skills.loader import (
     list_skills,
     load_skill,
     parse_skill_metadata,
+    skill_id,
 )
 
 
@@ -92,21 +93,21 @@ class TestSkillMetadataAndRouting:
 
     def test_parse_skill_metadata(self):
         meta = parse_skill_metadata("code_review")
-        assert meta["name"] == "Odoo Code Review"
+        assert meta["name"] == "code-review"
         assert "security" in meta["description"].lower()
         assert meta["globs"] != ""
 
     def test_generate_skills_routing(self):
         routing = generate_skills_routing()
         assert "# Odoo Boost Skills Catalog & Progressive Routing" in routing
-        assert "`code_review`" in routing
-        assert "`domain_accounting`" in routing
-        assert "`creating_models`" in routing
+        assert "`code-review`" in routing
+        assert "`domain-accounting`" in routing
+        assert "`creating-models`" in routing
 
     def test_generate_category_routing_only_lists_installed_category(self):
         routing = generate_skills_routing(category="workflows")
-        assert "`code_review`" in routing
-        assert "`creating_models`" not in routing
+        assert "`code-review`" in routing
+        assert "`creating-models`" not in routing
 
 
 class TestLoadSkill:
@@ -138,7 +139,7 @@ class TestInstallSkills:
         assert len(created) > len(list_skills())
         skill_files = [p for p in created if p.name == "SKILL.md"]
         assert len(skill_files) == len(list_skills())
-        assert target.joinpath("pattern_library", "references", "INDEX.md").is_file()
+        assert target.joinpath("pattern-library", "references", "INDEX.md").is_file()
         routing_files = [p for p in created if p.name == "SKILLS_ROUTING.md"]
         assert len(routing_files) == 1
         for path in created:
@@ -156,14 +157,14 @@ class TestInstallSkills:
         created = install_skills(target, category="workflows", write_routing=False)
         assert sum(path.name == "SKILL.md" for path in created) == len(WORKFLOW_SKILLS)
         subdirs = sorted(d.name for d in target.iterdir() if d.is_dir())
-        assert subdirs == sorted(WORKFLOW_SKILLS)
+        assert subdirs == sorted(name.replace("_", "-") for name in WORKFLOW_SKILLS)
 
     def test_category_routing_matches_installed_skills(self, tmp_path):
         target = tmp_path / "skills"
         install_skills(target, category="workflows")
         routing = (target / "SKILLS_ROUTING.md").read_text(encoding="utf-8")
-        assert "`code_review`" in routing
-        assert "`creating_models`" not in routing
+        assert "`code-review`" in routing
+        assert "`creating-models`" not in routing
 
     def test_target_dir_created(self, tmp_path):
         target = tmp_path / "new" / "nested" / "skills"
@@ -174,7 +175,14 @@ class TestInstallSkills:
         target = tmp_path / "skills"
         install_skills(target)
         subdirs = sorted(d.name for d in target.iterdir() if d.is_dir())
-        assert subdirs == sorted(_SKILL_DIRS)
+        assert subdirs == sorted(name.replace("_", "-") for name in _SKILL_DIRS)
+
+    def test_installed_directory_matches_frontmatter_name(self, tmp_path):
+        target = tmp_path / "skills"
+        install_skills(target)
+        for skill_name in list_skills():
+            content = (target / skill_id(skill_name) / "SKILL.md").read_text(encoding="utf-8")
+            assert f"name: {skill_id(skill_name)}" in content
 
     def test_idempotent(self, tmp_path):
         target = tmp_path / "skills"
@@ -188,6 +196,6 @@ class TestInstallSkills:
         target = tmp_path / "skills"
         install_skills(target)
         for skill_name in list_skills():
-            installed = (target / skill_name / "SKILL.md").read_text(encoding="utf-8")
+            installed = (target / skill_name.replace("_", "-") / "SKILL.md").read_text(encoding="utf-8")
             loaded = load_skill(skill_name)
             assert installed == loaded

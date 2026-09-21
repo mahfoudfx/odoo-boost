@@ -1,5 +1,5 @@
 ---
-name: Security Rules
+name: security-rules
 description: Set up access rights (ACLs) and record rules for Odoo models.
 globs: ["security/**/*", "__manifest__.py"]
 ---

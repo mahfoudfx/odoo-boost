@@ -1,5 +1,5 @@
 ---
-name: Transient Models & Wizards
+name: domain-wizards
 description: Creating modal dialog wizards using TransientModel, action buttons, and active_id context.
 globs: ["wizard/**/*.py", "wizard/**/*.xml", "views/**/*.xml"]
 ---

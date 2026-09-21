@@ -1,5 +1,5 @@
 ---
-name: Mail & Chatter Integration
+name: domain-mail-chatter
 description: Adding chatter, followers, activity scheduling, and field tracking using mail.thread and mail.activity.mixin.
 globs: ["models/**/*.py", "views/**/*.xml", "__manifest__.py"]
 ---
