@@ -7,15 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.10.1] - 2026-09-21
+## [0.10.2] - 2026-09-21
 
 ### Fixed
 
 - Generate standards-compliant, hyphenated skill identifiers and matching
   directory names for Pi, OpenCode, Codex, Antigravity, and Zed.
 - Install Claude Code skills in its native `.claude/skills/` directory.
-- Migrate unchanged legacy Pi and Claude skill output on `odoo-boost update`,
-  preventing duplicate skill discovery.
 
 ## [0.10.0] - 2026-09-21
 

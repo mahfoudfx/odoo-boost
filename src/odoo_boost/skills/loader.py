@@ -55,36 +55,6 @@ SKILL_CATEGORIES: dict[str, list[str]] = {
 # removing duplicates (e.g. the 'domain_patterns' alias).
 _SKILL_DIRS = list(dict.fromkeys(CORE_SKILLS + WORKFLOW_SKILLS + DOMAIN_SKILLS))
 
-# Titles used by releases before skill identifiers were normalized for the
-# Agent Skills standard.  Retain these solely to clean up the former Pi output
-# on update; current SKILL.md files use their directory name as ``name``.
-LEGACY_SKILL_DISPLAY_NAMES = {
-    "automated_actions": "Automated Actions",
-    "code_review": "Odoo Code Review",
-    "controllers_routes": "Controllers & Routes",
-    "conventional_commit": "Conventional Commits for Odoo",
-    "creating_models": "Creating Models",
-    "domain_accounting": "Accounting Domain Patterns",
-    "domain_computed_fields": "Computed Fields & Cache Invalidation",
-    "domain_crons_automation": "Crons & Scheduled Actions",
-    "domain_inheritance": "Model & View Inheritance Mechanisms",
-    "domain_mail_chatter": "Mail & Chatter Integration",
-    "domain_multi_company": "Multi-Company Domain Patterns",
-    "domain_stock": "Stock & Inventory Domain Patterns",
-    "domain_wizards": "Transient Models & Wizards",
-    "odoo_core_contribution": "Odoo Core Contribution",
-    "owl_components": "OWL Components",
-    "pattern_library": "Odoo Pattern Library",
-    "report_development": "Report Development",
-    "security_rules": "Security Rules",
-    "source_trace": "Odoo Source Trace",
-    "spec_driven_dev": "Spec-Driven Module Development",
-    "testing": "Testing",
-    "upgrade_analysis": "Upgrade Analysis & Migration",
-    "xml_views": "XML Views",
-}
-
-
 def list_skills(category: str | None = None) -> list[str]:
     """Return the list of available skill names, optionally filtered by category."""
     if category:
@@ -171,9 +141,7 @@ def parse_skill_metadata(skill_name: str) -> dict[str, str]:
     return meta
 
 
-def generate_skills_routing(
-    category: str | None = None, *, legacy_directory_names: bool = False
-) -> str:
+def generate_skills_routing(category: str | None = None) -> str:
     """Generate a markdown routing table summarizing all available skills.
 
     This table serves as a fast-lookup index for LLM agents to progressively
@@ -193,8 +161,7 @@ def generate_skills_routing(
         category = get_skill_category(skill_name)
         globs = meta.get("globs", "-") or "-"
         desc = meta.get("description", "").replace("|", "\\|").replace("\n", " ")
-        directory = skill_name if legacy_directory_names else skill_id(skill_name)
-        lines.append(f"| `{directory}` | {category} | `{globs}` | {desc} |")
+        lines.append(f"| `{skill_id(skill_name)}` | {category} | `{globs}` | {desc} |")
 
     lines.append("")
     return "\n".join(lines)

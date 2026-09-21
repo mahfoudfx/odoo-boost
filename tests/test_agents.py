@@ -29,7 +29,6 @@ from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.agents.windsurf import WindsurfAgent
 from odoo_boost.agents.zed import ZedAgent
 from odoo_boost.config.schema import OdooBoostConfig
-from odoo_boost.skills.loader import install_skills
 
 # ---------------------------------------------------------------------------
 # Registry
@@ -119,21 +118,6 @@ class TestPiAgent:
         agent = PiAgent(config=sample_config, project_path=tmp_path)
         assert agent.skills_dir == tmp_path / ".agents" / "skills"
 
-    def test_migrates_unmodified_legacy_pi_skills(self, sample_config, tmp_path):
-        legacy_dir = tmp_path / ".pi" / "skills"
-        install_skills(legacy_dir)
-        legacy_skill = legacy_dir / "pattern-library" / "SKILL.md"
-        legacy_skill.write_text(
-            legacy_skill.read_text(encoding="utf-8").replace(
-                "name: pattern-library", "name: Odoo Pattern Library", 1
-            ),
-            encoding="utf-8",
-        )
-
-        PiAgent(config=sample_config, project_path=tmp_path).install()
-
-        assert not legacy_dir.exists()
-        assert (tmp_path / ".agents" / "skills" / "pattern-library" / "SKILL.md").is_file()
 
     def test_guidelines_path_is_absolute(self, agent: Agent):
         assert agent.guidelines_path.is_absolute()

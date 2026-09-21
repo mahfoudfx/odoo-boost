@@ -18,7 +18,6 @@ except ModuleNotFoundError:  # Python 3.10
 
 from odoo_boost.guidelines import composer
 from odoo_boost.skills.loader import (
-    LEGACY_SKILL_DISPLAY_NAMES,
     generate_skills_routing,
     list_skills,
     load_skill_files,
@@ -223,21 +222,7 @@ def remove_generated_skills(skills_dir: Path) -> list[Path]:
         for name in list_skills()
         for relative, content in load_skill_files(name).items()
     }
-    legacy_expected: dict[Path, str] = {
-        skills_dir / name / relative: content
-        for name in list_skills()
-        for relative, content in load_skill_files(name).items()
-    }
-    for name in list_skills():
-        legacy_content = load_skill_files(name)["SKILL.md"].replace(
-            f"name: {skill_id(name)}", f"name: {LEGACY_SKILL_DISPLAY_NAMES[name]}", 1
-        )
-        legacy_expected[skills_dir / name / "SKILL.md"] = legacy_content
-        legacy_expected[skills_dir / skill_id(name) / "SKILL.md"] = legacy_content
     expected[skills_dir / "SKILLS_ROUTING.md"] = generate_skills_routing()
-    legacy_expected[skills_dir / "SKILLS_ROUTING.md"] = generate_skills_routing(
-        legacy_directory_names=True
-    )
     reference_dir = skills_dir / "guidelines"
     for filename in composer._CORE_FILES:
         expected[reference_dir / filename] = composer._read_resource(filename)
@@ -248,16 +233,12 @@ def remove_generated_skills(skills_dir: Path) -> list[Path]:
             expected[reference_dir / "versions" / version.name] = version.read_text(
                 encoding="utf-8"
             )
-    for path in expected.keys() | legacy_expected.keys():
+    for path, content in expected.items():
         if path.is_symlink() or any(
             parent.is_symlink() for parent in path.parents if parent != skills_dir.parent
         ):
             continue
-        if path.is_file() and path.read_text(encoding="utf-8") in {
-            candidate
-            for candidate in (expected.get(path), legacy_expected.get(path))
-            if candidate is not None
-        }:
+        if path.is_file() and path.read_text(encoding="utf-8") == content:
             path.unlink()
             removed.append(path)
     for directory in (

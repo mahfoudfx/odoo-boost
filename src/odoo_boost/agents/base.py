@@ -301,10 +301,6 @@ class Agent(ABC):
 
     def _write_skills(self) -> list[Path]:
         """Install skill files into the skills directory."""
-        for legacy_parts in self.spec.legacy_skills_dirs:
-            legacy_dir = self.project_path.joinpath(*legacy_parts)
-            if legacy_dir.is_dir():
-                remove_generated_skills(legacy_dir)
         assert_safe_path(self.skills_dir, self.project_path)
         if self.skills_dir.is_dir():
             for path in self.skills_dir.rglob("*"):
