@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import importlib.util
 import os
+import subprocess
+import sys
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 import typer
 from rich.console import Console
@@ -21,7 +24,15 @@ from odoo_boost.versions import detect_version, get_version_profile, version_gui
 console = Console()
 
 
-def install() -> None:
+def install(
+    skip_dev_tools: Annotated[
+        bool,
+        typer.Option(
+            "--skip-dev-tools",
+            help="Do not install Odoo LS and pylint-odoo during setup.",
+        ),
+    ] = False,
+) -> None:
     """Interactive wizard: configure connection, detect version, select agents, generate files."""
     console.print(
         Panel.fit(
@@ -72,9 +83,9 @@ def install() -> None:
     if get_version_profile(odoo_version) is None:
         console.print(version_guidance(odoo_version), markup=False)
 
-    import shutil
+    from odoo_boost.odoo_ls import find_odoo_ls
 
-    ls_bin = shutil.which("odoo-ls")
+    ls_bin = find_odoo_ls()
     if ls_bin:
         console.print(f"  Detected Odoo Language Server: [green]{ls_bin}[/]")
     else:
@@ -120,6 +131,10 @@ def install() -> None:
 
     generate_mcp = Confirm.ask("  Generate MCP config files?", default=True)
     generate_ai_files = Confirm.ask("  Generate AI guidelines and skill files?", default=True)
+    install_dev_tools = not skip_dev_tools and Confirm.ask(
+        "  Install Odoo LS and the OCA pylint-odoo checker?",
+        default=True,
+    )
 
     if not generate_mcp and not generate_ai_files:
         console.print("  [dim]Both disabled — only odoo-boost.json will be created.[/]")
@@ -226,6 +241,10 @@ def install() -> None:
                 rel = p
             console.print(f"  [green]Created[/] {rel}")
 
+    if install_dev_tools:
+        console.print("\n[bold]Step 6:[/] Installing Odoo development analysis tools…\n")
+        _install_development_tools()
+
     # --- Done ---
     console.print(
         Panel.fit(
@@ -256,3 +275,30 @@ def _ensure_gitignore(project_path: Path) -> None:
         f"{content}{separator}\n# Odoo Boost\n{CONFIG_FILENAME}\n", encoding="utf-8"
     )
     console.print(f"  [green]Updated[/] .gitignore (added {CONFIG_FILENAME})")
+
+
+def _install_development_tools() -> None:
+    """Install optional diagnostics without making project setup depend on them."""
+    from odoo_boost.odoo_ls import find_odoo_ls, install_official_odoo_ls
+
+    if find_odoo_ls():
+        console.print("  [green]Odoo LS already available.[/]")
+    else:
+        try:
+            path, version = install_official_odoo_ls()
+            console.print(f"  [green]Installed official Odoo LS {version}:[/] {path}")
+        except Exception as exc:
+            console.print(f"  [yellow]Could not install Odoo LS:[/] {exc}")
+
+    if importlib.util.find_spec("pylint_odoo"):
+        console.print("  [green]pylint-odoo already available.[/]")
+        return
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "pylint-odoo>=10.0.11"],
+            check=True,
+            timeout=300,
+        )
+        console.print("  [green]Installed pylint-odoo.[/]")
+    except (OSError, subprocess.SubprocessError) as exc:
+        console.print(f"  [yellow]Could not install pylint-odoo:[/] {exc}")

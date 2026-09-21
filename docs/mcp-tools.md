@@ -305,7 +305,20 @@ Lint an Odoo module or file with `pylint-odoo` when installed. Its fallback AST 
 
 ## 10. check_odoo_ls
 
-Run `odoo-ls check` on a local path if the executable is installed; otherwise report that it is unavailable.
+Run the official `odoo_ls_server --parse` diagnostic mode on a local path and
+return its JSON diagnostics. Odoo Boost detects the configured `odoo_ls_path`,
+the executable on `PATH`, or its managed user-bin installation. Install the
+latest stable binary directly from official `odoo/odoo-ls` release assets with:
+
+```bash
+odoo-boost odoo-ls install
+odoo-boost odoo-ls status
+```
+
+Downloads happen only through this explicit command. The installer accepts
+only the expected platform archive from the official GitHub repository and
+installs it atomically. Use `--version 1.4.0` to pin a release and `--force` to
+replace an existing managed binary.
 
 Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"`).
 
@@ -315,8 +328,9 @@ Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"
   "installed": true,
   "binary": "/usr/local/bin/odoo-ls",
   "exit_code": 0,
-  "output": "",
-  "stderr": "",
+  "diagnostic_count": 0,
+  "diagnostics": [],
+  "truncated": false,
   "response_format": "compact"
 }
 ```

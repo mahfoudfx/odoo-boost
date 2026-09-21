@@ -95,6 +95,10 @@ class OdooBoostConfig(BaseModel):
             "roots. Empty means no confinement (default)."
         ),
     )
+    odoo_ls_path: str | None = Field(
+        default=None,
+        description="Optional path to the official odoo_ls_server executable.",
+    )
     compact_responses: bool = Field(
         default=True,
         description=(

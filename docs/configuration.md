@@ -75,6 +75,7 @@ Path to the project root directory. Default: `"."`.
 | `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
 | `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |
 | `allowed_roots` | string[] | `[]` | Restrict `inspect_local_addon` and `lint_odoo_code` to these roots. Empty means no confinement. |
+| `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed user-bin location. |
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |

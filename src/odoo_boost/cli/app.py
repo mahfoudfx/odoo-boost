@@ -50,6 +50,7 @@ from odoo_boost.cli.install import install  # noqa: E402
 from odoo_boost.cli.lint_cmd import lint  # noqa: E402
 from odoo_boost.cli.mcp_cmd import mcp  # noqa: E402
 from odoo_boost.cli.mcp_config_cmd import mcp_config  # noqa: E402
+from odoo_boost.cli.odoo_ls_cmd import odoo_ls_app  # noqa: E402
 from odoo_boost.cli.uninstall import uninstall  # noqa: E402
 from odoo_boost.cli.update import update  # noqa: E402
 
@@ -60,6 +61,7 @@ app.command()(uninstall)
 app.command()(lint)
 app.command(name="mcp")(mcp)
 app.command(name="mcp-config")(mcp_config)
+app.add_typer(odoo_ls_app, name="odoo-ls")
 
 
 def main() -> None:

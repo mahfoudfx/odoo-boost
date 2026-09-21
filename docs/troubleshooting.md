@@ -115,7 +115,8 @@ explicit `-c <path>`, so regenerate the config; or pass `--config` manually.
 
 ## Linting or language-server tools
 
-- `pylint-odoo` and `odoo-ls` are optional. Without them, Odoo Boost falls back
+- The installer selects `pylint-odoo` and official Odoo LS by default. Without
+  them, Odoo Boost falls back
   to the built-in AST scanner. Install with `pip install "odoo-boost[lint]"` for
   `pylint-odoo`.
 - File tools respect `allowed_roots`. If a tool reports a path outside the

@@ -16,7 +16,16 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
 - **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, 19, and 20.
-- **Optional Static Linting & LSP** — Seamless integration with `OCA/pylint-odoo` and `odoo/odoo-ls` with automatic graceful fallbacks.
+- **Odoo-Aware Diagnostics by Default** — The setup wizard installs
+  `OCA/pylint-odoo` and the official `odoo/odoo-ls` binary by default, with a
+  lightweight opt-out and graceful fallbacks.
+
+Install the official Odoo Language Server independently when needed:
+
+```bash
+odoo-boost odoo-ls install
+odoo-boost odoo-ls status
+```
 - **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
 - **Progressive Context** — Compact responses, cached local scans, repeated-call loop protection, and explicit investigation budgets lead to detailed skills only on demand. Use `response_format="full"` when needed, or `lean_tools=true` to reduce the advertised tool set.
 - **Automatic Fast/Deep Modes** — Small field, label, translation, and view edits keep the target-version contract but normally use only 2–4 tool calls. New modules, coupled workflows, security, migrations, and audits progressively load the full expert references.
@@ -64,7 +73,9 @@ odoo-boost install
 The wizard will:
 - Collect your Odoo connection details (URL, database, username, password/API key)
 - Test the connection and detect the Odoo version (registered series 14.0–20.0; [version support](docs/versions.md))
-- Check for optional tools like `odoo-ls`
+- Install the official Odoo LS and OCA `pylint-odoo` checker by default for
+  richer diagnostics; answer **No** at the prompt or use
+  `odoo-boost install --skip-dev-tools` for a lightweight setup
 - Let you select which AI agents to configure (from 12 supported agents)
 - Generate guidelines, MCP server configs, skills catalog, and `SKILLS_ROUTING.md`
 

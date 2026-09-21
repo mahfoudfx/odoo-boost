@@ -22,7 +22,7 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv pip install odoo-boost
 ```
 
-For optional features:
+For package-managed optional features:
 
 ```bash
 # Optional OCA code linting (pylint-odoo)
@@ -126,6 +126,27 @@ Run static linting on your local addon code:
 
 ```bash
 odoo-boost lint ./my_custom_addon
+```
+
+Optionally install Odoo's official language server for deeper semantic
+Python/XML/JavaScript/OWL diagnostics:
+
+```bash
+odoo-boost odoo-ls install
+odoo-boost odoo-ls status
+```
+
+This explicit command downloads the stable platform binary only from the
+official `odoo/odoo-ls` GitHub releases. Odoo Boost otherwise keeps using its
+built-in scanner and OCA linter.
+
+The install wizard chooses these diagnostics by default: it installs the
+official Odoo LS binary and `pylint-odoo` in the active Python environment.
+Answer **No** to its development-tools prompt, or use the following option,
+when a small or offline setup is preferable:
+
+```bash
+odoo-boost install --skip-dev-tools
 ```
 
 ---

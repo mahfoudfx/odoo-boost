@@ -7,12 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-21
+
+### Changed
+
+- The interactive installer now installs official Odoo LS and `pylint-odoo` by
+  default. Users can decline the prompt or pass `--skip-dev-tools` for a
+  lightweight or offline setup.
+
 ## [0.8.0] - 2026-09-21
 
 ### Added
 
 - First-class Zed integration using `AGENTS.md`, project-local Agent Skills,
   and merge-safe `.zed/settings.json` MCP configuration for stdio and HTTP.
+- Official Odoo LS installer and discovery (`odoo-boost odoo-ls install|status`)
+  with platform-specific release selection and structured CLI diagnostics.
 
 ### Fixed
 

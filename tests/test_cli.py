@@ -245,14 +245,46 @@ class TestInstallWizard:
         }
         mock_conn.authenticate.return_value = 2
 
-        # url, database, username, password, agent #1, generate_mcp=n, generate_ai=n
-        user_input = "\ndb\n\n\n1\nn\nn\n"
+        # url, database, username, password, agent #1, generated files, dev tools
+        user_input = "\ndb\n\n\n1\nn\nn\nn\n"
         with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
             result = runner.invoke(app, ["install"], input=user_input)
 
         assert result.exit_code == 0, result.output
         assert (tmp_path / "odoo-boost.json").exists()
         assert not (tmp_path / "AGENTS.md").exists()
+
+    def test_install_defaults_to_development_tools(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0", "server_serie": "18.0"}
+        mock_conn.authenticate.return_value = 2
+
+        with (
+            patch("odoo_boost.cli.install.create_connection", return_value=mock_conn),
+            patch("odoo_boost.cli.install._install_development_tools") as install_tools,
+        ):
+            result = runner.invoke(app, ["install"], input="\ndb\n\n\n1\nn\nn\n\n")
+
+        assert result.exit_code == 0, result.output
+        install_tools.assert_called_once()
+
+    def test_install_skip_dev_tools_flag(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0", "server_serie": "18.0"}
+        mock_conn.authenticate.return_value = 2
+
+        with (
+            patch("odoo_boost.cli.install.create_connection", return_value=mock_conn),
+            patch("odoo_boost.cli.install._install_development_tools") as install_tools,
+        ):
+            result = runner.invoke(
+                app, ["install", "--skip-dev-tools"], input="\ndb\n\n\n1\nn\nn\n"
+            )
+
+        assert result.exit_code == 0, result.output
+        install_tools.assert_not_called()
 
 
 class TestMcpCommand:
