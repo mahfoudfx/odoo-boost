@@ -5,7 +5,7 @@ This guide walks you through installing Odoo Boost, configuring your AI agents, 
 ## Prerequisites
 
 - **Python 3.10+** (Python 3.12+ recommended)
-- **An Odoo instance** (v14 through v19) accessible over HTTP/HTTPS, or local Odoo addons for offline AST scanning
+- **An Odoo instance** (v14 through v20) accessible over HTTP/HTTPS, or local Odoo addons for offline AST scanning
 - **User credentials or API key** for your Odoo database
 
 ---
@@ -54,7 +54,7 @@ odoo-boost install
 
 The wizard will:
 1. **Prompt for Odoo connection details**: URL, database name, user, and password/API key.
-2. **Test the connection**: Verify authentication, detect Odoo version (e.g. 14.0, 17.0, 18.0, 19.0), and check for `odoo-ls`.
+2. **Test the connection**: Verify authentication, detect Odoo version (e.g. 14.0, 17.0, 18.0, 19.0, 20.0), and check for `odoo-ls`.
 3. **Select AI agents**: Choose from 11 modern assistants:
    - Antigravity (App & CLI `agy`)
    - Claude Code
@@ -69,7 +69,13 @@ The wizard will:
    - Junie
 4. **Choose the MCP transport**: stdio (default) or HTTP, and whether the same
    project is opened from Windows IDEs while the server runs in WSL.
-5. **Generate files**: Creates guidelines, MCP configs, 20 skills, and the `SKILLS_ROUTING.md` index.
+5. **Generate files**: Creates guidelines, MCP configs, 23 skills, and the `SKILLS_ROUTING.md` index.
+
+Generated instructions choose an execution depth automatically. Small iterative
+edits use fast mode with the configured Odoo version rules and a 2–4 call target.
+Complex modules, cross-model behavior, security, migrations, and audits switch to
+deep mode and load relevant expert topics and skills progressively. No prompt
+prefix or mode keyword is required.
 
 ---
 

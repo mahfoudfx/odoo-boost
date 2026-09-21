@@ -20,7 +20,7 @@ from odoo_boost.mcp_server.registry import (
 
 class TestToolInventory:
     def test_tool_count(self):
-        assert len(ALL_TOOLS) == 22
+        assert len(ALL_TOOLS) == 23
 
     def test_no_duplicates(self):
         names = [tool.__name__ for tool in ALL_TOOLS]

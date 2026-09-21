@@ -30,19 +30,19 @@ src/odoo_boost/
 ├── connection/             # Abstract base + XML-RPC client
 ├── mcp_server/
 │   ├── server.py           # MCP v2 server assembly (resources + prompts)
-│   ├── registry.py         # Single source of truth for the 22 tools
+│   ├── registry.py         # Single source of truth for the 23 tools
 │   ├── context.py          # ContextVar holding connection + config
 │   ├── auth.py             # Static bearer-token verifier for HTTP
 │   ├── policy.py           # Opt-in readonly / allowed_roots guardrails
-│   └── tools/              # 22 MCP tools (one file per tool)
+│   └── tools/              # 23 MCP tools (one file per tool)
 │       └── _common.py      # Shared JSON/error/compaction helpers
 ├── agents/                 # 11 agent adapters + base class + declarative specs
 │   ├── spec.py             # AgentSpec registry (paths + output format)
 │   └── base.py             # Spec-driven Agent base class
 ├── guidelines/
 │   ├── composer.py         # Assembles markdown into unified agent prompt
-│   └── core/               # 10 core markdown topics + versions (v14-v19)
-├── skills/                 # 20 skills (Core, Workflows, Domain Patterns) + routing
+│   └── core/               # 10 core markdown topics + versions (v14-v20)
+├── skills/                 # 23 skills (Core, Workflows, Domain Patterns) + routing
 ├── versions.py             # Registered series, inherited compatibility facts and doc paths
 ├── logging_config.py       # stderr-only logging (stdout is the MCP wire)
 └── mcp_launcher.py         # native/WSL/HTTP command + URL resolution
@@ -103,7 +103,7 @@ LIVE_TOOLS = (..., my_tool)
 
 `server.py` iterates the registry automatically; live tools are wrapped so
 connection failures become clear `ToolError` messages.
-All 22 tools are registered by default; `lean_tools=true` opts into the curated
+All 23 tools are registered by default; `lean_tools=true` opts into the curated
 8-tool profile. Choose `LOCAL_TOOLS` for bundled documentation or filesystem
 tools that do not need a running Odoo connection.
 

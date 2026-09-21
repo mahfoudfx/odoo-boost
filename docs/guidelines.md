@@ -1,6 +1,10 @@
 # Guidelines
 
-Odoo Boost bundles Odoo development guidelines. Generated agent files include the complete expert guidelines and target-version notes. Separate topic references and the skill catalog remain available for targeted lookup. The MCP resource `odoo://guidelines/oca` still provides the complete document.
+Odoo Boost bundles complete expert guidelines while keeping routine agent context
+small. Generated agent files contain an adaptive fast/deep router and the effective
+target-version contract. Full topic references and version notes are installed beside
+the skills and loaded only when relevant. The MCP resource `odoo://guidelines/oca`
+provides the complete combined document for broad audits.
 
 ## What's Included
 
@@ -32,6 +36,7 @@ Guidelines are composed from 11 core files plus a version-specific addendum:
 | `v17.md` | Odoo 17 | Inline view modifiers and `_compute_display_name` replace older patterns |
 | `v18.md` | Odoo 18 | `<list>` replaces `<tree>` as the list view root |
 | `v19.md` | Odoo 19 | `jsonrpc` controller routes and search view differences |
+| `v20.md` | Odoo 20 | Runtime baseline, `fields.Domain`, bearer scopes, and security APIs |
 
 The [version support guide](versions.md) describes the effective version facts and how to add a release. The registry in `versions.py` is authoritative for compatibility facts; each version note provides targeted detail.
 
@@ -46,9 +51,16 @@ During `odoo-boost install`, Odoo Boost detects your server version and writes i
 ```
 
 When building agent guidelines, the composer:
-1. Writes all expert guidelines, effective compatibility rules, and target-version notes to the agent's guideline file.
-2. Installs the 11 core topics and the matching version note under the agent's skills directory in `guidelines/`. Unknown series receive shared guidance and an explicit uncertainty note.
-3. Keeps the complete combined document available through the MCP resource and `compose_guidelines()` API.
+1. Writes a compact automatic mode router plus effective compatibility rules.
+2. Uses fast mode for small view, field, label, and translation edits, normally
+   within two to four tool calls.
+3. Escalates new modules, cross-model logic, security, migrations, audits, and
+   failed simple attempts to deep mode.
+4. Installs all 11 expert topics and the matching version note under the agent's
+   `guidelines/` directory for selective loading. Unknown series keep an explicit
+   uncertainty notice.
+5. Keeps the complete combined document available through the MCP resource and
+   `compose_guidelines()` API.
 
 ## Where Guidelines Are Written
 

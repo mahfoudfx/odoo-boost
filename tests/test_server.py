@@ -109,11 +109,11 @@ class TestCreateMcpServer:
 
     def test_full_profile_registers_all_tools(self, monkeypatch, sample_config):
         server = _run_create(monkeypatch, sample_config, lean_tools=False)
-        assert len(server.registered) == 22
+        assert len(server.registered) == 23
 
     def test_default_registers_all_tools(self, monkeypatch, sample_config):
         server = _run_create(monkeypatch, sample_config)
-        assert len(server.registered) == 22
+        assert len(server.registered) == 23
 
     def test_lean_tools_registers_subset(self, monkeypatch, sample_config):
         server = _run_create(monkeypatch, sample_config, lean_tools=True)
@@ -121,3 +121,15 @@ class TestCreateMcpServer:
         assert len(names) == 8
         assert "database_query" in names
         assert "list_views" not in names
+
+    def test_identical_tool_call_loop_is_blocked(self, monkeypatch, sample_config, tmp_path):
+        server = _run_create(
+            monkeypatch,
+            sample_config,
+            max_consecutive_identical_calls=2,
+        )
+        tools = {fn.__name__: fn for fn in server.registered}
+        tools["inspect_local_addon"](str(tmp_path))
+        tools["inspect_local_addon"](str(tmp_path))
+        with pytest.raises(ToolError, match="Repeated identical call blocked"):
+            tools["inspect_local_addon"](str(tmp_path))

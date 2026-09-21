@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -223,6 +224,30 @@ def parse_xml_file(path: Path) -> dict[str, Any]:
     return res
 
 
+@lru_cache(maxsize=512)
+def _parse_python_file_cached(path: str, mtime_ns: int, size: int) -> list[dict[str, Any]]:
+    """Parse one Python file, keyed by stable file metadata."""
+    del mtime_ns, size
+    return parse_python_file(Path(path))
+
+
+@lru_cache(maxsize=512)
+def _parse_xml_file_cached(path: str, mtime_ns: int, size: int) -> dict[str, Any]:
+    """Parse one XML file, keyed by stable file metadata."""
+    del mtime_ns, size
+    return parse_xml_file(Path(path))
+
+
+def _cached_python(path: Path) -> list[dict[str, Any]]:
+    stat = path.stat()
+    return _parse_python_file_cached(str(path), stat.st_mtime_ns, stat.st_size)
+
+
+def _cached_xml(path: Path) -> dict[str, Any]:
+    stat = path.stat()
+    return _parse_xml_file_cached(str(path), stat.st_mtime_ns, stat.st_size)
+
+
 def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     """Scan an entire local addon directory on disk for models, fields, and XML definitions."""
     path = Path(addon_path).resolve()
@@ -267,7 +292,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
         if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
             continue
         result["python_files_count"] += 1
-        models = parse_python_file(py_file)
+        models = _cached_python(py_file)
         result["models"].extend(models)
 
     # Scan XML files
@@ -275,12 +300,39 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
         if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
             continue
         result["xml_files_count"] += 1
-        xml_data = parse_xml_file(xml_file)
+        xml_data = _cached_xml(xml_file)
         result["records"].extend(xml_data["records"])
         result["templates"].extend(xml_data["templates"])
         result["menuitems"].extend(xml_data["menuitems"])
 
     return result
+
+
+def _addon_fingerprint(path: Path) -> tuple[tuple[str, int, int], ...]:
+    """Return a cheap signature that changes with relevant addon source files."""
+    entries: list[tuple[str, int, int]] = []
+    for source in sorted((*path.rglob("*.py"), *path.rglob("*.xml"))):
+        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in source.parts):
+            continue
+        try:
+            stat = source.stat()
+        except OSError:
+            continue
+        entries.append((source.relative_to(path).as_posix(), stat.st_mtime_ns, stat.st_size))
+    return tuple(entries)
+
+
+@lru_cache(maxsize=32)
+def _scan_addon_cached(path: str, fingerprint: tuple[tuple[str, int, int], ...]) -> dict[str, Any]:
+    """Cache parsed addon data; *fingerprint* provides automatic invalidation."""
+    del fingerprint
+    return scan_addon(path)
+
+
+def scan_addon_cached(addon_path: str | Path) -> dict[str, Any]:
+    """Scan an addon once and reuse the result while relevant files are unchanged."""
+    path = Path(addon_path).resolve()
+    return _scan_addon_cached(str(path), _addon_fingerprint(path))
 
 
 def find_local_xml_id(addon_path: str | Path, xml_id: str) -> dict[str, Any] | None:
@@ -291,7 +343,7 @@ def find_local_xml_id(addon_path: str | Path, xml_id: str) -> dict[str, Any] | N
     for xml_file in sorted(path.rglob("*.xml")):
         if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
             continue
-        data = parse_xml_file(xml_file)
+        data = _cached_xml(xml_file)
         for rec in data["records"]:
             if rec["id"] == target_id:
                 return {"type": "record", **rec}
@@ -312,7 +364,7 @@ def find_model_in_local_files(addon_path: str | Path, model_name: str) -> dict[s
     for py_file in sorted(path.rglob("*.py")):
         if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
             continue
-        models = parse_python_file(py_file)
+        models = _cached_python(py_file)
         for m in models:
             if m.get("_name") == model_name or m.get("_inherit") == model_name:
                 return m

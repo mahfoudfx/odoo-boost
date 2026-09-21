@@ -8,6 +8,16 @@ globs: ["**/*.py", "**/*.xml", "security/*.csv"]
 
 This skill provides a rigorous review methodology for Odoo addons, ensuring compliance with OCA guidelines, performance best practices, and security safeguards.
 
+Start by pinning the reviewed revision and base. Map changed files to the relevant
+guidelines, then review in two passes: compliance first; functional behavior second.
+For each changed contract, search available addon paths for overrides and consumers of
+methods, fields, XML IDs, templates, context keys, and exports. Test empty and
+multi-record calls, boundary values, rounding, time zones, repeated execution,
+concurrency, and scale where applicable. A useful finding states the exact location,
+concrete failure scenario, and smallest fix. When reviewing Odoo's own community or
+enterprise repository, load `odoo_core_contribution` for its stable-branch and
+cross-repository rules.
+
 ## 1. Security & Access Rights
 - **Missing ACLs**: Every non-transient model (`models.Model`) must have read/write/create/unlink permissions defined in `security/ir.model.access.csv`.
 - **`sudo()` Misuse**:

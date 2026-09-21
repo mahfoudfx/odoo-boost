@@ -56,6 +56,7 @@ def test_detection_uses_series_then_build():
         ("17.0", "tree", "inline expressions", "_compute_display_name", "json"),
         ("18.0", "list", "inline expressions", "_compute_display_name", "json"),
         ("19.0", "list", "inline expressions", "_compute_display_name", "jsonrpc"),
+        ("20.0", "list", "inline expressions", "_compute_display_name", "jsonrpc"),
     ],
 )
 def test_version_isolation(version, tag, modifiers, display, route):
@@ -72,7 +73,7 @@ def test_version_isolation(version, tag, modifiers, display, route):
         profile.features["list_view_tag"] = "invalid"
 
 
-@pytest.mark.parametrize("version", [None, "invalid", "20.0", "18.2", "saas~19.1"])
+@pytest.mark.parametrize("version", [None, "invalid", "21.0", "18.2", "saas~20.1"])
 def test_unknown_versions_never_inherit(version, tmp_path):
     assert get_version_profile(version) is None
     for content in (compose_guidelines(version), compose_agent_guidelines(version, "refs")):
@@ -99,9 +100,9 @@ def test_new_registration_does_not_require_consumer_changes(monkeypatch, tmp_pat
     previous = get_version_profile("19.0")
     monkeypatch.setitem(
         VERSION_REGISTRY,
-        "20.0",
+        "21.0",
         VersionSpec(
-            parent="19.0",
+            parent="20.0",
             features={"json_route_type": "future-test-type"},
             doc_paths={"orm": "/future/orm.html"},
         ),
@@ -111,22 +112,22 @@ def test_new_registration_does_not_require_consumer_changes(monkeypatch, tmp_pat
         composer,
         "_read_resource",
         lambda path: (
-            "## Odoo 20 test-only delta" if path == "versions/v20.md" else original_read(path)
+            "## Odoo 21 test-only delta" if path == "versions/v21.md" else original_read(path)
         ),
     )
-    profile = get_version_profile("20.0")
+    profile = get_version_profile("21.0")
     assert profile.features["list_view_tag"] == "list"
     assert get_version_profile("19.0") == previous
-    assert "future-test-type" in compose_agent_guidelines("20.0", "refs")
-    assert tmp_path / "versions/v20.md" in install_guideline_references(tmp_path, "20.0")
-    result = json.loads(search_docs("orm", version="20.0"))
-    assert result["results"][0]["url"].endswith("/20.0/future/orm.html")
+    assert "future-test-type" in compose_agent_guidelines("21.0", "refs")
+    assert tmp_path / "versions/v21.md" in install_guideline_references(tmp_path, "21.0")
+    result = json.loads(search_docs("orm", version="21.0"))
+    assert result["results"][0]["url"].endswith("/21.0/future/orm.html")
 
 
 def test_invalid_inheritance_fails_loudly(monkeypatch):
-    monkeypatch.setitem(VERSION_REGISTRY, "20.0", VersionSpec(parent="20.0"))
+    monkeypatch.setitem(VERSION_REGISTRY, "21.0", VersionSpec(parent="21.0"))
     with pytest.raises(ValueError, match="Cyclic"):
-        get_version_profile("20.0")
+        get_version_profile("21.0")
 
 
 def test_docs_use_config_without_runtime_call(server_context, monkeypatch):

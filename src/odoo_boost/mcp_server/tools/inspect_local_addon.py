@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
-from odoo_boost.ast_scanner.analyzer import find_local_xml_id, scan_addon
+from odoo_boost.ast_scanner.analyzer import find_local_xml_id, scan_addon, scan_addon_cached
 from odoo_boost.mcp_server.policy import enforce_path
-from odoo_boost.mcp_server.tools._common import error_response, json_response, resolve_full
+from odoo_boost.mcp_server.tools._common import (
+    active_config,
+    error_response,
+    json_response,
+    resolve_full,
+)
 
 
 def _model_summary(model: dict) -> dict:
@@ -57,7 +62,10 @@ def inspect_local_addon(
             )
         return json_response({"found": True, "xml_id": xml_id, "definition": found})
 
-    scanned = scan_addon(path)
+    config = active_config()
+    scanned = (
+        scan_addon_cached(path) if config is None or config.cache_local_scans else scan_addon(path)
+    )
 
     if model:
         matches = [

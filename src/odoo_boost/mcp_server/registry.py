@@ -20,6 +20,7 @@ from odoo_boost.mcp_server.tools.application_info import application_info
 
 # Local AST, verification, and diagnostics tools
 from odoo_boost.mcp_server.tools.check_odoo_ls import check_odoo_ls
+from odoo_boost.mcp_server.tools.count_records import count_records
 from odoo_boost.mcp_server.tools.database_query import database_query
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.mcp_server.tools.execute_method import execute_method
@@ -68,6 +69,7 @@ LIVE_TOOLS: tuple[ToolFn, ...] = (
     application_info,
     database_schema,
     database_query,
+    count_records,
     list_models,
     list_views,
     list_menus,

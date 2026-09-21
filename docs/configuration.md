@@ -36,7 +36,7 @@ Odoo Boost stores project configuration in `odoo-boost.json` at your project roo
 
 ### `odoo_version` (optional)
 
-Detected Odoo version string. Registered series are 14.0 through 19.0; see [version support](versions.md) for the registration and unknown-version rules. The install wizard detects it from the server when available.
+Detected Odoo version string. Registered series are 14.0 through 20.0; see [version support](versions.md) for the registration and unknown-version rules. The install wizard detects it from the server when available.
 
 ### `agents` (optional)
 
@@ -76,7 +76,9 @@ Path to the project root directory. Default: `"."`.
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
-| `lean_tools` | bool | `false` | Register all 22 tools by default. Set `true` to advertise only 8 common tools. Saved explicit values are preserved. |
+| `lean_tools` | bool | `false` | Register all 23 tools by default. Set `true` to advertise only 8 common tools. Saved explicit values are preserved. |
+| `cache_local_scans` | bool | `true` | Reuse parsed local addon results until a relevant Python/XML file timestamp or size changes. |
+| `max_consecutive_identical_calls` | int | `2` | Block a third consecutive MCP call with the same tool and arguments. Any different call resets the counter; `0` disables. |
 
 ### Token efficiency
 
@@ -91,6 +93,13 @@ its `response_format="full"` explicitly bypasses that cap. See
 
 Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
 so the server works regardless of the working directory the IDE chooses.
+
+Generated agent rules also set investigation budgets: routine work should stay
+within eight tool calls, complex work must reassess every eight calls, and work
+stops at 24 unless an exhaustive audit was requested or new evidence justifies
+continuing. These are agent instructions because Odoo Boost cannot observe an
+agent's native file reads or iterations. The MCP server independently enforces
+identical-call loop detection, and local addon scans are cached by file metadata.
 
 ### WSL + Windows IDEs
 

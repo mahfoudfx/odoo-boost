@@ -81,3 +81,17 @@ Ensure security files are listed before view files:
 - [ ] ACL file listed in manifest before views
 - [ ] Tested with non-admin user
 - [ ] Wizard/transient models also have ACLs
+- [ ] Public model methods validate attacker-controlled recordsets and arguments
+- [ ] Sensitive fields use `groups`; sensitive related chains review `related_sudo`
+- [ ] Every `sudo()`, user/company switch, raw SQL query, and dynamic domain has a
+      narrow, documented trust boundary
+- [ ] Controller writes whitelist fields and nested x2many commands; state changes
+      use POST and HTTP routes retain CSRF protection
+- [ ] Dynamic field access uses `record[name]` after allowlisting; secrets use
+      constant-time comparison; addon file reads use `odoo.tools.file_open`
+
+For a security audit, also inspect `Markup`/`markup`, HTML sinks, `eval`/`safe_eval`,
+`pickle`, mutable default arguments, and model methods returning rich backend objects.
+Judge each hit by its data flow rather than reporting string matches mechanically.
+On Odoo 20, load the version note for `fields.Domain`, `@api.private`, related-field,
+and controller-specific guidance.

@@ -1,6 +1,6 @@
 # Odoo version support and onboarding
 
-Odoo Boost registers the on-premise series **14.0 through 19.0** in
+Odoo Boost registers the on-premise series **14.0 through 20.0** in
 `src/odoo_boost/versions.py`. Registration describes curated development guidance
 and documentation mappings, not a guarantee that every deployment, Enterprise
 addon or third-party override has been integration-tested. Runtime tools use the
@@ -12,9 +12,10 @@ inspection, skills or documentation-link lookup.
 Universal principles live in `guidelines/core/`. `VERSION_REGISTRY` contains an
 explicit baseline and parent-linked `VersionSpec` entries with only changed
 compatibility facts and documentation paths. `get_version_profile()` resolves
-these into an immutable effective profile. Generated instructions include the full expert guidelines, a summary of the
-target's effective rules, and its release note. Topic files and specialized
-skills remain available separately. Older release notes are not concatenated:
+these into an immutable effective profile. Generated instructions always include
+the target's small effective-rule summary. Detailed expert topics, the matching
+release note, and specialized skills are loaded on demand in deep mode. Older
+release notes are not concatenated:
 that would reintroduce removed APIs as current advice.
 
 The registry supplies view roots/modifiers, relational command conventions,
@@ -23,6 +24,15 @@ group attributes. It is a focused compatibility reference, not an exhaustive
 model of the Odoo API. Specialized examples must be checked against the target
 source before use. For example, Odoo 17 still uses `tree`, Odoo 18 uses `list`,
 and Odoo 19 changes controller route type `json` to `jsonrpc`.
+Odoo 20 adds an explicit runtime baseline, `fields.Domain` guidance, and bearer
+route scope requirements. The official Odoo skills are treated as primary house
+rules for contributions to Odoo's community/enterprise repositories; reusable
+security and review practices are shared, while core-only stable-branch and
+layout rules stay in the on-demand `odoo_core_contribution` skill.
+The same official skill files exist on 20.0 and master and contain several
+sections explicitly labelled master-only. Odoo Boost therefore verifies stable
+20.0 APIs independently and does not treat every official skill statement as a
+20.0 compatibility fact.
 
 Version normalization is shared by installation, guideline composition and
 `search_docs`. A configured version is enough for offline documentation lookup;
@@ -33,7 +43,7 @@ agent files when changing the deployment's target version.
 
 ## Unknown versions
 
-A new major (including Odoo 20 until explicitly registered), an unregistered
+A new major after Odoo 20, an unregistered
 SaaS series, or an unparseable version does not inherit the highest known release.
 Shared guidance remains available with an uncertainty notice. No guessed
 version-specific documentation links or fallback-linter deprecation rules are

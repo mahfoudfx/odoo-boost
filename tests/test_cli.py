@@ -120,7 +120,7 @@ class TestUpdateCommand:
         assert (tmp_path / "AGENTS.md").exists()
         assert (tmp_path / ".agents" / "mcp_config.json").exists()
         skill_files = list((tmp_path / ".agents" / "skills").rglob("SKILL.md"))
-        assert len(skill_files) == 20
+        assert len(skill_files) == 23
 
     def test_update_is_idempotent(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)

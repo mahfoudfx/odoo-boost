@@ -11,14 +11,15 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 
 ## Highlights
 
-- **22 MCP Tools, Resources & Prompts** — All tools are available by default; opt into an 8-tool profile with `lean_tools=true`. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **23 MCP Tools, Resources & Prompts** — All tools are available by default; opt into an 8-tool profile with `lean_tools=true`. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **11 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
-- **20 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
-- **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, and 19.
+- **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
+- **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, 19, and 20.
 - **Optional Static Linting & LSP** — Seamless integration with `OCA/pylint-odoo` and `odoo/odoo-ls` with automatic graceful fallbacks.
 - **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
-- **Progressive Context** — Compact tool responses and short generated agent instructions lead to detailed topic files and skills on demand. Use `response_format="full"` on tools that support it, or `lean_tools=true` to reduce the advertised tool set.
+- **Progressive Context** — Compact responses, cached local scans, repeated-call loop protection, and explicit investigation budgets lead to detailed skills only on demand. Use `response_format="full"` when needed, or `lean_tools=true` to reduce the advertised tool set.
+- **Automatic Fast/Deep Modes** — Small field, label, translation, and view edits keep the target-version contract but normally use only 2–4 tool calls. New modules, coupled workflows, security, migrations, and audits progressively load the full expert references.
 
 ## Installation
 
@@ -62,7 +63,7 @@ odoo-boost install
 
 The wizard will:
 - Collect your Odoo connection details (URL, database, username, password/API key)
-- Test the connection and detect the Odoo version (registered series 14.0–19.0; [version support](docs/versions.md))
+- Test the connection and detect the Odoo version (registered series 14.0–20.0; [version support](docs/versions.md))
 - Check for optional tools like `odoo-ls`
 - Let you select which AI agents to configure (from 11 supported agents)
 - Generate guidelines, MCP server configs, skills catalog, and `SKILLS_ROUTING.md`
@@ -88,7 +89,29 @@ odoo-boost lint ./addons/my_custom_addon
 
 ### 4. Start coding
 
-Your AI assistant is now configured. The MCP server starts automatically when your agent needs it. Try asking your agent:
+Your AI assistant is now configured. Odoo Boost selects the appropriate depth
+from the request; no mode keyword or special prompt syntax is required.
+
+For small iterative changes, it uses **fast mode** with the active Odoo version
+rules and minimal context/tool calls. Example prompts:
+
+- "Rename the `Reference` label to `Order Reference`."
+- "Move `partner_id` before `date_order` in the form view."
+- "Add `customer_code` to the list view."
+- "Translate this label into French."
+- "Make this field readonly when the order is confirmed."
+
+For coupled or higher-risk work, it uses **deep mode** and progressively loads
+the relevant expert guidelines, skills, source context, and MCP tools. Example
+prompts:
+
+- "Create a complete rental management module."
+- "Implement multi-company approval for purchase orders."
+- "Migrate this module from Odoo 16 to Odoo 20."
+- "Audit this addon for security and performance."
+- "Trace and fix this stock valuation inconsistency."
+
+You can also ask direct inspection questions:
 
 > "What models are available in this Odoo instance?"  
 > "Run inspect_local_addon on ./my_addon to see what models and XML views it declares"  
@@ -115,13 +138,13 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 ```
 ┌─────────────────────────┐     stdio      ┌─────────────────────────────────┐    XML-RPC     ┌────────────────┐
 │        AI Agent         │◄──────────────►│        Odoo Boost MCP           │◄─────────────►│  Odoo Server   │
-│ (Antigravity, Claude,   │                │   (Runtime + AST Scanner)       │               │ (v14 - v19)    │
+│ (Antigravity, Claude,   │                │   (Runtime + AST Scanner)       │               │ (v14 - v20)    │
 │  Cursor, OpenCode, ...) │                └────────────────┬────────────────┘               └────────────────┘
 └───────────┬─────────────┘                                 │
             │                                               ▼
             ▼                                  ┌───────────────────────────┐
-     Guidelines, OCA,                          │     22 MCP Tools          │
-  20 Skills + Routing Map                      │ - Live ORM & DB schema    │
+     Guidelines, OCA,                          │     23 MCP Tools          │
+  23 Skills + Routing Map                      │ - Live ORM & DB schema    │
   (Local Markdown Files)                       │ - read_group aggregation  │
                                                │ - Sub-50ms local AST scan │
                                                │ - XML ID resolution       │
@@ -130,9 +153,9 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 ```
 
 Odoo Boost sits between your AI agent and your Odoo instance / codebase:
-1. **22 MCP Tools** — Real-time database queries, schema inspection, local AST parsing, and validation.
-2. **OCA Guidelines** — Version-specific guidelines (v14-v19) and OCA architectural rules.
-3. **20 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
+1. **23 MCP Tools** — Real-time database queries (including count-only), schema inspection, local AST parsing, and validation.
+2. **OCA Guidelines** — Version-specific guidelines (v14-v20) and OCA architectural rules.
+3. **23 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
 
 The recommended agent workflow is to understand the business requirement, inspect
 local code and configuration, load the relevant version note or skill, and call
@@ -241,10 +264,10 @@ opencode.json
 ## Documentation
 
 - [Getting Started](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
-- [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 22 tools with examples
+- [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 23 tools with examples
 - [Agent Configuration](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 11 supported agents
-- [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 20 progressive skills and routing table
-- [Guidelines](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v19 and OCA rules)
+- [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 23 progressive skills and routing table
+- [Guidelines](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v20 and OCA rules)
 - [Configuration Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
 - [Architecture](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/architecture.md) — Components, tool-call lifecycle, and extension points
 - [Troubleshooting](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/troubleshooting.md) — WSL/Windows, HTTP auth, connection, and logging issues

@@ -10,6 +10,12 @@ Load the configured version notes and inspect the component being extended befor
 copying imports, hooks, services, or registry APIs. The example shows a common modern
 pattern, not a compatibility contract for every supported Odoo version.
 
+Organize frontend files by feature. Prefer registries, services, hooks, composition,
+and documented extension points over patching framework code. When patching is the
+only viable option, keep it narrow and test it with other installed patches. Scope CSS
+classes to the addon (`o_<module>_...`), avoid ID selectors, and never pass untrusted
+strings to `markup()`, `innerHTML`, or `insertAdjacentHTML`.
+
 ## Steps
 
 ### 1. Create JavaScript Component (`static/src/js/my_component.js`)

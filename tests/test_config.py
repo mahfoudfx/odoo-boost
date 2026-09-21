@@ -158,6 +158,8 @@ class TestOdooBoostConfig:
         assert cfg.max_response_chars == 40000
         assert cfg.redact_config_secrets is True
         assert cfg.lean_tools is False
+        assert cfg.cache_local_scans is True
+        assert cfg.max_consecutive_identical_calls == 2
 
     def test_compaction_fields_roundtrip(self, sample_connection_config):
         cfg = OdooBoostConfig(
@@ -166,12 +168,23 @@ class TestOdooBoostConfig:
             max_response_chars=1000,
             redact_config_secrets=False,
             lean_tools=True,
+            cache_local_scans=False,
+            max_consecutive_identical_calls=4,
         )
         restored = OdooBoostConfig.model_validate(json.loads(cfg.model_dump_json()))
         assert restored.compact_responses is False
         assert restored.max_response_chars == 1000
         assert restored.redact_config_secrets is False
         assert restored.lean_tools is True
+        assert restored.cache_local_scans is False
+        assert restored.max_consecutive_identical_calls == 4
+
+    def test_negative_identical_call_limit_is_rejected(self, sample_connection_config):
+        with pytest.raises(ValidationError):
+            OdooBoostConfig(
+                connection=sample_connection_config,
+                max_consecutive_identical_calls=-1,
+            )
 
     def test_security_fields_roundtrip(self, sample_connection_config):
         cfg = OdooBoostConfig(

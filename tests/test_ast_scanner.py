@@ -5,11 +5,13 @@ from __future__ import annotations
 from pathlib import Path
 
 from odoo_boost.ast_scanner.analyzer import (
+    _scan_addon_cached,
     find_local_xml_id,
     find_model_in_local_files,
     parse_python_file,
     parse_xml_file,
     scan_addon,
+    scan_addon_cached,
 )
 
 
@@ -116,3 +118,27 @@ class MyCustom(models.Model):
     found_model = find_model_in_local_files(tmp_path, "my.custom")
     assert found_model is not None
     assert found_model["class_name"] == "MyCustom"
+
+
+def test_cached_scan_reuses_unchanged_files_and_invalidates(tmp_path: Path, monkeypatch):
+    import odoo_boost.ast_scanner.analyzer as analyzer
+
+    source = tmp_path / "model.py"
+    source.write_text("from odoo import models\nclass A(models.Model):\n    _name = 'x.a'\n")
+    original = analyzer.scan_addon
+    calls = 0
+
+    def counted(path):
+        nonlocal calls
+        calls += 1
+        return original(path)
+
+    _scan_addon_cached.cache_clear()
+    monkeypatch.setattr(analyzer, "scan_addon", counted)
+    assert scan_addon_cached(tmp_path)["models"][0]["_name"] == "x.a"
+    assert scan_addon_cached(tmp_path)["models"][0]["_name"] == "x.a"
+    assert calls == 1
+
+    source.write_text("from odoo import models\nclass B(models.Model):\n    _name = 'x.changed'\n")
+    assert scan_addon_cached(tmp_path)["models"][0]["_name"] == "x.changed"
+    assert calls == 2

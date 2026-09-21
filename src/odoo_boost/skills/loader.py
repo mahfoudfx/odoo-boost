@@ -21,10 +21,13 @@ CORE_SKILLS = [
     "report_development",
     "automated_actions",
     "testing",
+    "pattern_library",
 ]
 
 WORKFLOW_SKILLS = [
     "code_review",
+    "source_trace",
+    "odoo_core_contribution",
     "upgrade_analysis",
     "spec_driven_dev",
     "conventional_commit",
@@ -80,6 +83,25 @@ def load_skill(skill_name: str) -> str:
         raise FileNotFoundError(f"Unknown bundled skill: {skill_name}")
     ref = importlib.resources.files("odoo_boost.skills") / skill_name / "SKILL.md"
     return ref.read_text(encoding="utf-8")
+
+
+def load_skill_files(skill_name: str) -> dict[str, str]:
+    """Return every bundled text file for a skill, keyed by relative path."""
+    if skill_name not in _SKILL_DIRS:
+        raise FileNotFoundError(f"Unknown bundled skill: {skill_name}")
+    root = importlib.resources.files("odoo_boost.skills") / skill_name
+    files: dict[str, str] = {}
+
+    def collect(node: Any, prefix: Path = Path()) -> None:
+        for entry in node.iterdir():
+            relative = prefix / entry.name
+            if entry.is_dir():
+                collect(entry, relative)
+            elif entry.is_file():
+                files[relative.as_posix()] = entry.read_text(encoding="utf-8")
+
+    collect(root)
+    return files
 
 
 def parse_skill_metadata(skill_name: str) -> dict[str, str]:
@@ -156,12 +178,11 @@ def install_skills(
 
     for skill_name in skills:
         dest = target_dir / skill_name
-        dest.mkdir(parents=True, exist_ok=True)
-
-        content = load_skill(skill_name)
-        skill_file = dest / "SKILL.md"
-        skill_file.write_text(content, encoding="utf-8")
-        created.append(skill_file)
+        for relative, content in load_skill_files(skill_name).items():
+            skill_file = dest / relative
+            skill_file.parent.mkdir(parents=True, exist_ok=True)
+            skill_file.write_text(content, encoding="utf-8")
+            created.append(skill_file)
 
     if write_routing:
         routing_file = target_dir / "SKILLS_ROUTING.md"

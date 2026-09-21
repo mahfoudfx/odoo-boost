@@ -22,7 +22,7 @@ class OdooBoostConfig(BaseModel):
 
     connection: OdooConnection
     odoo_version: str | None = Field(
-        default=None, description="Detected Odoo version (e.g. '17.0', '18.0', '19.0')"
+        default=None, description="Detected Odoo version (e.g. '18.0', '19.0', '20.0')"
     )
     agents: list[str] = Field(
         default_factory=list,
@@ -112,5 +112,17 @@ class OdooBoostConfig(BaseModel):
         description=(
             "Register only a small commonly used subset of MCP tools to reduce tool-schema "
             "overhead per model turn."
+        ),
+    )
+    cache_local_scans: bool = Field(
+        default=True,
+        description=("Cache local addon scans until a Python/XML file timestamp or size changes."),
+    )
+    max_consecutive_identical_calls: int = Field(
+        default=2,
+        ge=0,
+        description=(
+            "Block an MCP tool after this many consecutive calls with identical arguments "
+            "(0 disables loop detection)."
         ),
     )

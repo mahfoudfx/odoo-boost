@@ -1,6 +1,6 @@
 # Skills & Progressive Routing
 
-Odoo Boost includes **20 specialized development skills** organized into three categories: **Core**, **Workflows**, and **Domain Patterns**.
+Odoo Boost includes **23 specialized development skills** organized into three categories: **Core**, **Workflows**, and **Domain Patterns**.
 
 To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTING.md`** index file in each agent's skills directory. AI agents consult this routing index to progressively fetch only the skill files required for the task at hand.
 
@@ -8,7 +8,7 @@ To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTIN
 
 ## Skills Catalog
 
-### 1. Core Development (8 Skills)
+### 1. Core Development (9 Skills)
 | Skill | Directory | Description |
 |---|---|---|
 | Creating Models | `creating_models/` | Create a new Odoo model with fields, constraints, and methods |
@@ -19,11 +19,14 @@ To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTIN
 | Report Development | `report_development/` | Create QWeb PDF reports and report actions |
 | Automated Actions | `automated_actions/` | Create `base.automation` and server actions |
 | Testing | `testing/` | Write Python and JavaScript tests for Odoo modules |
+| Pattern Library | `pattern_library/` | Route to 52 detailed functional references without loading them globally |
 
-### 2. Workflows & Engineering Standards (4 Skills)
+### 2. Workflows & Engineering Standards (6 Skills)
 | Skill | Directory | Description |
 |---|---|---|
+| Source Trace | `source_trace/` | Follow entry points, overrides, views, security, and side effects for complex changes |
 | Code Review | `code_review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
+| Odoo Core Contribution | `odoo_core_contribution/` | Official Odoo house rules, stable-branch constraints, cross-repository review, and targeted backend/web/security references |
 | Upgrade Analysis | `upgrade_analysis/` | Migration checklist; consult the [version support guide](versions.md) and target version note for actual differences |
 | Spec-Driven Dev | `spec_driven_dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
 | Conventional Commits | `conventional_commit/` | Standardized Odoo & OCA commit formatting (`[ADD]`, `[FIX]`, `[REF]`, `[MIG]`, etc.) |
@@ -52,6 +55,13 @@ For example, an agent working in `.agents/skills/` reads `SKILLS_ROUTING.md` to 
 - Concise summaries
 
 This allows LLM agents to maintain minimal prompt overhead while retaining immediate access to in-depth Odoo documentation.
+
+The pattern library consolidates 52 focused references instead of exposing the
+upstream projects' many overlapping files as top-level skills. Shared guidance,
+version deltas, and routing remain authoritative; agents open a detailed pattern
+only when a task needs it. The library incorporates selected patterns and
+workflow ideas from Letzdoo, UncleCat, Vauxoo, and fhidalgodev with attribution
+and license texts bundled beside the references.
 
 ---
 
@@ -84,7 +94,7 @@ from odoo_boost.skills import (
     generate_skills_routing,
 )
 
-# List all 20 skills
+# List all 23 skills
 all_skills = list_skills()
 
 # Filter by category: "core", "workflows", or "domain"

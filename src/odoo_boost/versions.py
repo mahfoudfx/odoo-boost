@@ -93,6 +93,15 @@ VERSION_REGISTRY: dict[str, VersionSpec] = {
         features={"json_route_type": "jsonrpc", "search_group_attributes": "expand/string removed"},
         doc_paths={"web_services": "/developer/reference/external_rpc_api.html"},
     ),
+    "20.0": VersionSpec(
+        parent="19.0",
+        features={
+            "domain_composition": "fields.Domain",
+            "route_auth": "bearer auth requires bearer_scope",
+            "supported_python": "3.12-3.14",
+            "minimum_postgresql": "16",
+        },
+    ),
 }
 
 

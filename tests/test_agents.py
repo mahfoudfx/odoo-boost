@@ -217,11 +217,24 @@ class TestAgentContracts:
         path = agent.guidelines_path
         content = path.read_text(encoding="utf-8")
         path.write_text(
-            content.replace("# Odoo Development Guidelines", "# Team-edited Guidelines"),
+            content.replace(
+                "# Odoo Boost: adaptive development workflow", "# Team-edited Guidelines"
+            ),
             encoding="utf-8",
         )
         agent.uninstall()
         assert "Team-edited Guidelines" in path.read_text(encoding="utf-8")
+
+    def test_edited_nested_skill_reference_survives_uninstall(self, agent: Agent):
+        agent.install()
+        path = agent.skills_dir / "pattern_library" / "references" / "INDEX.md"
+        path.write_text(path.read_text(encoding="utf-8") + "\nTeam note.\n", encoding="utf-8")
+
+        agent.uninstall()
+
+        assert path.is_file()
+        assert "Team note." in path.read_text(encoding="utf-8")
+        assert not (agent.skills_dir / "pattern_library" / "SKILL.md").exists()
 
     def test_legacy_generated_guidelines_upgrade_without_duplication(self, agent: Agent):
         path = agent.guidelines_path

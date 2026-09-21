@@ -21,3 +21,19 @@
 ### 3. Scope Restraint
 - Only edit the files, models, and records relevant to the request.
 - Avoid re-authoring or generating massive translation catalogs or auxiliary files unless explicitly requested.
+
+### 4. Context and Tool Budget
+- Read the closest implementation and configuration first. Keep a short evidence map of
+  files already read; do not read an unchanged file twice in the same task.
+- Start with targeted searches and compact tool responses. Load at most two routed skills
+  initially; add another only when a concrete uncertainty requires it. Never load the full
+  pattern library.
+- Routine changes should normally finish within 8 tool calls. At 8 calls, stop and state
+  what unresolved question justifies more investigation. Complex work may continue, but
+  reassess every 8 calls and stop at 24 unless the user requested an exhaustive audit or
+  new evidence makes the additional calls necessary.
+- Never repeat a tool call with identical arguments after it succeeds or returns a stable
+  error. Reuse the result. After two failed approaches with the same blocker, change the
+  approach or report the blocker instead of looping.
+- Search once with grouped patterns, inspect only matching ranges, and broaden gradually.
+  Do not request full output merely to avoid choosing fields, filters, files, or a model.

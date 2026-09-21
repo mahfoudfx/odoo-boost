@@ -27,7 +27,7 @@ standard XML-RPC.
 | `config/` | Pydantic schema and `odoo-boost.json` load/save (owner-only perms) |
 | `mcp_launcher.py` | Resolves the stdio command for native/WSL targets and builds HTTP URLs |
 | `mcp_server/server.py` | Assembles the MCP v2 server (resources, prompts, tool loop) |
-| `mcp_server/registry.py` | Single source of truth for the 22 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
+| `mcp_server/registry.py` | Single source of truth for the 23 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
 | `mcp_server/context.py` | `ContextVar` holding the active connection + config |
 | `mcp_server/auth.py` | Static bearer-token verifier for HTTP |
 | `mcp_server/policy.py` | Opt-in `readonly` / `allowed_roots` guardrails |
@@ -56,9 +56,10 @@ standard XML-RPC.
 `install` and `update` instantiate each selected agent with its `AgentSpec`
 (paths + output format) and write:
 
-- **Guidelines** — composed markdown in the agent's native file.
+- **Guidelines** — a compact fast/deep router and effective version contract in
+  the agent's native file; complete expert topics are installed as references.
 - **MCP config** — JSON/TOML/YAML in the format the agent expects.
-- **Skills** — the 20 bundled skills plus `SKILLS_ROUTING.md`.
+- **Skills** — the 23 bundled skills plus `SKILLS_ROUTING.md`.
 
 Generated guideline sections and Odoo Boost MCP entries are updated in place;
 unrelated user content and other MCP servers are preserved. Edited generated
@@ -69,6 +70,12 @@ Version guidance follows shared Odoo topics → registered version facts and
 delta note → task-specific skill or tool. Unknown series receive shared topics
 and an uncertainty warning rather than inheriting the newest release. See
 [version support](versions.md) for the onboarding sequence.
+
+The generated router selects fast mode automatically for small field, label,
+translation, and view edits. It keeps version facts active but avoids MCP calls,
+plans, broad scans, and unrelated skills. Deep mode progressively loads the same
+expert material for new modules, coupled workflows, security, migrations,
+audits, and failed simple attempts.
 
 For stdio, `mcp_target: "auto"` writes the native config plus a `*.windows.*`
 companion that wraps the interpreter in `wsl.exe`. For `mcp_transport: "http"`,
@@ -92,3 +99,18 @@ See [SECURITY.md](../SECURITY.md). In short: credentials live in
 `odoo-boost.json` (owner-only, plaintext), HTTP non-loopback binds require a
 token, and `readonly` / `allowed_roots` are defense-in-depth rather than a
 sandbox.
+
+## Selective patterns from related projects
+
+The optional `source_trace` skill adopts source-first tracing and a short context
+brief for coupled changes, inspired by [Agent Skills](https://github.com/unclecatvn/agent-skills)
+and the [universal Odoo development skill](https://github.com/fhidalgodev/odoo-development-skill).
+`count_records` adopts the useful count-only query from
+[Vauxoo's MCP server](https://github.com/Vauxoo/mcp.odoo). These are native
+Odoo Boost features, not runtime dependencies on those projects. The response
+cap, compact modes, and full-detail escape hatches retain the useful part of
+[Letzdoo's token-saving approach](https://github.com/letzdoo/claude-marketplace)
+without filtering source files or hiding test failures. A database index, global
+command hook, or per-call environment profiles would add setup and security
+complexity to the current project-scoped server; use an external project tool
+when those workflows are actually needed.

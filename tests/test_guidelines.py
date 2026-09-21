@@ -69,7 +69,7 @@ class TestComposeGuidelines:
         assert "ir.model.access.csv" in result
 
     def test_version_specific_addenda(self):
-        for ver in ["14.0", "15.0", "16.0", "17.0", "18.0", "19.0"]:
+        for ver in ["14.0", "15.0", "16.0", "17.0", "18.0", "19.0", "20.0"]:
             result = compose_guidelines(version=ver)
             major = ver.split(".")[0]
             assert f"Odoo {major}" in result
@@ -90,14 +90,18 @@ class TestComposeGuidelinesIndex:
         assert "Odoo 18.0" in compose_guidelines_index("18.0")
 
 
-def test_generated_agent_guidelines_preserve_full_expert_content(tmp_path):
+def test_generated_agent_guidelines_route_to_full_expert_content(tmp_path):
     reference_dir = ".agents/skills/guidelines"
     content = compose_agent_guidelines("18.0", reference_dir)
     created = install_guideline_references(tmp_path / reference_dir, "18.0")
 
-    assert compose_guidelines("18.0").strip() in content
+    assert "Fast mode (default for small iterative edits)" in content
+    assert "## Deep mode" in content
+    assert "list_view_tag: list" in content
+    assert len(content) < len(compose_guidelines("18.0")) / 3
+    assert compose_guidelines("18.0").strip() not in content
     for filename in _CORE_FILES:
-        assert (tmp_path / reference_dir / filename).read_text().strip() in content
+        assert (tmp_path / reference_dir / filename).is_file()
     assert f"{reference_dir}/security.md" in content
     assert f"{reference_dir}/versions/v18.md" in content
     assert all(path.is_file() for path in created)

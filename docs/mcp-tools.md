@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-Odoo Boost provides 22 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
+Odoo Boost provides 23 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
 
 All tools return JSON strings.
 
@@ -32,11 +32,26 @@ Targeted single-object queries (e.g. `list_views(view_id=…)`,
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
 `max_response_chars` (default 40000, `0` disables), `redact_config_secrets`
-(default `true`), and `lean_tools` (default `false`, all 22 tools registered;
+(default `true`), and `lean_tools` (default `false`, all 23 tools registered;
 `true` opts into 8 common tools). Per-call `response_format` controls detail
 where supported. Oversized responses are replaced by a bounded
 `{ "truncated": true, "full_length": …, "preview": … }` envelope. Narrow the
 query or increase `max_response_chars` to see more.
+
+`cache_local_scans=true` reuses unchanged AST/XML addon scans. The cache key
+tracks relevant paths, timestamps, and sizes, so edits invalidate it without a
+manual refresh. `max_consecutive_identical_calls=2` blocks a third consecutive
+call with the same tool and arguments; a different call resets the guard and
+`0` disables it.
+
+---
+
+## Count-only queries
+
+`count_records(model, domain="[]")` returns `{"model": ..., "count": ...}`
+using one read-only ORM `search_count` call. Use it to check existence or size;
+use `search_records` for actual records. Invalid JSON or a non-list domain
+returns an error without calling Odoo. It respects Odoo access rules.
 
 ---
 

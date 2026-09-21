@@ -4,8 +4,14 @@
 
 - Run `odoo-boost update` after upgrading the package. This refreshes the generated agent guidelines and XML view skill; existing generated files do not change by themselves.
 - For a source-only change, the agent should locate the relevant files, edit them, and inspect the diff. Live Odoo queries are useful when the task depends on current database state.
-- New configurations expose all 22 tools. Set `"lean_tools": true` to advertise 8 common tools when schema overhead matters. To use omitted tools such as `list_views` and `list_access_rights`, set it to `false`.
-- `compact_responses` and `max_response_chars` limit individual MCP outputs. They cannot cap a model's reasoning, repeated calls to other tools, or total conversation input. Compare a run's tool-call list before attributing its full token count to Odoo Boost.
+- New configurations expose all 23 tools. Set `"lean_tools": true` to advertise 8 common tools when schema overhead matters. To use omitted tools such as `list_views` and `list_access_rights`, set it to `false`.
+- `compact_responses` and `max_response_chars` limit individual MCP outputs.
+  `max_consecutive_identical_calls` blocks mechanical repetition of one call,
+  while generated instructions impose investigation budgets and prevent repeated
+  native file reads. `cache_local_scans` avoids reparsing unchanged addons.
+  Odoo Boost still cannot hard-cap reasoning or native file operations performed
+  internally by the agent host; compare the host's call/file trace when totals
+  remain unexpectedly high.
 - An Odoo “no create access” error identifies a denied operation for the configured user. If the task concerns access rights, inspect that model's ACLs; otherwise stop that line of investigation and report the denial.
 
 ## The MCP server does not appear in my IDE

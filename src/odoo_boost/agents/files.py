@@ -17,7 +17,7 @@ except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
 from odoo_boost.guidelines import composer
-from odoo_boost.skills.loader import generate_skills_routing, list_skills, load_skill
+from odoo_boost.skills.loader import generate_skills_routing, list_skills, load_skill_files
 
 _TOML_TABLE = re.compile(r"(?m)^\[([^\]\n]+)\][ \t]*(?:\n|$)")
 _GUIDE_BLOCK = re.compile(
@@ -210,7 +210,11 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
 def remove_generated_skills(skills_dir: Path) -> list[Path]:
     """Delete unchanged packaged files, preserving custom and edited skill content."""
     removed: list[Path] = []
-    expected = {skills_dir / name / "SKILL.md": load_skill(name) for name in list_skills()}
+    expected = {
+        skills_dir / name / relative: content
+        for name in list_skills()
+        for relative, content in load_skill_files(name).items()
+    }
     expected[skills_dir / "SKILLS_ROUTING.md"] = generate_skills_routing()
     reference_dir = skills_dir / "guidelines"
     for filename in composer._CORE_FILES:

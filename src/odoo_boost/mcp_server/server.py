@@ -18,6 +18,7 @@ from odoo_boost.guidelines.composer import compose_guidelines, compose_guideline
 from odoo_boost.logging_config import configure_logging
 from odoo_boost.mcp_launcher import build_http_url
 from odoo_boost.mcp_server.auth import StaticTokenVerifier
+from odoo_boost.mcp_server.call_guard import ConsecutiveCallGuard
 from odoo_boost.mcp_server.context import ServerContext, bound_context, set_context
 from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, is_enabled, resilient_live_tool
 from odoo_boost.mcp_server.tools.database_schema import database_schema
@@ -26,11 +27,14 @@ from odoo_boost.skills.loader import generate_skills_routing
 logger = logging.getLogger(__name__)
 
 
-def _bind_handler(fn: Callable[..., Any], context: ServerContext) -> Callable[..., Any]:
+def _bind_handler(
+    fn: Callable[..., Any], context: ServerContext, guard: ConsecutiveCallGuard
+) -> Callable[..., Any]:
     """Keep a registered handler attached to its originating server instance."""
 
     @functools.wraps(fn)
     def wrapped(*args: Any, **kwargs: Any) -> Any:
+        guard.check(fn.__name__, args, kwargs)
         with bound_context(context):
             return fn(*args, **kwargs)
 
@@ -82,6 +86,8 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
             "Use these tools to explore models, views, records, configuration, access rights, "
             "inspect local code on disk, and validate code against OCA standards. "
             "Use live tools only when the task depends on current Odoo state. "
+            "Reuse prior results and never repeat an identical successful call. "
+            "Start with compact, filtered requests and deepen only for a concrete uncertainty. "
             "If a live call reports an access denial, do not retry it or investigate "
             "permissions unless the user asked for that."
         ),
@@ -138,11 +144,12 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # Tools Registration (see mcp_server/registry.py for the tool inventory)
     # -------------------------------------------------------------------------
     lean = config.lean_tools
+    call_guard = ConsecutiveCallGuard(config.max_consecutive_identical_calls)
     for tool in LIVE_TOOLS:
         if is_enabled(tool, lean=lean):
-            mcp.tool()(_bind_handler(resilient_live_tool(tool), context))
+            mcp.tool()(_bind_handler(resilient_live_tool(tool), context, call_guard))
     for local_tool in LOCAL_TOOLS:
         if is_enabled(local_tool, lean=lean):
-            mcp.tool()(_bind_handler(local_tool, context))
+            mcp.tool()(_bind_handler(local_tool, context, call_guard))
 
     return mcp

@@ -34,16 +34,56 @@ def _version_file(version: str | None) -> str | None:
 
 
 def compose_agent_guidelines(version: str | None, reference_dir: str) -> str:
-    """Full expert guidelines, with a supplementary index for targeted references."""
+    """Build a compact adaptive router; detailed expert topics stay on disk."""
     lines = [
-        compose_guidelines(version).rstrip(),
+        "# Odoo Boost: adaptive development workflow",
         "",
-        "## Reference files and skills",
+        "Solve the user's business request with the smallest correct change. Detect the",
+        "mode from the task; the user does not need to name a mode.",
         "",
-        "The expert guidelines above are included in full. Topic copies are available below.",
-        "Paths below are relative to the project root.",
-        f"Skill catalog: `{Path(reference_dir).parent.as_posix()}/SKILLS_ROUTING.md`.",
-        "Load specialized skills when relevant to the task.",
+        "## Version contract (always active)",
+        "",
+        version_guidance(version),
+        "Never substitute another release's XML, ORM, controller, or frontend syntax.",
+        "If a required fact is absent or the version is unverified, inspect the target source",
+        "or load the target version note before editing.",
+        "",
+        "## Fast mode (default for small iterative edits)",
+        "",
+        "Use for labels, translations, adding/renaming/moving a field or column, simple",
+        "visibility/readonly expressions, and a small local method or view adjustment.",
+        "",
+        "1. Inspect the target file and its closest inherited definition. Reuse the existing",
+        "   local pattern and preserve the surrounding style.",
+        "2. Make the direct edit. Do not create a plan, launch live/database tools, load broad",
+        "   guidelines, or scan the whole repository unless the edit exposes uncertainty.",
+        "3. Use 2-4 tool calls normally. Do not reread unchanged files or repeat a call. For a",
+        "   visual-only view change, a browser refresh by the user can be sufficient feedback.",
+        "4. Check the diff and the edited syntax. Run a focused check only when it adds useful",
+        "   evidence; do not manufacture tests for a reversible presentation-only change.",
+        "",
+        "## Deep mode",
+        "",
+        "Use for a new module, multi-model business workflow, accounting/stock/security work,",
+        "migration, unfamiliar inheritance, architectural refactor, persistent data change,",
+        "performance investigation, audit, or a failed fast-mode attempt.",
+        "",
+        "1. State the business outcome, version, invariants, and smallest viable scope.",
+        "2. Read only the relevant topic references and routed skills below. Trace overrides,",
+        "   security, consumers, and side effects when the change crosses those boundaries.",
+        "3. Start compact and deepen progressively. Reassess every 8 tool calls; stop at 24",
+        "   unless an exhaustive audit was requested or new evidence justifies continuing.",
+        "4. Implement, run risk-appropriate checks, and review the final diff.",
+        "",
+        "Escalate from fast to deep only when scope or evidence matches a deep trigger. Security",
+        "boundaries, access control, public controllers, `sudo()`, raw SQL, accounting entries,",
+        "and stock valuation always require their focused reference or skill.",
+        "",
+        "## On-demand references",
+        "",
+        "Paths are relative to the project root. Open only what the current task needs.",
+        f"Skill routing: `{Path(reference_dir).parent.as_posix()}/SKILLS_ROUTING.md`.",
+        f"Operating and investigation rules: `{reference_dir}/operating_rules.md`.",
         "",
     ]
     for filename in _CORE_FILES:
@@ -61,6 +101,13 @@ def compose_agent_guidelines(version: str | None, reference_dir: str) -> str:
     version_file = _version_file(version)
     if version_file:
         lines.append(f"- Odoo {version} version notes: `{reference_dir}/{version_file}`")
+    lines.extend(
+        [
+            "",
+            "The complete combined expert reference is available through",
+            "`odoo://guidelines/oca`; use it for broad audits, not routine edits.",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 

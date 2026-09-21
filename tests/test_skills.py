@@ -24,15 +24,15 @@ class TestListSkills:
         assert isinstance(skills, list)
 
     def test_count(self):
-        assert len(list_skills()) == 20
+        assert len(list_skills()) == 23
 
     def test_categories(self):
         core = list_skills(category="core")
-        assert len(core) == 8
+        assert len(core) == 9
         assert set(core) == set(CORE_SKILLS)
 
         workflows = list_skills(category="workflows")
-        assert len(workflows) == 4
+        assert len(workflows) == 6
         assert set(workflows) == set(WORKFLOW_SKILLS)
 
         domain = list_skills(category="domain")
@@ -50,6 +50,9 @@ class TestListSkills:
             "security_rules",
             "owl_components",
             "code_review",
+            "pattern_library",
+            "source_trace",
+            "odoo_core_contribution",
             "upgrade_analysis",
             "domain_accounting",
             "domain_stock",
@@ -132,10 +135,10 @@ class TestInstallSkills:
     def test_creates_files(self, tmp_path):
         target = tmp_path / "skills"
         created = install_skills(target)
-        # 20 skill files + 1 SKILLS_ROUTING.md = 21 files
-        assert len(created) == 21
+        assert len(created) > len(list_skills())
         skill_files = [p for p in created if p.name == "SKILL.md"]
-        assert len(skill_files) == 20
+        assert len(skill_files) == len(list_skills())
+        assert target.joinpath("pattern_library", "references", "INDEX.md").is_file()
         routing_files = [p for p in created if p.name == "SKILLS_ROUTING.md"]
         assert len(routing_files) == 1
         for path in created:
@@ -144,14 +147,14 @@ class TestInstallSkills:
     def test_install_without_routing(self, tmp_path):
         target = tmp_path / "skills"
         created = install_skills(target, write_routing=False)
-        assert len(created) == 20
-        for path in created:
-            assert path.name == "SKILL.md"
+        assert len(created) > len(list_skills())
+        assert sum(path.name == "SKILL.md" for path in created) == len(list_skills())
+        assert all(path.name != "SKILLS_ROUTING.md" for path in created)
 
     def test_install_by_category(self, tmp_path):
         target = tmp_path / "skills"
         created = install_skills(target, category="workflows", write_routing=False)
-        assert len(created) == 4
+        assert sum(path.name == "SKILL.md" for path in created) == len(WORKFLOW_SKILLS)
         subdirs = sorted(d.name for d in target.iterdir() if d.is_dir())
         assert subdirs == sorted(WORKFLOW_SKILLS)
 

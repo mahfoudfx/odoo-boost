@@ -1,23 +1,24 @@
 ---
 name: Upgrade Analysis & Migration
-description: Systematic migration and upgrade analysis for Odoo addons between versions (v14 to v19).
+description: Systematic migration and upgrade analysis for Odoo addons between versions (v14 to v20).
 globs: ["**/*.py", "**/*.xml", "__manifest__.py"]
 ---
 
 # Odoo Upgrade & Migration Analysis
 
-This skill guides migration analysis and refactoring across Odoo versions from v14 through v19.
+This skill guides migration analysis and refactoring across Odoo versions from v14 through v20.
 
 ## Common Upgrade Patterns Matrix
 
-| Feature / Pattern | v14 - v16 | v17 | v18 | v19 |
-|---|---|---|---|---|
-| List view tag | `<tree>` | `<tree>` (required) | `<list>` (required) | `<list>` (strictly enforced) |
-| Dynamic attributes | `attrs="{'invisible': ...}"` | `invisible="cond"` | `invisible="cond"` | `invisible="cond"` |
-| Search view `<group>` | `expand="0" string="..."` | Attributes supported | Attributes supported | RNG failure if `expand` or `string` present |
-| Relational commands | Tuples in v14; `Command` available in v15–16 | `Command.create({...})` | `Command.create({...})` | `Command.create({...})` |
-| Python runtime | Check target installation | 3.10+ | 3.10+ | 3.10+ |
-| Web client framework | Legacy/Owl mix; Owl 2 web client in v16 | Owl 2 | Inspect target source | Inspect target source |
+| Feature / Pattern | v14 - v16 | v17 | v18 | v19 | v20 |
+|---|---|---|---|---|---|
+| List view tag | `<tree>` | `<tree>` | `<list>` | `<list>` | `<list>` |
+| Dynamic attributes | `attrs` / `states` | Inline expressions | Inline expressions | Inline expressions | Inline expressions |
+| Search view `<group>` | `expand` / `string` | Supported | Supported | Removed | Removed |
+| Relational commands | Tuples; `Command` from v15 | `Command` | `Command` | `Command` | `Command` |
+| Dynamic domain composition | Verify target | Verify target | Verify target | Verify target | `fields.Domain` |
+| Python runtime | Check deployment | 3.10+ | 3.10+ | 3.10+ | 3.12–3.14 |
+| Web client framework | Legacy/Owl mix | Owl 2 | Inspect target source | Inspect target source | Inspect target source |
 
 ## Migration Steps Checklist
 
@@ -59,8 +60,8 @@ This skill guides migration analysis and refactoring across Odoo versions from v
   - In v19, use `self.env.flush_all()` prior to raw SQL reads if needed.
 
 ### 3. Manifest Upgrades
-- Update version prefix: `18.0.1.0.0` or `19.0.1.0.0`.
+- Update version prefix for the target series, for example `20.0.1.0.0`.
 - Verify external Python dependencies support the deployment Python version.
 - Check if upstream base modules have been merged, renamed, or deprecated.
 
-For unregistered versions, verify the target source and documentation instead of extrapolating this matrix. JSON-RPC controller routes change from `type="json"` to `type="jsonrpc"` in Odoo 19.
+For unregistered versions, verify the target source and documentation instead of extrapolating this matrix. JSON-RPC controller routes change from `type="json"` to `type="jsonrpc"` in Odoo 19. Odoo 20 bearer routes require `bearer_scope`; load the v20 note before applying its newer APIs.
