@@ -12,7 +12,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 ## Highlights
 
 - **23 MCP Tools, Resources & Prompts** — All tools are available by default; opt into an 8-tool profile with `lean_tools=true`. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
-- **11 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie.
+- **12 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie, Zed.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
 - **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, 19, and 20.
@@ -65,7 +65,7 @@ The wizard will:
 - Collect your Odoo connection details (URL, database, username, password/API key)
 - Test the connection and detect the Odoo version (registered series 14.0–20.0; [version support](docs/versions.md))
 - Check for optional tools like `odoo-ls`
-- Let you select which AI agents to configure (from 11 supported agents)
+- Let you select which AI agents to configure (from 12 supported agents)
 - Generate guidelines, MCP server configs, skills catalog, and `SKILLS_ROUTING.md`
 
 ### 2. Verify the connection
@@ -195,7 +195,9 @@ generated configs handle it two ways:
   Streamable HTTP endpoint (default `http://127.0.0.1:8765/mcp`) that Windows
   IDEs reach through WSL2 `localhost` forwarding, no process spawning required.
   Non-loopback binds require `--token` / `mcp_token`; generated configs embed
-  the `Authorization: Bearer` header.
+  the `Authorization: Bearer` header. Antigravity receives its required
+  `serverUrl` schema; set `mcp_http_url` only when Windows cannot use WSL
+  localhost forwarding.
 
 Security guardrails: `odoo-boost.json` is written `0600`, `readonly` blocks
 mutating `execute_method` calls, and `allowed_roots` confines the local file
@@ -236,6 +238,7 @@ opencode.json
 .windsurf/
 .cline/
 .junie/
+.zed/settings.json
 
 # Windows/WSL companion MCP configs (mcp_target: "auto")
 *.windows.json
@@ -260,12 +263,13 @@ opencode.json
 | **Windsurf** | `.windsurfrules` | `.windsurf/mcp.json` | `.windsurf/skills/` |
 | **Cline** | `.clinerules` | `.cline/mcp_settings.json` | `.cline/skills/` |
 | **Junie** | `.junie/guidelines.md` | `.junie/mcp/mcp.json` | `.junie/skills/` |
+| **Zed** | `AGENTS.md` | `.zed/settings.json` | `.agents/skills/` |
 
 ## Documentation
 
 - [Getting Started](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
 - [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 23 tools with examples
-- [Agent Configuration](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 11 supported agents
+- [Agent Configuration](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 12 supported agents
 - [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 23 progressive skills and routing table
 - [Guidelines](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v20 and OCA rules)
 - [Configuration Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options

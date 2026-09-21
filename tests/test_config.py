@@ -147,6 +147,7 @@ class TestOdooBoostConfig:
         assert cfg.mcp_token is None
         assert cfg.readonly is False
         assert cfg.allowed_roots == []
+        assert cfg.mcp_http_url is None
 
     def test_token_hidden_from_repr(self, sample_connection_config):
         cfg = OdooBoostConfig(connection=sample_connection_config, mcp_token="super-secret")

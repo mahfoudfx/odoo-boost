@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from typing import Literal
 
 # How the MCP config file is serialized for a given agent.
-McpFormat = Literal["mcpServers", "vscode", "opencode", "codex", "hermes"]
+McpFormat = Literal["mcpServers", "vscode", "opencode", "codex", "hermes", "zed"]
+RemoteUrlKey = Literal["url", "serverUrl"]
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,8 @@ class AgentSpec:
     skills_dir: tuple[str, ...]
     mcp_format: McpFormat = "mcpServers"
     cursor_rules: bool = False
+    remote_url_key: RemoteUrlKey = "url"
+    remote_server_type: str | None = "http"
 
 
 AGENT_SPECS: dict[str, AgentSpec] = {
@@ -33,6 +36,8 @@ AGENT_SPECS: dict[str, AgentSpec] = {
         guidelines_path=("AGENTS.md",),
         mcp_config_path=(".agents", "mcp_config.json"),
         skills_dir=(".agents", "skills"),
+        remote_url_key="serverUrl",
+        remote_server_type=None,
     ),
     "claude_code": AgentSpec(
         id="claude_code",
@@ -108,5 +113,14 @@ AGENT_SPECS: dict[str, AgentSpec] = {
         guidelines_path=(".junie", "guidelines.md"),
         mcp_config_path=(".junie", "mcp", "mcp.json"),
         skills_dir=(".junie", "skills"),
+    ),
+    "zed": AgentSpec(
+        id="zed",
+        display_name="Zed",
+        guidelines_path=("AGENTS.md",),
+        mcp_config_path=(".zed", "settings.json"),
+        skills_dir=(".agents", "skills"),
+        mcp_format="zed",
+        remote_server_type=None,
     ),
 }

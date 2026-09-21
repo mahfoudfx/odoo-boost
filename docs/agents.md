@@ -1,6 +1,6 @@
 # Agent Configuration
 
-Odoo Boost supports 11 modern AI coding agents. For each agent, Odoo Boost generates:
+Odoo Boost supports 12 modern AI coding agents. For each agent, Odoo Boost generates:
 
 1. **Guidelines** — Odoo development best practices and version notes in the agent's native format
 2. **MCP Config** — Machine-readable configuration connecting the agent to the Odoo Boost MCP server
@@ -271,6 +271,34 @@ mcp_servers:
 
 ---
 
+### Zed
+
+| File | Path |
+|---|---|
+| Guidelines | `AGENTS.md` |
+| MCP Config | `.zed/settings.json` |
+| Skills | `.agents/skills/` |
+
+Zed reads project instructions and skills directly. Odoo Boost adds only its
+entry under `context_servers`, preserving unrelated Zed settings and servers:
+
+```json
+{
+  "context_servers": {
+    "odoo-boost": {
+      "url": "http://127.0.0.1:8765/mcp",
+      "headers": {"Authorization": "Bearer <token>"}
+    }
+  }
+}
+```
+
+For a Windows Zed client with the project in WSL, prefer HTTP and regenerate
+with `odoo-boost mcp-config --platform http --agents zed`. Trust the worktree
+when Zed asks before it activates project settings and skills.
+
+---
+
 ## Selecting Agents
 
 ### During Install Wizard
@@ -289,6 +317,7 @@ Step 3: Select AI agents to configure
   9. Windsurf (windsurf)
   10. Cline (cline)
   11. Junie (junie)
+  12. Zed (zed)
 
   Enter agent numbers (comma-separated) or 'all' [all]:
 ```
@@ -302,6 +331,6 @@ You can configure agents explicitly in `odoo-boost.json`:
 ```
 
 Valid identifiers:
-`antigravity`, `claude_code`, `cursor`, `copilot`, `codex`, `opencode`, `pi`, `hermes`, `windsurf`, `cline`, `junie`.
+`antigravity`, `claude_code`, `cursor`, `copilot`, `codex`, `opencode`, `pi`, `hermes`, `windsurf`, `cline`, `junie`, `zed`.
 
 Run `odoo-boost update` to apply changes.

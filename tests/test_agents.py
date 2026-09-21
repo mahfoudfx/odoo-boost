@@ -1,4 +1,4 @@
-"""Tests for odoo_boost.agents (base + all 11 concrete agents)."""
+"""Tests for odoo_boost.agents (base + all concrete agents)."""
 
 from __future__ import annotations
 
@@ -27,6 +27,7 @@ from odoo_boost.agents.opencode import OpenCodeAgent
 from odoo_boost.agents.pi import PiAgent
 from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.agents.windsurf import WindsurfAgent
+from odoo_boost.agents.zed import ZedAgent
 from odoo_boost.config.schema import OdooBoostConfig
 
 # ---------------------------------------------------------------------------
@@ -35,8 +36,8 @@ from odoo_boost.config.schema import OdooBoostConfig
 
 
 class TestAgentRegistry:
-    def test_eleven_agents(self):
-        assert len(AGENTS) == 11
+    def test_twelve_agents(self):
+        assert len(AGENTS) == 12
 
     def test_all_ids(self):
         assert list(AGENTS.keys()) == ALL_AGENT_IDS
@@ -54,6 +55,7 @@ class TestAgentRegistry:
             "codex",
             "copilot",
             "junie",
+            "zed",
         ]
         for agent_id in expected_ids:
             assert agent_id in AGENTS
@@ -91,6 +93,7 @@ AGENT_CLASSES = [
     CodexAgent,
     CopilotAgent,
     JunieAgent,
+    ZedAgent,
 ]
 
 
@@ -301,7 +304,7 @@ class TestAgentContracts:
         a = AntigravityAgent(config=cfg, project_path=tmp_path)
         a.install()
         data = json.loads(a.mcp_config_path.read_text())
-        assert data["mcpServers"]["odoo-boost"]["url"] == "http://127.0.0.1:9000/mcp"
+        assert data["mcpServers"]["odoo-boost"]["serverUrl"] == "http://127.0.0.1:9000/mcp"
         assert not a.windows_mcp_config_path.exists()
 
     def test_custom_command_override(self, sample_config, tmp_path):
@@ -414,6 +417,36 @@ class TestJunieAgent:
         assert ".junie" in str(a.skills_dir)
 
 
+class TestZedAgent:
+    def test_native_project_configuration(self, sample_config, tmp_path):
+        a = ZedAgent(config=sample_config, project_path=tmp_path)
+        a.install()
+
+        data = json.loads(a.mcp_config_path.read_text())
+        server = data["context_servers"]["odoo-boost"]
+        assert server["command"] == sys.executable
+        assert a.mcp_config_path == tmp_path / ".zed" / "settings.json"
+        assert a.guidelines_path == tmp_path / "AGENTS.md"
+        assert a.skills_dir == tmp_path / ".agents" / "skills"
+
+    def test_http_configuration_and_existing_settings_are_preserved(self, sample_config, tmp_path):
+        path = tmp_path / ".zed" / "settings.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(
+            json.dumps({"theme": "One Dark", "context_servers": {"other": {"url": "x"}}})
+        )
+        cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})
+        ZedAgent(config=cfg, project_path=tmp_path).install()
+
+        data = json.loads(path.read_text())
+        assert data["theme"] == "One Dark"
+        assert data["context_servers"]["other"] == {"url": "x"}
+        assert data["context_servers"]["odoo-boost"] == {
+            "url": "http://127.0.0.1:8765/mcp",
+            "headers": {"Authorization": "Bearer tok123"},
+        }
+
+
 # ---------------------------------------------------------------------------
 # HTTP transport config variants
 # ---------------------------------------------------------------------------
@@ -425,7 +458,11 @@ class TestHttpConfigVariants:
         a = AntigravityAgent(config=cfg, project_path=tmp_path)
         a.install()
         data = json.loads(a.mcp_config_path.read_text())
-        assert "headers" not in data["mcpServers"]["odoo-boost"]
+        server = data["mcpServers"]["odoo-boost"]
+        assert "headers" not in server
+        assert server["serverUrl"] == "http://127.0.0.1:8765/mcp"
+        assert "url" not in server
+        assert "type" not in server
 
     def test_json_agents_embed_bearer_token(self, sample_config, tmp_path):
         cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_token": "tok123"})

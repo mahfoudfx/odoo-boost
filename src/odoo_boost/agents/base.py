@@ -174,7 +174,7 @@ class Agent(ABC):
 
     def _http_server_entry(self, *, server_type: str | None = None) -> dict[str, Any]:
         """Return a ``{url[, headers]}`` mapping for HTTP-based clients."""
-        entry: dict[str, Any] = {"url": self._http_url()}
+        entry: dict[str, Any] = {self.spec.remote_url_key: self._http_url()}
         if self.config.mcp_token:
             entry["headers"] = {"Authorization": f"Bearer {self.config.mcp_token}"}
         if server_type:
@@ -233,12 +233,14 @@ class Agent(ABC):
     def _render_json(self, windows: bool) -> str:
         """Render the generic JSON format (``mcpServers`` or VS Code ``servers``)."""
         server = (
-            self._http_server_entry(server_type="http")
+            self._http_server_entry(server_type=self.spec.remote_server_type)
             if self._is_http()
             else self._stdio_server_entry(windows)
         )
         if self.spec.mcp_format == "vscode":
             return json.dumps({"servers": {"odoo-boost": server}}, indent=2) + "\n"
+        if self.spec.mcp_format == "zed":
+            return json.dumps({"context_servers": {"odoo-boost": server}}, indent=2) + "\n"
         return json.dumps({"mcpServers": {"odoo-boost": server}}, indent=2) + "\n"
 
     def _render_opencode(self, windows: bool) -> str:

@@ -10,7 +10,7 @@ import typer
 from rich.console import Console
 
 from odoo_boost.config.settings import load_config
-from odoo_boost.mcp_launcher import HTTP_PATH, is_loopback_host
+from odoo_boost.mcp_launcher import build_http_url, is_loopback_host
 
 console = Console(stderr=True)
 
@@ -86,8 +86,13 @@ def mcp(
         )
         raise typer.Exit(1)
 
-    if resolved_token != cfg.mcp_token:
-        cfg = cfg.model_copy(update={"mcp_token": resolved_token})
+    cfg = cfg.model_copy(
+        update={
+            "mcp_host": bind_host,
+            "mcp_port": bind_port,
+            "mcp_token": resolved_token,
+        }
+    )
 
     from odoo_boost.mcp_server.server import create_mcp_server
 
@@ -97,10 +102,9 @@ def mcp(
         console.print("[green]Bearer token authentication enabled.[/]")
 
     if resolved == "streamable-http":
-        client_host = "127.0.0.1" if bind_host in ("0.0.0.0", "::", "") else bind_host
         console.print(
             f"[dim]Odoo Boost MCP server listening on "
-            f"[cyan]http://{client_host}:{bind_port}{HTTP_PATH}[/] "
+            f"[cyan]{build_http_url(cfg)}[/] "
             f"(bind {bind_host})[/]"
         )
         server.run(transport="streamable-http", host=bind_host, port=bind_port)

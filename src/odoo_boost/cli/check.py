@@ -192,14 +192,43 @@ def _probe_stdio(command: list[str], timeout: float = 20.0) -> tuple[bool, str]:
 
 
 def _probe_http(url: str, timeout: float = 5.0, token: str | None = None) -> tuple[bool, str]:
-    """Check that an HTTP MCP endpoint is reachable."""
+    """Perform a real Streamable HTTP MCP initialize request."""
+    import json
+
     import httpx
 
-    headers = {"Authorization": f"Bearer {token}"} if token else None
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    initialize = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2025-06-18",
+            "capabilities": {},
+            "clientInfo": {"name": "odoo-boost-check", "version": "1"},
+        },
+    }
     try:
-        response = httpx.get(url, timeout=timeout, headers=headers)
+        response = httpx.post(url, timeout=timeout, headers=headers, json=initialize)
     except Exception as exc:
         return False, f"HTTP MCP server unreachable: {exc}"
-    if token and response.status_code in (401, 403):
+    if response.status_code in (401, 403):
         return False, f"HTTP MCP server rejected the configured token (HTTP {response.status_code})"
-    return True, f"HTTP MCP server reachable (HTTP {response.status_code})"
+    if response.status_code != 200:
+        return False, f"HTTP endpoint did not accept MCP initialize (HTTP {response.status_code})"
+    if "text/event-stream" in response.headers.get("content-type", ""):
+        if '"result"' in response.text or "event: message" in response.text:
+            return True, "HTTP MCP server responded to initialize"
+        return False, "HTTP MCP stream returned no initialize response"
+    try:
+        payload = response.json()
+    except (json.JSONDecodeError, ValueError):
+        return False, "HTTP MCP server returned an invalid initialize response"
+    if isinstance(payload, dict) and ("result" in payload or "error" in payload):
+        return True, "HTTP MCP server responded to initialize"
+    return False, "HTTP MCP server returned an unexpected initialize response"

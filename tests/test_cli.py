@@ -309,6 +309,45 @@ class TestCheckMcpHttp:
         assert probe.call_args.kwargs.get("token") == "tok"
 
 
+class TestHttpProbe:
+    def test_performs_initialize_with_authentication(self):
+        from odoo_boost.cli.check import _probe_http
+
+        response = MagicMock(
+            status_code=200,
+            headers={"content-type": "application/json"},
+        )
+        response.json.return_value = {"jsonrpc": "2.0", "id": 1, "result": {}}
+        with patch("httpx.post", return_value=response) as post:
+            ok, detail = _probe_http("http://localhost:8765/mcp", token="secret")
+
+        assert ok is True
+        assert "initialize" in detail
+        request = post.call_args
+        assert request.kwargs["json"]["method"] == "initialize"
+        assert request.kwargs["headers"]["Authorization"] == "Bearer secret"
+
+    def test_rejects_non_mcp_endpoint(self):
+        from odoo_boost.cli.check import _probe_http
+
+        response = MagicMock(status_code=404, headers={}, text="not found")
+        with patch("httpx.post", return_value=response):
+            ok, detail = _probe_http("http://localhost:8765/")
+
+        assert ok is False
+        assert "HTTP 404" in detail
+
+    def test_reports_rejected_token(self):
+        from odoo_boost.cli.check import _probe_http
+
+        response = MagicMock(status_code=401, headers={}, text="unauthorized")
+        with patch("httpx.post", return_value=response):
+            ok, detail = _probe_http("http://localhost:8765/mcp", token="bad")
+
+        assert ok is False
+        assert "rejected" in detail
+
+
 class TestMcpConfigCommand:
     def _write_config(self, tmp_path, sample_config):
         cfg_path = tmp_path / "odoo-boost.json"
@@ -371,7 +410,9 @@ class TestMcpConfigCommand:
         )
         assert result.exit_code == 0
         data = json.loads((tmp_path / ".agents" / "mcp_config.json").read_text())
-        assert "url" in data["mcpServers"]["odoo-boost"]
+        server = data["mcpServers"]["odoo-boost"]
+        assert server["serverUrl"] == "http://127.0.0.1:8765/mcp"
+        assert "url" not in server
 
     def test_unknown_platform_rejected(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)

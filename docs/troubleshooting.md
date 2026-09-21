@@ -56,6 +56,32 @@ A Windows-native IDE cannot execute a Linux interpreter path. Two options:
   odoo-boost mcp --transport http --host 0.0.0.0 --port 8765 --token "$MCP_TOKEN"
   ```
 
+  Keep the command running. Put the same token in `mcp_token`, run
+  `odoo-boost mcp-config --platform http`, and reload MCP servers in the IDE.
+  Current Antigravity configurations use `serverUrl`; Odoo Boost generates it
+  automatically.
+
+  From Windows PowerShell, verify WSL forwarding with:
+
+  ```powershell
+  Test-NetConnection localhost -Port 8765
+  ```
+
+  If that fails, get the current address with `hostname -I` inside WSL and set
+  the exact client endpoint while continuing to bind on all WSL interfaces:
+
+  ```json
+  {
+    "mcp_host": "0.0.0.0",
+    "mcp_port": 8765,
+    "mcp_http_url": "http://172.30.10.2:8765/mcp"
+  }
+  ```
+
+  Regenerate the HTTP configuration after an address change. WSL addresses can
+  change after restart; fixing Windows localhost forwarding is preferable for
+  a stable setup.
+
 ## HTTP server refuses to start / clients get 401
 
 - Non-loopback binds (`0.0.0.0`, LAN IPs) require a token. Pass `--token`,
@@ -68,8 +94,8 @@ A Windows-native IDE cannot execute a Linux interpreter path. Two options:
   ```
 
 - Use `127.0.0.1` for local-only access.
-- WSL2 usually forwards `localhost`; if not, use the WSL IP or enable the
-  Windows firewall rule for the port.
+- WSL2 usually forwards `localhost`; if not, use `mcp_http_url` with the WSL IP
+  and allow the port through Windows Firewall.
 
 ## "Cannot reach Odoo" / authentication failures
 

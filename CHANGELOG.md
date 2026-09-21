@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-21
+
+### Added
+
+- First-class Zed integration using `AGENTS.md`, project-local Agent Skills,
+  and merge-safe `.zed/settings.json` MCP configuration for stdio and HTTP.
+
+### Fixed
+
+- Generate Antigravity remote MCP entries with its current `serverUrl` schema.
+- Verify HTTP servers with an MCP `initialize` request and support an explicit
+  client-facing `mcp_http_url` for Windows-to-WSL connections.
+
 ## [0.7.1] - 2026-09-14
 
 ### Changed

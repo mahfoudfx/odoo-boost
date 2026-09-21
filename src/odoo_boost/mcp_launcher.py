@@ -103,6 +103,8 @@ def build_stdio_command(
 
 def build_http_url(config: OdooBoostConfig) -> str:
     """Return the Streamable HTTP endpoint advertised to MCP clients."""
+    if config.mcp_http_url:
+        return config.mcp_http_url.rstrip("/")
     host = config.mcp_host
     if host in ("0.0.0.0", "::", ""):
         host = "127.0.0.1"

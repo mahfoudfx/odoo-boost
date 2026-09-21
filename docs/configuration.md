@@ -53,6 +53,7 @@ List of enabled agent identifiers. Valid options:
 - `"windsurf"` — Windsurf
 - `"cline"` — Cline
 - `"junie"` — Junie
+- `"zed"` — Zed
 
 Default: `[]` (all configured agents).
 
@@ -69,6 +70,7 @@ Path to the project root directory. Default: `"."`.
 | `wsl_distro` | string | — | WSL distribution used by the `wsl` target. |
 | `mcp_host` | string | `"127.0.0.1"` | Bind host for HTTP transport. |
 | `mcp_port` | number | `8765` | Bind port for HTTP transport. |
+| `mcp_http_url` | string | — | Client-facing Streamable HTTP URL override, e.g. `http://172.30.10.2:8765/mcp`, when Windows cannot use WSL localhost forwarding. Does not change the bind address. |
 | `mcp_command` | string[] | — | Advanced: full stdio command override, used verbatim. |
 | `mcp_token` | string | — | Bearer token required by HTTP clients. Non-loopback binds are refused without it. Hidden from `repr`. |
 | `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |

@@ -80,6 +80,7 @@ and license texts bundled beside the references.
 | Windsurf | `.windsurf/skills/` |
 | Cline | `.cline/skills/` |
 | Junie | `.junie/skills/` |
+| Zed | `.agents/skills/` |
 
 ---
 

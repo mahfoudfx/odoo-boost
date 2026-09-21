@@ -93,3 +93,11 @@ class TestBuildHttpUrl:
     def test_remote_host_preserved(self):
         cfg = _config(mcp_host="192.168.1.10", mcp_port=8000)
         assert build_http_url(cfg) == "http://192.168.1.10:8000/mcp"
+
+    def test_explicit_client_url_overrides_bind_address(self):
+        cfg = _config(
+            mcp_host="0.0.0.0",
+            mcp_port=8000,
+            mcp_http_url="http://172.30.10.2:8000/mcp/",
+        )
+        assert build_http_url(cfg) == "http://172.30.10.2:8000/mcp"

@@ -182,6 +182,8 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
         if fmt == "opencode"
         else "servers"
         if fmt == "vscode"
+        else "context_servers"
+        if fmt == "zed"
         else "mcpServers"
     )
     if not isinstance(data, dict) or (key in data and not isinstance(data[key], dict)):

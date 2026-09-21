@@ -60,6 +60,13 @@ class OdooBoostConfig(BaseModel):
         default=8765,
         description="Port the HTTP MCP server binds to when mcp_transport is 'http'",
     )
+    mcp_http_url: str | None = Field(
+        default=None,
+        description=(
+            "Optional client-facing Streamable HTTP endpoint override, useful when a "
+            "Windows client reaches WSL through a hostname/IP different from the bind host."
+        ),
+    )
     mcp_command: list[str] | None = Field(
         default=None,
         description=(

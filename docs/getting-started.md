@@ -55,7 +55,7 @@ odoo-boost install
 The wizard will:
 1. **Prompt for Odoo connection details**: URL, database name, user, and password/API key.
 2. **Test the connection**: Verify authentication, detect Odoo version (e.g. 14.0, 17.0, 18.0, 19.0, 20.0), and check for `odoo-ls`.
-3. **Select AI agents**: Choose from 11 modern assistants:
+3. **Select AI agents**: Choose from 12 modern assistants:
    - Antigravity (App & CLI `agy`)
    - Claude Code
    - Cursor
@@ -67,6 +67,7 @@ The wizard will:
    - Windsurf
    - Cline
    - Junie
+   - Zed
 4. **Choose the MCP transport**: stdio (default) or HTTP, and whether the same
    project is opened from Windows IDEs while the server runs in WSL.
 5. **Generate files**: Creates guidelines, MCP configs, 23 skills, and the `SKILLS_ROUTING.md` index.
@@ -110,6 +111,17 @@ Alternatively, run the server over HTTP and point the IDE at
 odoo-boost mcp --transport http --host 0.0.0.0 --port 8765 --token "$MCP_TOKEN"
 ```
 
+Keep that process running, store the same token as `mcp_token` in
+`odoo-boost.json`, then generate the remote configuration:
+
+```bash
+odoo-boost mcp-config --platform http --agents antigravity
+odoo-boost check --mcp
+```
+
+Antigravity uses `serverUrl` for remote MCP servers. Odoo Boost writes this
+current schema automatically to `.agents/mcp_config.json`.
+
 Run static linting on your local addon code:
 
 ```bash
@@ -125,7 +137,7 @@ Open your project in your preferred editor or agent:
 - **Antigravity (App & CLI `agy`)**: Auto-detects `AGENTS.md` and `.agents/mcp_config.json`.
 - **Claude Code**: Run `claude` in your project root; `.mcp.json` and `CLAUDE.md` are auto-loaded.
 - **Cursor**: Open the workspace in Cursor; `.cursor/rules/odoo-boost.mdc` and `.cursor/mcp.json` are active.
-- **Windsurf / Cline / OpenCode / Copilot / Codex / Pi / Hermes / Junie**: Native configurations are in place.
+- **Windsurf / Cline / OpenCode / Copilot / Codex / Pi / Hermes / Junie / Zed**: Native configurations are in place.
 
 Ask your assistant:
 - *"Inspect my local addon in ./addons/my_sale with inspect_local_addon"*

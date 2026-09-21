@@ -77,6 +77,7 @@ When building agent guidelines, the composer:
 | Windsurf | `.windsurfrules` | Markdown |
 | Cline | `.clinerules` | Markdown |
 | Junie | `.junie/guidelines.md` | Markdown |
+| Zed | `AGENTS.md` | Markdown |
 
 ## Refreshing Guidelines
 

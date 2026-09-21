@@ -14,6 +14,7 @@ from odoo_boost.agents.junie import JunieAgent
 from odoo_boost.agents.opencode import OpenCodeAgent
 from odoo_boost.agents.pi import PiAgent
 from odoo_boost.agents.windsurf import WindsurfAgent
+from odoo_boost.agents.zed import ZedAgent
 
 AGENTS: dict[str, type[Agent]] = {
     "antigravity": AntigravityAgent,
@@ -27,6 +28,7 @@ AGENTS: dict[str, type[Agent]] = {
     "codex": CodexAgent,
     "copilot": CopilotAgent,
     "junie": JunieAgent,
+    "zed": ZedAgent,
 }
 
 ALL_AGENT_IDS = list(AGENTS.keys())
@@ -46,4 +48,5 @@ __all__ = [
     "CodexAgent",
     "CopilotAgent",
     "JunieAgent",
+    "ZedAgent",
 ]
