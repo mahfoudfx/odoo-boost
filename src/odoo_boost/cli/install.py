@@ -15,8 +15,9 @@ from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 
 from odoo_boost.agents import AGENTS, ALL_AGENT_IDS
+from odoo_boost.cli.gitignore import ignore_entry, managed_entries, update_gitignore
 from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
-from odoo_boost.config.settings import CONFIG_FILENAME, save_config
+from odoo_boost.config.settings import save_config
 from odoo_boost.connection.factory import create_connection
 from odoo_boost.mcp_launcher import detect_wsl_distro, is_loopback_host, is_wsl
 from odoo_boost.versions import detect_version, get_version_profile, version_guidance
@@ -32,6 +33,10 @@ def install(
             help="Do not install Odoo LS and pylint-odoo during setup.",
         ),
     ] = False,
+    gitignore: Annotated[
+        bool | None,
+        typer.Option("--gitignore/--no-gitignore", help="Add generated paths to .gitignore."),
+    ] = None,
 ) -> None:
     """Interactive wizard: configure connection, detect version, select agents, generate files."""
     console.print(
@@ -223,19 +228,40 @@ def install(
     console.print(
         "  [yellow]Credentials are stored in plaintext — keep odoo-boost.json out of version control.[/]"
     )
-    _ensure_gitignore(project_path)
+    generated_paths = [config_path]
 
     # Install each agent
     for agent_id in selected_agents:
         agent_cls = AGENTS[agent_id]
         agent = agent_cls(config=config, project_path=project_path)
         created = agent.install()
+        generated_paths.extend(created)
         for p in created:
             try:
                 rel = p.relative_to(project_path)
             except ValueError:
                 rel = p
             console.print(f"  [green]Created[/] {rel}")
+
+    # Claude Code also creates the shared AGENTS.md file.
+    if "claude_code" in selected_agents and generate_ai_files:
+        generated_paths.append(project_path / "AGENTS.md")
+    entries = {ignore_entry(project_path, path) for path in generated_paths}
+    existing = (
+        set((project_path / ".gitignore").read_text(encoding="utf-8").splitlines())
+        if (project_path / ".gitignore").is_file()
+        else set()
+    )
+    proposed = entries - existing - managed_entries(project_path)
+    if proposed:
+        console.print("\n[bold]Suggested .gitignore entries:[/]")
+        for entry in sorted(proposed):
+            console.print(f"  {entry}", markup=False)
+        if gitignore is True or (
+            gitignore is None and Confirm.ask("  Add these entries to .gitignore?", default=False)
+        ):
+            update_gitignore(project_path, add=proposed)
+            console.print("  [green]Updated[/] .gitignore")
 
     if install_dev_tools:
         console.print("\n[bold]Step 6:[/] Installing Odoo development analysis tools…\n")
@@ -253,24 +279,6 @@ def install(
             border_style="green",
         )
     )
-
-
-def _ensure_gitignore(project_path: Path) -> None:
-    """Add odoo-boost.json to an existing .gitignore (best-effort)."""
-    gitignore = project_path / ".gitignore"
-    if not gitignore.is_file():
-        return
-    try:
-        content = gitignore.read_text(encoding="utf-8")
-    except OSError:  # pragma: no cover - defensive
-        return
-    if any(line.strip() == CONFIG_FILENAME for line in content.splitlines()):
-        return
-    separator = "" if content.endswith("\n") else "\n"
-    gitignore.write_text(
-        f"{content}{separator}\n# Odoo Boost\n{CONFIG_FILENAME}\n", encoding="utf-8"
-    )
-    console.print(f"  [green]Updated[/] .gitignore (added {CONFIG_FILENAME})")
 
 
 def _install_development_tools() -> None:

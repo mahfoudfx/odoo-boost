@@ -250,6 +250,26 @@ class TestUpdateCommand:
 
 
 class TestInstallWizard:
+    def test_gitignore_opt_in_and_uninstall_removes_only_managed_entry(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / ".gitignore").write_text("__pycache__/\n")
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0", "server_serie": "18.0"}
+        mock_conn.authenticate.return_value = 2
+
+        with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
+            result = runner.invoke(
+                app,
+                ["install", "--skip-dev-tools", "--gitignore"],
+                input="\ndb\n\n\n1\nn\nn\n",
+            )
+        assert result.exit_code == 0, result.output
+        assert "/odoo-boost.json" in (tmp_path / ".gitignore").read_text()
+
+        result = runner.invoke(app, ["uninstall", "-y", "--gitignore"])
+        assert result.exit_code == 0, result.output
+        assert (tmp_path / ".gitignore").read_text() == "__pycache__/\n"
+
     def test_minimal_install(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
 
@@ -261,7 +281,7 @@ class TestInstallWizard:
         mock_conn.authenticate.return_value = 2
 
         # url, database, username, password, agent #1, generated files, dev tools
-        user_input = "\ndb\n\n\n1\nn\nn\nn\n"
+        user_input = "\ndb\n\n\n1\nn\nn\nn\nn\n"
         with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
             result = runner.invoke(app, ["install"], input=user_input)
 
@@ -279,7 +299,7 @@ class TestInstallWizard:
             patch("odoo_boost.cli.install.create_connection", return_value=mock_conn),
             patch("odoo_boost.cli.install._install_development_tools") as install_tools,
         ):
-            result = runner.invoke(app, ["install"], input="\ndb\n\n\n1\nn\nn\n\n")
+            result = runner.invoke(app, ["install"], input="\ndb\n\n\n1\nn\nn\n\nn\n")
 
         assert result.exit_code == 0, result.output
         install_tools.assert_called_once()
@@ -295,7 +315,7 @@ class TestInstallWizard:
             patch("odoo_boost.cli.install._install_development_tools") as install_tools,
         ):
             result = runner.invoke(
-                app, ["install", "--skip-dev-tools"], input="\ndb\n\n\n1\nn\nn\n"
+                app, ["install", "--skip-dev-tools"], input="\ndb\n\n\n1\nn\nn\nn\n"
             )
 
         assert result.exit_code == 0, result.output
@@ -470,24 +490,29 @@ class TestMcpConfigCommand:
         assert result.exit_code == 1
 
 
-class TestEnsureGitignore:
-    def test_appends_config_entry_once(self, tmp_path):
-        from odoo_boost.cli.install import _ensure_gitignore
+class TestManagedGitignore:
+    def test_preserves_other_entries_and_only_removes_owned_entries(self, tmp_path):
+        from odoo_boost.cli.gitignore import managed_entries, update_gitignore
 
         gitignore = tmp_path / ".gitignore"
-        gitignore.write_text("__pycache__/\n")
-        _ensure_gitignore(tmp_path)
+        gitignore.write_text("__pycache__/\n/AGENTS.md\n")
+        update_gitignore(tmp_path, add={"/odoo-boost.json", "/.mcp.json"})
         first = gitignore.read_text()
-        assert "odoo-boost.json" in first
-
-        _ensure_gitignore(tmp_path)
+        update_gitignore(tmp_path, add={"/odoo-boost.json"})
         assert gitignore.read_text() == first
+        assert managed_entries(tmp_path) == {"/odoo-boost.json", "/.mcp.json"}
 
-    def test_no_gitignore_is_noop(self, tmp_path):
-        from odoo_boost.cli.install import _ensure_gitignore
+        update_gitignore(tmp_path, remove={"/odoo-boost.json"})
+        assert gitignore.read_text().startswith("__pycache__/\n/AGENTS.md\n")
+        assert managed_entries(tmp_path) == {"/.mcp.json"}
 
-        _ensure_gitignore(tmp_path)
+    def test_creates_file_only_when_adding_entries(self, tmp_path):
+        from odoo_boost.cli.gitignore import update_gitignore
+
+        update_gitignore(tmp_path, remove={"/odoo-boost.json"})
         assert not (tmp_path / ".gitignore").exists()
+        update_gitignore(tmp_path, add={"/odoo-boost.json"})
+        assert "/odoo-boost.json" in (tmp_path / ".gitignore").read_text()
 
 
 class TestLintCommand:

@@ -260,6 +260,10 @@ odoo-boost check --mcp                     # verify the server starts
 
 Generated files contain environment-specific paths and local configs. Add the following to your project `.gitignore`:
 
+During `odoo-boost install`, the wizard shows the exact generated paths and asks whether to add them to `.gitignore`. It creates a marked block so `odoo-boost uninstall` can offer to remove only entries it added for files it deleted. Both prompts default to no. Use `--gitignore` or `--no-gitignore` on either command to choose without a prompt; `uninstall --yes` leaves `.gitignore` unchanged unless `--gitignore` is also given. Review the suggested paths before accepting, especially if you plan to commit generated agent instructions. The config contains plaintext credentials, so ensure `odoo-boost.json` stays out of version control even when you decline the prompt.
+
+For manual setup, these are common paths; your selected agents determine which ones exist:
+
 ```gitignore
 # Odoo Boost
 odoo-boost.json
