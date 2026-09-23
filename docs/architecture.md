@@ -63,17 +63,18 @@ standard XML-RPC.
 
 Generated guideline sections and Odoo Boost MCP entries are updated in place;
 unrelated user content and other MCP servers are preserved. Edited generated
-sections are left for the user to reconcile. Existing configurations retain
-explicit option values such as `lean_tools`.
+sections are left for the user to reconcile. Older configurations containing
+Unknown configuration keys are ignored when reading a project config.
 
 Version guidance follows shared Odoo topics → registered version facts and
 delta note → task-specific skill or tool. Unknown series receive shared topics
 and an uncertainty warning rather than inheriting the newest release. See
 [version support](versions.md) for the onboarding sequence.
 
-The generated router selects first-pass coding automatically for small field,
-label, translation, and view edits. It keeps version facts active but avoids MCP
-calls, plans, broad scans, and unrelated skills. Medium effort covers bounded
+The generated router selects low effort for clear local edits of any type. It
+keeps version and live execution boundaries active while loading detailed
+procedures only when needed. Deadline mode explicitly favors the shortest route
+to a working result at any assurance level. Medium effort covers bounded
 multi-file features, localized refactoring, and packaging with focused checks.
 High effort progressively loads expert material for broad refactors, production
 readiness, security, migrations, audits, accounting/stock integrity, and failed

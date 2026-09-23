@@ -73,10 +73,17 @@ The wizard will:
 5. **Generate files**: Creates guidelines, MCP configs, 23 skills, and the `SKILLS_ROUTING.md` index.
 
 Generated instructions choose an execution depth automatically. Small iterative
-edits use first-pass coding with the configured Odoo version rules and a 2–4 call
-target. Bounded multi-file work uses medium effort; production readiness, broad
+edits use low effort with the configured Odoo version and a relevant completion
+check. Bounded multi-file work uses medium effort; production readiness, broad
 refactors, security, migrations, and audits use high effort and progressively
-load relevant expert topics and skills. No prompt prefix or mode keyword is required.
+load relevant expert topics and skills. No prompt prefix is required. Request
+`Deadline mode` explicitly for the shortest route to a working change.
+
+For example, prompt: "Deadline mode: rename the `client_order_ref` label in the
+sale order form to Customer PO." The expected result is a targeted XML edit,
+an XML parse and diff check, and a short completion report. Deadline mode is
+also available for Python, security, or multi-file work; the agent keeps the
+checks relevant to those changes.
 
 ---
 

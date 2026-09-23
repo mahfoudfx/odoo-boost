@@ -28,6 +28,8 @@ def find_orphaned_agent_files(config: OdooBoostConfig, project_path: Path) -> di
     ]
 
     active_guidelines = {a.guidelines_path for a in active_agents if config.generate_ai_files}
+    if config.generate_ai_files and "claude_code" in config.agents:
+        active_guidelines.add(project_path / "AGENTS.md")
     active_mcp = set()
     if config.generate_mcp:
         for a in active_agents:

@@ -118,7 +118,6 @@ class TestPiAgent:
         agent = PiAgent(config=sample_config, project_path=tmp_path)
         assert agent.skills_dir == tmp_path / ".agents" / "skills"
 
-
     def test_guidelines_path_is_absolute(self, agent: Agent):
         assert agent.guidelines_path.is_absolute()
 
@@ -138,6 +137,9 @@ class TestPiAgent:
         agent.install()
         assert agent.guidelines_path.exists()
         content = agent.guidelines_path.read_text(encoding="utf-8")
+        if agent.id == "claude_code":
+            assert "@AGENTS.md" in content
+            content = (agent.project_path / "AGENTS.md").read_text(encoding="utf-8")
         assert "Odoo" in content
         reference_dir = agent.skills_dir / "guidelines"
         assert (reference_dir / "security.md").exists()
@@ -224,12 +226,12 @@ class TestPiAgent:
 
     def test_edited_generated_guidelines_survive_uninstall(self, agent: Agent):
         agent.install()
-        path = agent.guidelines_path
+        path = (
+            agent.project_path / "AGENTS.md" if agent.id == "claude_code" else agent.guidelines_path
+        )
         content = path.read_text(encoding="utf-8")
         path.write_text(
-            content.replace(
-                "# Odoo Boost: adaptive development workflow", "# Team-edited Guidelines"
-            ),
+            content.replace("# Odoo Boost: working rules", "# Team-edited Guidelines"),
             encoding="utf-8",
         )
         agent.uninstall()
@@ -385,9 +387,20 @@ class TestClaudeCodeAgent:
     def test_mcp_config_json(self, sample_config, tmp_path):
         a = ClaudeCodeAgent(config=sample_config, project_path=tmp_path)
         a.install()
+        assert "@AGENTS.md" in a.guidelines_path.read_text()
+        assert "# Odoo Boost: working rules" in (tmp_path / "AGENTS.md").read_text()
         data = json.loads(a.mcp_config_path.read_text())
         assert "mcpServers" in data
         assert "odoo-boost" in data["mcpServers"]
+
+    def test_import_and_shared_guide_removed_on_uninstall(self, sample_config, tmp_path):
+        cfg = sample_config.model_copy(update={"agents": ["claude_code"]})
+        agent = ClaudeCodeAgent(config=cfg, project_path=tmp_path)
+        agent.install()
+        assert "@AGENTS.md" in (tmp_path / "CLAUDE.md").read_text()
+        agent.uninstall()
+        assert not (tmp_path / "CLAUDE.md").exists()
+        assert not (tmp_path / "AGENTS.md").exists()
 
 
 class TestCursorAgent:

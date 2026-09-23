@@ -4,7 +4,7 @@
 
 - Run `odoo-boost update` after upgrading the package. This refreshes the generated agent guidelines and XML view skill; existing generated files do not change by themselves.
 - For a source-only change, the agent should locate the relevant files, edit them, and inspect the diff. Live Odoo queries are useful when the task depends on current database state.
-- New configurations advertise 8 common tools. To use omitted tools such as `list_views` and `list_access_rights`, set `"lean_tools": false` to expose all 23.
+- Odoo Boost registers all 23 tools. Whether their definitions enter every model request or are discovered on demand depends on the agent client.
 - `compact_responses` and `max_response_chars` limit individual MCP outputs.
   `max_consecutive_identical_calls` blocks mechanical repetition of one call,
   while generated instructions impose investigation budgets and prevent repeated

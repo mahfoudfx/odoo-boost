@@ -1,6 +1,6 @@
 ---
 name: spec-driven-dev
-description: End-to-end workflow to take a feature specification and produce a production-ready Odoo module.
+description: Use when a user asks to turn a full feature specification into a production-ready Odoo module; avoid for bounded edits to an existing feature.
 globs: ["__manifest__.py", "models/**/*.py", "views/**/*.xml", "security/*"]
 ---
 

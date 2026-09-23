@@ -174,6 +174,21 @@ class TestUpdateCommand:
         assert not (tmp_path / "CLAUDE.md").exists()
         assert not (tmp_path / ".mcp.json").exists()
 
+    def test_claude_only_update_keeps_shared_guide(self, tmp_path, sample_config, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        cfg = sample_config.model_copy(
+            update={"project_path": str(tmp_path), "agents": ["claude_code"]}
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+
+        assert runner.invoke(app, ["update", "--config", str(cfg_path), "-y"]).exit_code == 0
+        shared = tmp_path / "AGENTS.md"
+        content = shared.read_text()
+        assert "@AGENTS.md" in (tmp_path / "CLAUDE.md").read_text()
+        assert runner.invoke(app, ["update", "--config", str(cfg_path), "-y"]).exit_code == 0
+        assert shared.read_text() == content
+
     def test_update_keep_orphans_flag(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)
         cfg = sample_config.model_copy(

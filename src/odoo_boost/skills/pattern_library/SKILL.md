@@ -1,6 +1,6 @@
 ---
 name: pattern-library
-description: Find focused implementation patterns for fields, workflows, business domains, integrations, performance, migration, and troubleshooting.
+description: Use when a concrete Odoo implementation question needs an example pattern for fields, workflows, integrations, performance, migration, or troubleshooting; open only the relevant reference.
 globs: ["**/*.py", "**/*.xml", "**/*.csv", "**/*.js", "__manifest__.py"]
 ---
 

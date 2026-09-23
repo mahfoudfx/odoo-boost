@@ -11,7 +11,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 
 ## Highlights
 
-- **23 MCP Tools, Resources & Prompts** — An 8-tool lean profile is advertised by default; set `lean_tools=false` to expose all 23. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **23 MCP Tools, Resources & Prompts** — All tools are available for client-side discovery. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **12 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie, Zed.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
@@ -27,8 +27,8 @@ odoo-boost odoo-ls install
 odoo-boost odoo-ls status
 ```
 - **Zero Config on Odoo Side** — Connects via standard XML-RPC; no custom module installation required on your Odoo server.
-- **Progressive Context** — Compact responses, cached local scans, repeated-call loop protection, and explicit investigation budgets lead to detailed skills only on demand. Use `response_format="full"` when needed, or `lean_tools=true` to reduce the advertised tool set.
-- **Automatic Fast/Deep Modes** — Small field, label, translation, and view edits keep the target-version contract but normally use only 2–4 tool calls. New modules, coupled workflows, security, migrations, and audits progressively load the full expert references.
+- **Progressive Context** — Compact responses, cached local scans, repeated-call loop protection, and task-specific checks lead to detailed skills only on demand. Use `response_format="full"` when needed. MCP tool schema loading depends on the client.
+- **Goal-first modes** — Low, medium, and high effort follow the affected behavior. Small edits use an exact target and relevant check; explicit Deadline mode takes the shortest route to a working result. Coupled workflows, security, migrations, and audits progressively load expert references.
 
 ## Installation
 
@@ -103,14 +103,14 @@ odoo-boost lint ./addons/my_custom_addon
 Your AI assistant is now configured. Odoo Boost selects the appropriate depth
 from the request; no mode keyword or special prompt syntax is required.
 
-Every task starts in first-pass coding. The generated router is behavioral guidance,
-not guaranteed enforcement: Gemini 3.7/3.8 may still produce heavy tool loops even
-at low effort. Odoo Boost enforces compact responses, a lean MCP surface,
-and repeated-call guards only for its own MCP server; native file/search/shell/test
-calls and total model turns remain outside its control.
+The generated router chooses low, medium, or high effort from the affected Odoo
+behavior. It is behavioral guidance, not guaranteed enforcement: a model may
+still make excessive tool calls. Odoo Boost enforces compact responses and
+repeated-call guards only for its own MCP server;
+native file/search/shell/test calls and total model turns remain outside its control.
 
-For small iterative changes, it uses **first-pass coding** with the active Odoo version
-rules and minimal context/tool calls. Example prompts:
+For small iterative changes, **low effort** identifies the exact target, edits it,
+and performs the smallest relevant check. Example prompts:
 
 - "Rename the `Reference` label to `Order Reference`."
 - "Move `partner_id` before `date_order` in the form view."
@@ -129,6 +129,32 @@ skills, source context, and MCP tools. Example prompts:
 - "Migrate this module from Odoo 16 to Odoo 20."
 - "Audit this addon for security and performance."
 - "Trace and fix this stock valuation inconsistency."
+
+Ask for **Deadline mode** when turnaround is the priority. It takes the shortest
+path to a working result while retaining the relevant version, reference, and
+security checks. It is an urgency modifier for low, medium, or high assurance:
+the affected behavior determines the checks. It skips unnecessary plans, broad
+scans, and unrelated skill loading.
+
+Example prompt:
+
+> Deadline mode: In the existing sale order form view, rename the
+> `client_order_ref` label to "Customer PO".
+
+Expected result: the agent locates the exact view record, edits the label,
+checks that the XML parses, reviews the diff, and replies briefly with the
+changed file and checks performed. It does not run an Odoo module upgrade for
+this presentation-only change.
+
+Deadline mode also applies to behavior changes. For example, "Deadline mode:
+fix the existing total computation when there are no lines." The agent still
+checks the compute dependencies and a focused regression case when available;
+it reports anything that could not be verified.
+
+For a bounded security change, "Deadline mode: restrict this public download
+route to records the current user may read" still calls for the route's
+authentication and access boundary to be checked, including a denied case.
+See the [verification guide](docs/guidelines.md) for change-specific checks.
 
 You can also ask direct inspection questions:
 
@@ -272,7 +298,7 @@ opencode.json
 | Agent | Guidelines | MCP Config | Skills Directory |
 |---|---|---|---|
 | **Antigravity (App & CLI `agy`)** | `AGENTS.md` | `.agents/mcp_config.json` | `.agents/skills/` |
-| **Claude Code** | `CLAUDE.md` | `.mcp.json` | `.claude/skills/` |
+| **Claude Code** | `CLAUDE.md` imports shared `AGENTS.md` | `.mcp.json` | `.claude/skills/` |
 | **Cursor** | `.cursor/rules/odoo-boost.mdc` | `.cursor/mcp.json` | `.cursor/skills/` |
 | **GitHub Copilot** | `.github/copilot-instructions.md` | `.vscode/mcp.json` | `.github/skills/` |
 | **OpenAI Codex** | `AGENTS.md` | `.codex/config.toml` | `.agents/skills/` |

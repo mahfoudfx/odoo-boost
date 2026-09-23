@@ -35,9 +35,10 @@ Odoo-core audits require the explicit `allow_collection_scan=true` argument and
 must still satisfy the configured filesystem boundary.
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
-`max_response_chars` (default 40000, `0` disables), `redact_config_secrets`
-(default `true`), and `lean_tools` (default `true`, 8 common tools registered;
-set `false` to expose all 23 tools). Per-call `response_format` controls detail
+`max_response_chars` (default 40000, `0` disables), and `redact_config_secrets`
+(default `true`). All 23 tools are registered; the agent client controls whether
+tool definitions are loaded eagerly or discovered on demand; the MCP server
+cannot require one behavior. Per-call `response_format` controls detail
 where supported. Oversized responses are replaced by a bounded
 `{ "truncated": true, "full_length": …, "preview": … }` envelope. Narrow the
 query or increase `max_response_chars` to see more.

@@ -85,8 +85,8 @@ class TestOdooBoostConfig:
         assert restored.generate_mcp is False
         assert restored.generate_ai_files is False
 
-    def test_backward_compat_missing_flags(self, sample_connection_config):
-        """Old config without generate flags parses with True defaults."""
+    def test_missing_generate_flags_use_defaults(self, sample_connection_config):
+        """Omitted generate flags use their documented defaults."""
         data = {
             "connection": sample_connection_config.model_dump(),
             "odoo_version": "18.0",
@@ -132,7 +132,7 @@ class TestOdooBoostConfig:
         assert restored.mcp_port == 9100
         assert restored.mcp_command == ["docker", "run", "odoo-boost"]
 
-    def test_backward_compat_missing_mcp_fields(self, sample_connection_config):
+    def test_missing_mcp_fields_use_defaults(self, sample_connection_config):
         data = {
             "connection": sample_connection_config.model_dump(),
             "odoo_version": "18.0",
@@ -160,7 +160,6 @@ class TestOdooBoostConfig:
         assert cfg.compact_responses is True
         assert cfg.max_response_chars == 40000
         assert cfg.redact_config_secrets is True
-        assert cfg.lean_tools is True
         assert cfg.cache_local_scans is True
         assert cfg.max_consecutive_identical_calls == 2
         assert cfg.max_repeated_calls_per_window == 2
@@ -172,7 +171,6 @@ class TestOdooBoostConfig:
             compact_responses=False,
             max_response_chars=1000,
             redact_config_secrets=False,
-            lean_tools=True,
             cache_local_scans=False,
             max_consecutive_identical_calls=4,
             max_repeated_calls_per_window=3,
@@ -182,7 +180,6 @@ class TestOdooBoostConfig:
         assert restored.compact_responses is False
         assert restored.max_response_chars == 1000
         assert restored.redact_config_secrets is False
-        assert restored.lean_tools is True
         assert restored.cache_local_scans is False
         assert restored.max_consecutive_identical_calls == 4
         assert restored.max_repeated_calls_per_window == 3

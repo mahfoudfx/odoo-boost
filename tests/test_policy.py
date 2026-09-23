@@ -95,9 +95,7 @@ class TestToolIntegration:
         with pytest.raises(ToolError):
             inspect_local_addon("/etc")
 
-    def test_inspect_refuses_directory_without_addon_manifest(
-        self, policy_config, tmp_path: Path
-    ):
+    def test_inspect_refuses_directory_without_addon_manifest(self, policy_config, tmp_path: Path):
         policy_config(allowed_roots=[str(tmp_path)])
         (tmp_path / "model.py").write_text("from odoo import models\n")
         result = json.loads(inspect_local_addon(str(tmp_path)))

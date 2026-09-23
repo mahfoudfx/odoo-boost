@@ -52,15 +52,16 @@ class TestComposeGuidelines:
         assert "# Odoo Development Guidelines" in result
 
     def test_core_files_list_not_empty(self):
-        assert len(_CORE_FILES) == 11
+        assert len(_CORE_FILES) == 12
         assert "operating_rules.md" in _CORE_FILES
+        assert "verification.md" in _CORE_FILES
         assert "oca_standards.md" in _CORE_FILES
 
     def test_includes_agent_operating_rules(self):
         result = compose_guidelines()
         assert "Agent Operating Rules" in result
         assert "Strict Prohibition on Live Environment Execution" in result
-        assert "No Unsolicited Automated Tests" in result
+        assert "Proportionate tests" in result
         assert "Scope Restraint" in result
 
     def test_includes_oca_standards(self):
@@ -95,18 +96,22 @@ def test_generated_agent_guidelines_route_to_full_expert_content(tmp_path):
     content = compose_agent_guidelines("18.0", reference_dir)
     created = install_guideline_references(tmp_path / reference_dir, "18.0")
 
-    assert "First-pass coding (default)" in content
-    assert "## Medium effort" in content
-    assert "## High effort" in content
-    assert "configured Odoo version" in content
-    assert "Every task starts" in content
-    assert "native file reads" in content
+    assert "Low (default): clear, local edits" in content
+    assert "Deadline (only when requested)" in content
+    assert "Medium: bounded multi-file changes" in content
+    assert "High:" in content
+    assert "Start at the named" in content
+    assert "failure modes the change can realistically introduce" in content
+    assert "Do not run a live Odoo shell" in content
     assert "list_view_tag: list" in content
+    assert len(content.split()) <= 350
+    assert "Gemini 3" not in content
     assert len(content) < len(compose_guidelines("18.0")) / 3
     assert compose_guidelines("18.0").strip() not in content
     for filename in _CORE_FILES:
         assert (tmp_path / reference_dir / filename).is_file()
     assert f"{reference_dir}/security.md" in content
+    assert f"{reference_dir}/verification.md" in content
     assert f"{reference_dir}/versions/v18.md" in content
     assert all(path.is_file() for path in created)
     assert len(created) == len(_CORE_FILES) + 1

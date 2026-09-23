@@ -95,23 +95,3 @@ LOCAL_TOOLS: tuple[ToolFn, ...] = (
 )
 
 ALL_TOOLS: tuple[ToolFn, ...] = LIVE_TOOLS + LOCAL_TOOLS
-
-# Commonly used subset registered when ``lean_tools`` is enabled to reduce the
-# tool-schema overhead paid on every model turn.
-LEAN_TOOL_NAMES: frozenset[str] = frozenset(
-    {
-        "application_info",
-        "database_query",
-        "database_schema",
-        "search_records",
-        "list_models",
-        "inspect_local_addon",
-        "lint_odoo_code",
-        "search_docs",
-    }
-)
-
-
-def is_enabled(tool: ToolFn, *, lean: bool) -> bool:
-    """Return True when a tool should be registered for the given profile."""
-    return not lean or tool.__name__ in LEAN_TOOL_NAMES

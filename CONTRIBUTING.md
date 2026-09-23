@@ -103,8 +103,7 @@ LIVE_TOOLS = (..., my_tool)
 
 `server.py` iterates the registry automatically; live tools are wrapped so
 connection failures become clear `ToolError` messages.
-All 23 tools are registered by default; `lean_tools=true` opts into the curated
-8-tool profile. Choose `LOCAL_TOOLS` for bundled documentation or filesystem
+All 23 tools are registered. Choose `LOCAL_TOOLS` for bundled documentation or filesystem
 tools that do not need a running Odoo connection.
 
 3. **Add unit tests** in `tests/test_tools.py`. The suite asserts the total tool

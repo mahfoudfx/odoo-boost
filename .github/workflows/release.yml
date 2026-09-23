@@ -58,6 +58,7 @@ jobs:
           assert len(list_skills()) == 23, f"expected 23 skills, got {len(list_skills())}"
           for rel in (
               ("guidelines", "core", "coding_style.md"),
+              ("guidelines", "core", "verification.md"),
               ("guidelines", "core", "versions", "v18.md"),
               ("skills", "creating_models", "SKILL.md"),
           ):

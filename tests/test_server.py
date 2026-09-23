@@ -107,20 +107,25 @@ class TestCreateMcpServer:
         assert asyncio.run(verifier.verify_token("tok")) is not None
         assert asyncio.run(verifier.verify_token("nope")) is None
 
-    def test_full_profile_registers_all_tools(self, monkeypatch, sample_config):
-        server = _run_create(monkeypatch, sample_config, lean_tools=False)
-        assert len(server.registered) == 23
-
-    def test_default_registers_all_tools(self, monkeypatch, sample_config):
+    def test_registers_all_tools(self, monkeypatch, sample_config):
         server = _run_create(monkeypatch, sample_config)
-        assert len(server.registered) == 23
-
-    def test_lean_tools_registers_subset(self, monkeypatch, sample_config):
-        server = _run_create(monkeypatch, sample_config, lean_tools=True)
         names = {fn.__name__ for fn in server.registered}
-        assert len(names) == 8
-        assert "database_query" in names
-        assert "list_views" not in names
+        assert len(names) == 23
+        assert {"list_views", "list_access_rights", "resolve_local_xml_id"} <= names
+        assert "list_routes" in names
+
+    def test_live_tool_error_when_offline(self, monkeypatch, sample_config):
+        monkeypatch.setattr(server_mod, "MCPServer", _FakeMCPServer)
+        connection = MagicMock()
+        connection.search_read.side_effect = ConnectionError(
+            "Cannot connect to Odoo (502 Bad Gateway)"
+        )
+        monkeypatch.setattr(server_mod, "create_connection", lambda cfg: connection)
+        server = server_mod.create_mcp_server(sample_config)
+        tool = next(fn for fn in server.registered if fn.__name__ == "search_records")
+        with pytest.raises(ToolError, match="502 Bad Gateway"):
+            tool("res.partner")
+        reset_context()
 
     def test_identical_tool_call_loop_is_blocked(self, monkeypatch, sample_config, tmp_path):
         server = _run_create(

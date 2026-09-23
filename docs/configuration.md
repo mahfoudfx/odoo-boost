@@ -80,11 +80,15 @@ Path to the project root directory. Default: `"."`.
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
-| `lean_tools` | bool | `true` | Advertise only 8 common MCP tools by default. Set `false` to register all 23. Saved explicit values are preserved. |
 | `cache_local_scans` | bool | `true` | Reuse parsed local addon results until a relevant Python/XML file timestamp or size changes. |
 | `max_consecutive_identical_calls` | int | `2` | Block a third consecutive MCP call with the same tool and arguments. Any different call resets the counter; `0` disables. |
 | `max_repeated_calls_per_window` | int | `2` | Block the third identical MCP request in the rolling window, even if the model alternates tools; `0` disables. |
 | `repeated_call_window_size` | int | `12` | Number of recent MCP calls considered by the rolling repetition guard; `0` disables it. |
+
+All 23 MCP tools are registered. Tool registration is not profile-dependent.
+An agent client may load tool schemas on demand, as Codex can, or include all
+definitions in its model requests. The MCP server cannot require deferred
+loading from a client.
 
 ### Token efficiency
 
@@ -100,11 +104,11 @@ its `response_format="full"` explicitly bypasses that cap. See
 Every generated stdio command includes an explicit `-c <path/to/odoo-boost.json>`
 so the server works regardless of the working directory the IDE chooses.
 
-Generated agent rules also set investigation budgets: first-pass work normally
-uses 2-4 tool calls, medium work aims for 5-10, and high-effort work reassesses
-every eight calls and stops at 24 unless an exhaustive audit was requested or new
-evidence justifies continuing. These are agent instructions because Odoo Boost cannot observe an
-agent's native file reads or iterations. The MCP server independently enforces
+Generated agent rules choose low, medium, or high effort by affected behavior,
+with an explicit Deadline mode for the shortest safe route. They stop at the
+relevant completion check rather than a fixed call count. These are agent
+instructions because Odoo Boost cannot observe an agent's native file reads or
+iterations. The MCP server independently enforces
 consecutive and rolling repeated-call detection, and local addon scans are cached
 by file metadata. It cannot observe or cap native editor reads/searches, shell
 commands, tests, model turns, or total tool calls across an agent task.

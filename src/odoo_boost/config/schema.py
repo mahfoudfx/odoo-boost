@@ -125,13 +125,6 @@ class OdooBoostConfig(BaseModel):
         default=True,
         description="Redact secret-looking ir.config_parameter values in get_config.",
     )
-    lean_tools: bool = Field(
-        default=True,
-        description=(
-            "Register only a small commonly used subset of MCP tools to reduce tool-schema "
-            "overhead per model turn."
-        ),
-    )
     cache_local_scans: bool = Field(
         default=True,
         description=("Cache local addon scans until a Python/XML file timestamp or size changes."),

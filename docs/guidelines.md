@@ -1,20 +1,23 @@
 # Guidelines
 
 Odoo Boost bundles complete expert guidelines while keeping routine agent context
-small. Generated agent files contain an adaptive fast/deep router and the effective
+small. Generated agent files contain a short assurance router and the effective
 target-version contract. Full topic references and version notes are installed beside
 the skills and loaded only when relevant. The MCP resource `odoo://guidelines/oca`
 provides the complete combined document for broad audits.
+The [workflow evaluation](workflow-evaluation.md) gives representative prompts
+and the evidence expected for each assurance level.
 
 ## What's Included
 
-Guidelines are composed from 11 core files plus a version-specific addendum:
+Guidelines are composed from 12 core files plus a version-specific addendum:
 
-### Core Guidelines (11 Topics)
+### Core Guidelines (12 Topics)
 
 | File | Topic | Covers |
 |---|---|---|
-| `operating_rules.md` | Operating Rules & Boundaries | Workflow modes (Direct vs Plan), strict prohibition on live execution, scope restraint |
+| `operating_rules.md` | Operating Rules & Boundaries | Low, medium, high, and Deadline routing; live execution boundary; scope restraint |
+| `verification.md` | Verification by Change Type | Focused evidence for views, methods, models, security, and migrations |
 | `odoo_general.md` | General Principles | Architecture, module lifecycle, dependencies |
 | `module_structure.md` | Module Structure | Directory layout, `__manifest__.py`, file naming |
 | `orm_best_practices.md` | ORM Best Practices | Models, fields, CRUD, domains, performance, batched queries |
@@ -51,13 +54,13 @@ During `odoo-boost install`, Odoo Boost detects your server version and writes i
 ```
 
 When building agent guidelines, the composer:
-1. Writes a compact automatic effort router plus effective compatibility rules.
-2. Uses first-pass coding for small view, field, label, and translation edits, normally
-   within two to four tool calls.
+1. Writes a short assurance router plus effective compatibility and live execution rules.
+2. Uses low effort for clear local edits of any type; Deadline mode is an explicit
+   urgency modifier. Both retain checks for realistic failure modes.
 3. Uses medium effort for bounded cross-model features, localized refactoring,
    and packaging; high effort covers production readiness, security, migrations,
    audits, and failed lower-effort attempts.
-4. Installs all 11 expert topics and the matching version note under the agent's
+4. Installs all 12 expert topics and the matching version note under the agent's
    `guidelines/` directory for selective loading. Unknown series keep an explicit
    uncertainty notice.
 5. Keeps the complete combined document available through the MCP resource and
@@ -68,7 +71,7 @@ When building agent guidelines, the composer:
 | Agent | File | Format |
 |---|---|---|
 | Antigravity (App & CLI) | `AGENTS.md` | Markdown |
-| Claude Code | `CLAUDE.md` | Markdown |
+| Claude Code | `CLAUDE.md` imports shared `AGENTS.md` | Markdown |
 | Cursor | `.cursor/rules/odoo-boost.mdc` | Markdown with YAML frontmatter |
 | GitHub Copilot | `.github/copilot-instructions.md` | Markdown |
 | OpenAI Codex | `AGENTS.md` | Markdown |

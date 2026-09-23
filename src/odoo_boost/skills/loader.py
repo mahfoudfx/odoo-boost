@@ -55,6 +55,7 @@ SKILL_CATEGORIES: dict[str, list[str]] = {
 # removing duplicates (e.g. the 'domain_patterns' alias).
 _SKILL_DIRS = list(dict.fromkeys(CORE_SKILLS + WORKFLOW_SKILLS + DOMAIN_SKILLS))
 
+
 def list_skills(category: str | None = None) -> list[str]:
     """Return the list of available skill names, optionally filtered by category."""
     if category:

@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Write Python and JavaScript tests for Odoo modules.
+description: Use when adding or fixing Odoo Python or JavaScript tests for changed behavior; skip for presentation-only edits without a realistic regression case.
 globs: ["tests/**/*.py", "static/tests/**/*.js"]
 ---
 

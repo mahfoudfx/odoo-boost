@@ -65,3 +65,17 @@ This skill guides migration analysis and refactoring across Odoo versions from v
 - Check if upstream base modules have been merged, renamed, or deprecated.
 
 For unregistered versions, verify the target source and documentation instead of extrapolating this matrix. JSON-RPC controller routes change from `type="json"` to `type="jsonrpc"` in Odoo 19. Odoo 20 bearer routes require `bearer_scope`; load the v20 note before applying its newer APIs.
+
+## OCA addon migration
+
+When porting an OCA addon, record the source and target series, repository,
+module, target branch, and any existing migration issue or PR before changing
+files. Apply the relevant compatibility notes for **each** intervening Odoo
+major version; a direct jump can miss an intermediate API removal. Follow the
+repository's migration conventions and preserve original authorship and
+copyright notices. Keep compatibility changes separate from unrelated feature
+work where practical. Check the manifest version and dependencies, data/XML
+load order, security files, tests, and OCA metadata against the target branch.
+Use the repository's documented test command and database setup before any
+live install or upgrade; the operating rules require explicit authorization
+for database-touching commands.

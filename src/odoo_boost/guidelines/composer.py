@@ -9,6 +9,7 @@ from odoo_boost.versions import get_version_profile, version_guidance
 
 _CORE_FILES = [
     "operating_rules.md",
+    "verification.md",
     "odoo_general.md",
     "module_structure.md",
     "orm_best_practices.md",
@@ -34,116 +35,46 @@ def _version_file(version: str | None) -> str | None:
 
 
 def compose_agent_guidelines(version: str | None, reference_dir: str) -> str:
-    """Build a compact adaptive router; detailed expert topics stay on disk."""
+    """Build a small decision router; detailed procedures stay on disk."""
     lines = [
-        "# Odoo Boost: adaptive development workflow",
+        "# Odoo Boost: working rules",
         "",
-        "Solve the user's business request with the smallest correct change. Every task starts",
-        "in first-pass coding, regardless of apparent complexity or the model's effort setting.",
-        "Detect whether evidence requires escalation; the user does not need to name a level.",
-        "If the user",
-        "explicitly requests first-pass, medium, or high effort, honor that choice.",
+        "Make the smallest correct change that fulfills the request. Start at the named",
+        "file or symbol; widen only for a dependency, uncertainty, or failed check.",
+        "Preserve local conventions. Finish after reviewing the diff and checking the",
+        "failure modes the change can realistically introduce.",
         "",
-        "## Version contract (always active)",
+        "## Version and execution boundary",
         "",
         version_guidance(version),
-        "Never substitute another release's XML, ORM, controller, or frontend syntax.",
-        "If a required fact is absent or the version is unverified, inspect the target source",
-        "or load the target version note before editing.",
+        "Verify unknown version facts against the target source or version note.",
+        "Do not run a live Odoo shell, database diagnostic, module upgrade, or server",
+        "restart unless the user explicitly requests that operation. Focused offline",
+        "checks are allowed.",
         "",
-        "## First-pass coding (default)",
+        "## Assurance and urgency",
         "",
-        "Use for well-scoped changes with a clear local implementation: labels, translations,",
-        "fields or columns, view expressions, formatting, and small method adjustments. Also",
-        "use it as the unconditional starting state for every bug fix and feature request.",
-        "",
-        "1. Inspect the target file and its closest inherited definition. Reuse the existing",
-        "   local pattern and preserve the surrounding style.",
-        "2. Make the direct edit. Do not create a plan, launch live/database tools, load broad",
-        "   guidelines, scan the whole repository, or run tests by default. Escalate only when",
-        "   concrete evidence shows that the local edit is insufficient or risky.",
-        "   Never scan an Odoo checkout or addons collection for ordinary custom-addon work.",
-        "   If core behavior is genuinely uncertain, inspect only the exact symbol/file needed.",
-        "3. Use 2-4 tool calls normally. Before a fifth call, either make the edit or identify",
-        "   the concrete unresolved dependency/risk that requires medium effort. After the",
-        "   requested edit succeeds, stop. Do not add exploratory reads, broad verification,",
-        "   cleanup, or unrelated fixes. Finish with at most a targeted diff/syntax",
-        "   check. Do not reread unchanged files or repeat a call. For a",
-        "   visual-only view change, a browser refresh by the user can be sufficient feedback.",
-        "4. Preserve all always-active contracts, especially the configured Odoo version,",
-        "   security basics, local conventions, and the user's scope.",
-        "",
-        "## Medium effort",
-        "",
-        "Use for a bounded feature spanning several files/models, unfamiliar inheritance, a",
-        "localized refactor, packaging, integration work, persistent schema changes, or a",
-        "first-pass attempt that revealed meaningful coupling.",
-        "",
-        "1. Keep a short internal scope and evidence map; do not create planning artifacts",
-        "   unless the user requests them or coordination genuinely requires one.",
-        "2. Read only the relevant routed skills/references and trace direct consumers,",
-        "   overrides, security, and side effects for the affected boundary.",
-        "3. Aim for 5-10 tool calls. Run focused checks for changed behavior and stop after",
-        "   reviewing the relevant diff. Do not run the full suite or fix unrelated failures.",
-        "",
-        "## High effort",
-        "",
-        "Use for broad architectural refactors, production/release readiness, full packaging or",
-        "shipping validation, migrations, security audits, accounting or stock valuation,",
-        "data integrity risks, performance investigations, and explicitly exhaustive work.",
-        "",
-        "1. State the business outcome, version, invariants, risks, and smallest viable scope.",
-        "2. Load the necessary expert references progressively and trace all affected boundaries.",
-        "3. Use risk-appropriate tests and validation, including broader checks only when their",
-        "   signal is relevant. Separate pre-existing or unrelated failures from this task.",
-        "4. Reassess every 8 tool calls and stop at 24 unless an exhaustive audit was requested",
-        "   or new evidence clearly justifies continuing. Review the final diff and residual risk.",
-        "",
-        "Escalate one level at a time only for a named dependency, failed direct approach, or",
-        "specific risk; apparent complexity alone is insufficient. A high-risk task may",
-        "escalate before editing, but still begins with the narrow first-pass inspection. Do",
-        "not escalate merely to gain confidence. Security",
-        "boundaries, access control, public controllers, `sudo()`, raw SQL, accounting entries,",
-        "and stock valuation always require their focused reference or skill.",
+        "Low (default): clear, local edits; inspect the target, edit, and check the diff",
+        "plus the relevant syntax or behavior. Medium: bounded multi-file changes or",
+        "uncertain inheritance; trace direct consumers and run focused checks. High:",
+        "migrations, broad refactors, release work, security, data integrity, accounting,",
+        "or stock valuation; inspect affected boundaries and validate proportionately.",
+        "Escalate when evidence reveals coupling or risk; a small edit can remain low.",
+        "Deadline (only when requested) favors the shortest route and brief output at",
+        "any assurance level. Resolve required facts and retain the relevant checks.",
         "",
         "## On-demand references",
         "",
-        "Paths are relative to the project root. Open only what the current task needs.",
+        "Paths are relative to the project root. Open only what the task needs.",
         f"Skill routing: `{Path(reference_dir).parent.as_posix()}/SKILLS_ROUTING.md`.",
-        f"Operating and investigation rules: `{reference_dir}/operating_rules.md`.",
-        "",
+        f"Operating details: `{reference_dir}/operating_rules.md`.",
+        f"Checks by change type: `{reference_dir}/verification.md`.",
+        f"Security boundaries: `{reference_dir}/security.md`.",
     ]
-    for filename in _CORE_FILES:
-        if filename == "operating_rules.md":
-            continue
-        title = next(
-            (
-                line.lstrip("# ").strip()
-                for line in _read_resource(filename).splitlines()
-                if line.startswith("#")
-            ),
-            filename.removesuffix(".md"),
-        )
-        lines.append(f"- {title}: `{reference_dir}/{filename}`")
     version_file = _version_file(version)
     if version_file:
         lines.append(f"- Odoo {version} version notes: `{reference_dir}/{version_file}`")
-    lines.extend(
-        [
-            "",
-        "The complete combined expert reference is available through",
-        "`odoo://guidelines/oca`; use it for broad audits, not routine edits.",
-        "",
-        "## Enforcement boundary",
-        "",
-        "These workflow levels are instructions, not guaranteed model behavior. Models including",
-        "Gemini 3.7/3.8 may still enter heavy tool loops even at low effort. Odoo Boost can",
-        "limit its own MCP surface, response sizes, and repeated MCP calls. It cannot observe or",
-        "cap an agent's native file reads, searches, shell commands, tests, model turns, or total",
-        "task tool calls. Stop conditions for those native operations depend on the agent obeying",
-        "the generated project instructions.",
-        ]
-    )
+    lines.append("")
     return "\n".join(lines) + "\n"
 
 

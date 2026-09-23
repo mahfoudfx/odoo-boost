@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-23
+
+### Added
+
+- Explicit Deadline mode for the shortest route to a working Odoo change,
+  while retaining task-specific version, reference, and security checks.
+- OCA addon migration guidance for intermediate versions, metadata, and
+  separating compatibility work from feature changes.
+- On-demand verification guidance by Odoo change type and a scenario set for
+  evaluating agent behavior in supported clients.
+
+### Changed
+
+- Route low, medium, and high effort by affected behavior rather than forcing
+  every task through first-pass coding or fixed tool-call counts.
+- Remove the `lean_tools` switch and register all 23 MCP tools; clients decide
+  whether to load their definitions eagerly or through tool discovery. Existing
+  saved `lean_tools` values are ignored.
+- Generate Claude Code's `CLAUDE.md` as an import of shared `AGENTS.md`.
+- Use proportionate offline checks for behavioral changes while preserving
+  the opt-in boundary for database and server commands.
+- Shorten generated agent rules to a small assurance router, keep Deadline as
+  an urgency modifier, and narrow skill descriptions that could activate on
+  routine edits.
+- Remove stale `lean_tools` compatibility documentation and replace a hanging
+  offline MCP test with a focused registered-handler check.
+
 ## [0.10.2] - 2026-09-21
 
 ### Fixed

@@ -196,6 +196,8 @@ class TestInstallSkills:
         target = tmp_path / "skills"
         install_skills(target)
         for skill_name in list_skills():
-            installed = (target / skill_name.replace("_", "-") / "SKILL.md").read_text(encoding="utf-8")
+            installed = (target / skill_name.replace("_", "-") / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
             loaded = load_skill(skill_name)
             assert installed == loaded

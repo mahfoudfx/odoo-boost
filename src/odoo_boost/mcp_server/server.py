@@ -20,7 +20,7 @@ from odoo_boost.mcp_launcher import build_http_url
 from odoo_boost.mcp_server.auth import StaticTokenVerifier
 from odoo_boost.mcp_server.call_guard import ConsecutiveCallGuard
 from odoo_boost.mcp_server.context import ServerContext, bound_context, set_context
-from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, is_enabled, resilient_live_tool
+from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, resilient_live_tool
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.skills.loader import generate_skills_routing
 
@@ -143,17 +143,14 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     # -------------------------------------------------------------------------
     # Tools Registration (see mcp_server/registry.py for the tool inventory)
     # -------------------------------------------------------------------------
-    lean = config.lean_tools
     call_guard = ConsecutiveCallGuard(
         config.max_consecutive_identical_calls,
         config.max_repeated_calls_per_window,
         config.repeated_call_window_size,
     )
     for tool in LIVE_TOOLS:
-        if is_enabled(tool, lean=lean):
-            mcp.tool()(_bind_handler(resilient_live_tool(tool), context, call_guard))
+        mcp.tool()(_bind_handler(resilient_live_tool(tool), context, call_guard))
     for local_tool in LOCAL_TOOLS:
-        if is_enabled(local_tool, lean=lean):
-            mcp.tool()(_bind_handler(local_tool, context, call_guard))
+        mcp.tool()(_bind_handler(local_tool, context, call_guard))
 
     return mcp
