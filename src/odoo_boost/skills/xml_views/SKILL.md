@@ -10,6 +10,10 @@ globs: ["views/**/*.xml", "__manifest__.py"]
 
 For a label or title change, find the exact view record and change its `string` attribute (or the action/menu `name` if that is the requested title). In an inherited view, confirm the XPath anchor in the source you depend on. For column order, move the existing `<field>` elements within the list view. Keep their attributes and surrounding XPath inheritance intact. Use the configured version notes before changing root tags or dynamic attributes. Read the matching XML, check that it still parses, and inspect the diff; no database inspection or new view scaffold is needed unless the target cannot be identified from source.
 
+For an existing kanban card, edit the matching template and reuse fields already available to that view. Check a newly displayed field's presence in the view and model. A new grouping, drag behavior, or data source needs a focused behavior check beyond XML parsing.
+
+For a smart button's text, icon, or position, edit the existing button in place. For a new smart button or changed count/action, identify its target model, action, domain, count source, and access boundary. Check that the count and opened records agree for users allowed to see them; inspect cross-company and record-rule behavior when applicable.
+
 The creation examples and checklist below apply when creating a new view, action, or menu. They are not requirements for a small edit to an existing view.
 
 ## Steps

@@ -1,10 +1,16 @@
 ---
 name: report-development
-description: Create QWeb PDF reports and report actions in Odoo.
+description: Edit an existing Odoo QWeb report or create a report template and action; use for report layout, content, and report-specific behavior.
 globs: ["report/**/*.xml", "report/**/*.py", "__manifest__.py"]
 ---
 
 # Creating Reports
+
+## Small edits to an existing report
+
+For a heading, column title, or formatting change, locate the exact QWeb template and source text. Edit the matching node, keep the surrounding `t-*` expressions and inherited template structure, check XML parsing, and review the diff. For translations, use the `translation-edits` skill to update only the requested locale catalogs and validate the affected PO entries. Existing report text does not require a new report action, data model, or full report scaffold.
+
+If the requested change introduces new values or calculations, inspect the report's data provider and affected behavior. The creation steps and checklist below apply to new reports, not to a bounded edit of an existing template.
 
 ## Steps
 

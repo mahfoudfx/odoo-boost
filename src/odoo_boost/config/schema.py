@@ -29,6 +29,27 @@ class OdooBoostConfig(BaseModel):
         description="Enabled agent identifiers (e.g. ['claude_code', 'cursor'])",
     )
     project_path: str = Field(default=".", description="Path to the Odoo project root")
+    venv_path: str | None = Field(
+        default=None, description="Project Python VENV root used for Odoo and Python checks."
+    )
+    odoo_conf_path: str | None = Field(
+        default=None, description="Path to the Odoo configuration used by the project."
+    )
+    odoo_launch_cwd: str | None = Field(
+        default=None,
+        description="Working directory of the Odoo launch command for relative addon paths.",
+    )
+    addons_path_override: list[str] | None = Field(
+        default=None,
+        description="Effective --addons-path from the launch command, if it overrides odoo.conf.",
+    )
+    odoo_source_path: str | None = Field(
+        default=None, description="Odoo framework source checkout, separate from custom addons."
+    )
+    odoo_docs_path: str | None = Field(
+        default=None,
+        description="Optional indexed local Odoo documentation cache for this version.",
+    )
     generate_mcp: bool = Field(default=True, description="Generate MCP config files for agents")
     generate_ai_files: bool = Field(
         default=True, description="Generate AI guideline and skill files for agents"

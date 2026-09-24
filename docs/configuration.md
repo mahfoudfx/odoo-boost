@@ -16,6 +16,11 @@ Odoo Boost stores project configuration in `odoo-boost.json` at your project roo
   "odoo_version": "18.0",
   "agents": ["antigravity", "claude_code", "cursor"],
   "project_path": ".",
+  "venv_path": ".venv",
+  "odoo_conf_path": "/srv/odoo/odoo.conf",
+  "odoo_launch_cwd": "/srv/odoo",
+  "odoo_source_path": "/srv/odoo/odoo",
+  "odoo_docs_path": "/home/user/.cache/odoo-boost/docs/18.0/<revision>",
   "mcp_transport": "stdio",
   "mcp_target": "auto",
   "wsl_distro": "Ubuntu",
@@ -60,6 +65,63 @@ Default: `[]` (all configured agents).
 ### `project_path` (optional)
 
 Path to the project root directory. Default: `"."`.
+
+### Project layout and Python environment
+
+For custom-module development, `project_path` normally points to the custom-addon
+project, not the Odoo Community checkout. Work in the project's Python virtual
+environment (VENV): use its interpreter for Odoo Boost, Python tooling, and any
+explicitly requested Odoo command. Generated stdio MCP commands store the
+absolute interpreter path, so client startup does not depend on shell activation.
+The VENV may be named `.venv`, `venv`, or something else; use the configured
+interpreter rather than guessing from a directory name.
+When installation can identify an activated VENV or an interpreter VENV inside
+the project, Odoo Boost records its root as `venv_path`. This avoids treating
+an unrelated package-manager environment as the Odoo project VENV. Set this
+field explicitly when the project VENV is elsewhere or was not active during
+installation. For an existing installation, set this field to the VENV used by
+the custom-addon project. A missing or invalid VENV is reported by the
+`odoo://project/context` resource; it is not silently replaced with a system
+Python interpreter.
+
+Odoo core and Enterprise addons may be in other directories. The effective
+Odoo configuration or launch command, including `odoo.conf` and its
+`addons_path`, identifies addon roots; the framework's Python source can have
+a separate location. `project_path` does not automatically discover those
+roots. Local MCP file tools are restricted to `project_path` by default; set
+`allowed_roots` deliberately when a task needs another local source tree.
+Routine edits to custom addons should start in the custom project and inspect
+an external source file only for a specific dependency or unresolved fact.
+
+Set `odoo_conf_path` to the configuration used to launch Odoo. The
+`odoo://project/context` resource reads only its `addons_path` option; it does
+not expose passwords or other options. When a launch command supplies
+`--addons-path`, set `addons_path_override` to that effective, ordered list.
+Absolute addon paths are resolved and checked for existence. Set
+`odoo_launch_cwd` to the actual server launch working directory to resolve
+relative addon paths; without it, those entries remain unresolved.
+`odoo_source_path` identifies framework Python source. `odoo_docs_path` points
+to an indexed, version-matched cache directory selected by the
+[offline documentation installer](offline-documentation.md). The installer can
+copy and index an existing documentation checkout. `search_docs` can return a
+matching `.rst` path or search the indexed text with short excerpts. The
+installer checks the version of bundled and downloaded packs; an existing
+checkout with a named Git branch must match the target series. Odoo Boost does
+not auto-update documentation. External source paths
+still need deliberate `allowed_roots` entries for generic MCP file tools;
+`search_docs` can read its explicitly configured documentation directory.
+
+| Field | Type | Default | Meaning |
+|---|---|---|---|
+| `venv_path` | string | — | Project Python VENV root; detected during installation when identifiable. |
+| `odoo_conf_path` | string | — | Odoo launch configuration file. |
+| `odoo_launch_cwd` | string | — | Launch working directory for resolving relative addon paths. |
+| `addons_path_override` | string[] | — | Effective launch `--addons-path`; takes precedence over `odoo.conf`. |
+| `odoo_source_path` | string | — | Odoo framework source checkout. |
+| `odoo_docs_path` | string | — | Optional indexed, version-matched documentation cache directory. |
+
+Relative values in these fields are resolved from `project_path`. For external
+source, configuration, and documentation locations, absolute paths are clearer.
 
 ### MCP options (optional)
 

@@ -5,8 +5,14 @@ This guide walks you through installing Odoo Boost, configuring your AI agents, 
 ## Prerequisites
 
 - **Python 3.10+** (Python 3.12+ recommended)
+- **A project Python virtual environment (VENV)** for Odoo Boost and Python-based checks; activate it or use its executables by absolute path
 - **An Odoo instance** (v14 through v20) accessible over HTTP/HTTPS, or local Odoo addons for offline AST scanning
 - **User credentials or API key** for your Odoo database
+
+The project can contain only custom addons. Odoo Community and Enterprise source
+may be in separate directories referenced by the running Odoo configuration.
+Keep source-location discovery scoped to the requested task; see
+[project layout and Python environment](configuration.md#project-layout-and-python-environment).
 
 ---
 
@@ -68,9 +74,14 @@ The wizard will:
    - Cline
    - Junie
    - Zed
-4. **Choose the MCP transport**: stdio (default) or HTTP, and whether the same
+4. **Choose documentation access**: online links (default), cached local docs,
+   an optional packaged snapshot, an existing checkout, or a matching download.
+   See [offline documentation](offline-documentation.md). Use `--skip-docs` to
+   omit this prompt, or `--target-odoo-version` when developing for a source
+   series different from the connected server.
+5. **Choose the MCP transport**: stdio (default) or HTTP, and whether the same
    project is opened from Windows IDEs while the server runs in WSL.
-5. **Generate files**: Creates guidelines, MCP configs, 23 skills, and the `SKILLS_ROUTING.md` index.
+6. **Generate files**: Creates guidelines, MCP configs, 25 skills, and the `SKILLS_ROUTING.md` index.
 
 Generated instructions choose an execution depth automatically. Small iterative
 edits use low effort with the configured Odoo version and a relevant completion

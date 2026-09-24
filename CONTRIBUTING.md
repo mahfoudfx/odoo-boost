@@ -42,7 +42,7 @@ src/odoo_boost/
 ├── guidelines/
 │   ├── composer.py         # Assembles markdown into unified agent prompt
 │   └── core/               # 10 core markdown topics + versions (v14-v20)
-├── skills/                 # 23 skills (Core, Workflows, Domain Patterns) + routing
+├── skills/                 # 25 skills (Core, Workflows, Domain Patterns) + routing
 ├── versions.py             # Registered series, inherited compatibility facts and doc paths
 ├── logging_config.py       # stderr-only logging (stdout is the MCP wire)
 └── mcp_launcher.py         # native/WSL/HTTP command + URL resolution
@@ -186,7 +186,8 @@ pre-commit run --all-files
 ```
 
 CI runs the test suite on Python 3.10, 3.11, 3.12, and 3.13, plus a build job
-that installs the wheel and verifies bundled skills/guidelines package data.
+that installs both wheels and verifies bundled skills, guidelines, and
+documentation packs.
 
 ## Release Process
 
@@ -199,10 +200,15 @@ Releases use PyPI Trusted Publishing (OIDC) — no API tokens are stored.
 4. The `Release` workflow then:
    - runs CI,
    - verifies the tag matches `__version__`,
-   - builds the sdist/wheel and smoke-tests the installed wheel,
-   - publishes to PyPI via Trusted Publishing (with attestations) **only when
+   - builds and smoke-tests the core and optional documentation wheels,
+   - publishes only the core package to PyPI via Trusted Publishing (with attestations) **only when
      the repository variable `PUBLISH_TO_PYPI` is `true`**,
-   - creates a GitHub Release with generated notes.
+   - creates a GitHub Release with both packages' wheels and source distributions.
+
+The optional `odoo-boost-docs` package has an independent version and is
+available as a GitHub Release asset or from the repository source directory.
+Publishing it to PyPI would require a separate trusted publisher for that
+project; the core publish step must not upload its artifacts.
 
 PyPI publishing is gated so version bumps are safe before the publisher is
 configured. To enable it:

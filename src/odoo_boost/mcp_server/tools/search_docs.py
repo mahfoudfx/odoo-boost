@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from pathlib import Path
 
 from odoo_boost.mcp_server.context import get_context
-from odoo_boost.mcp_server.tools._common import json_response
+from odoo_boost.mcp_server.tools._common import active_config, error_response, json_response
+from odoo_boost.offline_docs import OfflineDocsError, search_local_docs
 from odoo_boost.versions import DOC_BASE, get_version_profile, normalize_version, version_guidance
 
 # Static map of documentation topics to URLs.
@@ -91,20 +93,47 @@ _TOPICS: dict[str, dict[str, str]] = {
 }
 
 
+def _local_source(web_path: str) -> str | None:
+    config = active_config()
+    if config is None or not config.odoo_docs_path:
+        return None
+    root = Path(config.odoo_docs_path).expanduser()
+    if not root.is_absolute():
+        root = Path(config.project_path).expanduser() / root
+    relative = web_path.split("#", 1)[0].lstrip("/").removesuffix(".html") + ".rst"
+    candidate = (root / "content" / relative).resolve()
+    return str(candidate) if candidate.is_file() else None
+
+
 def search_docs(
     topic: str = "",
     version: str = "",
+    query: str = "",
+    section: str = "all",
 ) -> str:
-    """Look up curated documentation links offline; does not fetch page contents.
+    """Look up curated links or search installed documentation text offline.
 
     Args:
         topic: Topic keyword (e.g. 'orm', 'views', 'security', 'owl', 'testing').
                Leave empty to list all available topics.
         version: Target series; defaults to configured project version, never to latest.
+        query: Search installed local documentation text; empty keeps curated-link mode.
+        section: 'all', 'developer', 'administration', or 'applications'.
     """
     if not version:
         with suppress(RuntimeError):
             version = get_context().config.odoo_version or ""
+    if query:
+        config = active_config()
+        if config is None or not config.odoo_docs_path:
+            return error_response("No offline Odoo documentation is configured for this project.")
+        root = Path(config.odoo_docs_path).expanduser()
+        if not root.is_absolute():
+            root = Path(config.project_path).expanduser() / root
+        try:
+            return json_response(search_local_docs(root, query, version=version, section=section))
+        except OfflineDocsError as exc:
+            return error_response(str(exc))
     profile = get_version_profile(version)
     metadata = {
         "version": normalize_version(version),
@@ -134,14 +163,16 @@ def search_docs(
             if profile is None:
                 continue
             url = profile.documentation_url(key, info["path"])
-            matches.append(
-                {
-                    "topic": key,
-                    "title": info["title"],
-                    "url": url,
-                    "description": info["description"],
-                }
-            )
+            result = {
+                "topic": key,
+                "title": info["title"],
+                "url": url,
+                "description": info["description"],
+            }
+            local = _local_source(info["path"])
+            if local:
+                result["local_source"] = local
+            matches.append(result)
 
     if profile is None:
         return json_response({**metadata, "results": [], "documentation_root": _DOC_BASE})

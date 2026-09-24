@@ -120,7 +120,7 @@ class TestUpdateCommand:
         assert (tmp_path / "AGENTS.md").exists()
         assert (tmp_path / ".agents" / "mcp_config.json").exists()
         skill_files = list((tmp_path / ".agents" / "skills").rglob("SKILL.md"))
-        assert len(skill_files) == 23
+        assert len(skill_files) == 25
 
     def test_update_is_idempotent(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)
@@ -260,7 +260,7 @@ class TestInstallWizard:
         with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
             result = runner.invoke(
                 app,
-                ["install", "--skip-dev-tools", "--gitignore"],
+                ["install", "--skip-dev-tools", "--skip-docs", "--gitignore"],
                 input="\ndb\n\n\n1\nn\nn\n",
             )
         assert result.exit_code == 0, result.output
@@ -283,7 +283,7 @@ class TestInstallWizard:
         # url, database, username, password, agent #1, generated files, dev tools
         user_input = "\ndb\n\n\n1\nn\nn\nn\nn\n"
         with patch("odoo_boost.cli.install.create_connection", return_value=mock_conn):
-            result = runner.invoke(app, ["install"], input=user_input)
+            result = runner.invoke(app, ["install", "--skip-docs"], input=user_input)
 
         assert result.exit_code == 0, result.output
         assert (tmp_path / "odoo-boost.json").exists()
@@ -299,7 +299,9 @@ class TestInstallWizard:
             patch("odoo_boost.cli.install.create_connection", return_value=mock_conn),
             patch("odoo_boost.cli.install._install_development_tools") as install_tools,
         ):
-            result = runner.invoke(app, ["install"], input="\ndb\n\n\n1\nn\nn\n\nn\n")
+            result = runner.invoke(
+                app, ["install", "--skip-docs"], input="\ndb\n\n\n1\nn\nn\n\nn\n"
+            )
 
         assert result.exit_code == 0, result.output
         install_tools.assert_called_once()
@@ -315,7 +317,7 @@ class TestInstallWizard:
             patch("odoo_boost.cli.install._install_development_tools") as install_tools,
         ):
             result = runner.invoke(
-                app, ["install", "--skip-dev-tools"], input="\ndb\n\n\n1\nn\nn\nn\n"
+                app, ["install", "--skip-dev-tools", "--skip-docs"], input="\ndb\n\n\n1\nn\nn\nn\n"
             )
 
         assert result.exit_code == 0, result.output

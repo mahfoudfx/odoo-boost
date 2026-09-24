@@ -19,12 +19,18 @@ class TestPackageData:
     def test_bundled_skills(self):
         from odoo_boost.skills.loader import list_skills
 
-        assert len(list_skills()) == 23
+        assert len(list_skills()) == 25
         assert (
             importlib.resources.files("odoo_boost")
             .joinpath("skills", "source_trace", "SKILL.md")
             .is_file()
         )
+        for skill in ("translation_edits", "extending_models"):
+            assert (
+                importlib.resources.files("odoo_boost")
+                .joinpath("skills", skill, "SKILL.md")
+                .is_file()
+            )
         assert (
             importlib.resources.files("odoo_boost")
             .joinpath("skills", "pattern_library", "references", "INDEX.md")

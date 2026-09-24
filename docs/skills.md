@@ -1,47 +1,57 @@
 # Skills & Progressive Routing
 
-Odoo Boost includes **23 specialized development skills** organized into three categories: **Core**, **Workflows**, and **Domain Patterns**.
+Odoo Boost includes **25 specialized development skills** organized into three categories: **Core**, **Workflows**, and **Domain Patterns**.
 
 To prevent context window bloat, Odoo Boost generates a compact **`SKILLS_ROUTING.md`** index file in each agent's skills directory. AI agents consult this routing index to progressively fetch only the skill files required for the task at hand.
+
+Custom modules can involve Python/ORM, PostgreSQL/SQL, XML/QWeb, CSV, PO/POT,
+JavaScript/Owl, CSS/SCSS, HTTP integrations, reports, and Python/JavaScript/browser
+tests. The skill catalog covers Odoo-specific procedures across these surfaces;
+it is not intended to contain a generic tutorial for each language. The
+[technical-surface and source-layout approach](routine-task-workflow-plan.md#full-custom-module-technical-surface)
+also covers work in a project VENV with Odoo core stored outside the custom
+addon repository.
 
 ---
 
 ## Skills Catalog
 
-### 1. Core Development (9 Skills)
+### 1. Core Development (11 Skills)
 | Skill | Directory | Description |
 |---|---|---|
-| Creating Models | `creating_models/` | Create a new Odoo model with fields, constraints, and methods |
-| XML Views | `xml_views/` | Create and customize form, list, kanban, and search views |
-| Security Rules | `security_rules/` | Set up ACLs (`ir.model.access.csv`) and record rules (`ir.rule`) |
-| OWL Components | `owl_components/` | Create custom OWL frontend components and templates |
-| Controllers & Routes | `controllers_routes/` | Create HTTP controllers and JSON-RPC API endpoints |
-| Report Development | `report_development/` | Create QWeb PDF reports and report actions |
-| Automated Actions | `automated_actions/` | Create `base.automation` and server actions |
+| Creating Models | `creating-models/` | Create a new Odoo model with fields, constraints, and methods |
+| Extending Models | `extending-models/` | Add fields to an existing model and expose them in a view |
+| Translation Edits | `translation-edits/` | Edit specific existing addon translations in requested locales |
+| XML Views | `xml-views/` | Create and customize form, list, kanban, and search views |
+| Security Rules | `security-rules/` | Set up ACLs (`ir.model.access.csv`) and record rules (`ir.rule`) |
+| OWL Components | `owl-components/` | Edit existing Owl components, templates, and assets or create new ones |
+| Controllers & Routes | `controllers-routes/` | Edit or create HTTP routes, controllers, APIs, and webhooks |
+| Report Development | `report-development/` | Edit existing QWeb reports or create report templates and actions |
+| Automated Actions | `automated-actions/` | Create `base.automation` and server actions |
 | Testing | `testing/` | Write Python and JavaScript tests for Odoo modules |
 | Pattern Library | `pattern-library/` | Route to 52 detailed functional references without loading them globally |
 
 ### 2. Workflows & Engineering Standards (6 Skills)
 | Skill | Directory | Description |
 |---|---|---|
-| Source Trace | `source_trace/` | Follow entry points, overrides, views, security, and side effects for complex changes |
+| Source Trace | `source-trace/` | Follow entry points, overrides, views, security, and side effects for complex changes |
 | Code Review | `code-review/` | Comprehensive review checklist for OCA standards, SQL injection, and N+1 queries |
-| Odoo Core Contribution | `odoo_core_contribution/` | Official Odoo house rules, stable-branch constraints, cross-repository review, and targeted backend/web/security references |
-| Upgrade Analysis | `upgrade_analysis/` | Migration checklist; consult the [version support guide](versions.md) and target version note for actual differences |
-| Spec-Driven Dev | `spec_driven_dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
-| Conventional Commits | `conventional_commit/` | Standardized Odoo & OCA commit formatting (`[ADD]`, `[FIX]`, `[REF]`, `[MIG]`, etc.) |
+| Odoo Core Contribution | `odoo-core-contribution/` | Official Odoo house rules, stable-branch constraints, cross-repository review, and targeted backend/web/security references |
+| Upgrade Analysis | `upgrade-analysis/` | Migration checklist; consult the [version support guide](versions.md) and target version note for actual differences |
+| Spec-Driven Dev | `spec-driven-dev/` | End-to-end workflow to take a spec and produce a production-ready module in proper dependency order |
+| Conventional Commits | `conventional-commit/` | Standardized Odoo & OCA commit formatting (`[ADD]`, `[FIX]`, `[REF]`, `[MIG]`, etc.) |
 
 ### 3. High-Impact Domain Patterns (8 Skills)
 | Skill | Directory | Description |
 |---|---|---|
-| Accounting Domain | `domain_accounting/` | Double-entry invariants, `account.move`, `account.move.line`, invoices, and currency rounding |
-| Stock & Inventory | `domain_stock/` | Transfers, pickings, stock moves, quant reservations, and valuation integrity |
-| Multi-Company | `domain_multi_company/` | Multi-company models, company-dependent properties, and record rules |
-| Mail & Chatter | `domain_mail_chatter/` | Inheriting `mail.thread` and `mail.activity.mixin`, field tracking, and chatter UI |
-| Wizards & Transients | `domain_wizards/` | `models.TransientModel`, wizard form dialogs, and action button workflows |
-| Crons & Automation | `domain_crons_automation/` | Batch-safe scheduled actions (`ir.cron`), error isolation, and cron definitions |
-| Computed Fields | `domain_computed_fields/` | `@api.depends`, complete assignment rules, inverse methods, and search handlers |
-| Model Inheritance | `domain_inheritance/` | Classical (`_inherit`), prototype, and delegation (`_inherits`) inheritance + XPath view extensions |
+| Accounting Domain | `domain-accounting/` | Double-entry invariants, `account.move`, `account.move.line`, invoices, and currency rounding |
+| Stock & Inventory | `domain-stock/` | Transfers, pickings, stock moves, quant reservations, and valuation integrity |
+| Multi-Company | `domain-multi-company/` | Multi-company models, company-dependent properties, and record rules |
+| Mail & Chatter | `domain-mail-chatter/` | Inheriting `mail.thread` and `mail.activity.mixin`, field tracking, and chatter UI |
+| Wizards & Transients | `domain-wizards/` | `models.TransientModel`, wizard form dialogs, and action button workflows |
+| Crons & Automation | `domain-crons-automation/` | Batch-safe scheduled actions (`ir.cron`), error isolation, and cron definitions |
+| Computed Fields | `domain-computed-fields/` | `@api.depends`, complete assignment rules, inverse methods, and search handlers |
+| Model Inheritance | `domain-inheritance/` | Classical (`_inherit`), prototype, and delegation (`_inherits`) inheritance + XPath view extensions |
 
 ---
 
@@ -95,7 +105,7 @@ from odoo_boost.skills import (
     generate_skills_routing,
 )
 
-# List all 23 skills
+# List all 25 skills
 all_skills = list_skills()
 
 # Filter by category: "core", "workflows", or "domain"

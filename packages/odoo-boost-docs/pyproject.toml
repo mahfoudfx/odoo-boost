@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "odoo-boost-docs"
+version = "0.1.0"
+description = "Optional versioned Odoo documentation text snapshots for Odoo Boost"
+requires-python = ">=3.10"
+license = "CC-BY-SA-4.0"
+license-files = ["LICENSE"]
+readme = "README.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/odoo_boost_docs"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/odoo_boost_docs/**", "README.md", "LICENSE", "pyproject.toml"]

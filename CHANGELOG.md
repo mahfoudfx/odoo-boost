@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-24
+
+### Added
+
+- Focused skills for editing translations and extending existing models, with
+  routine-task routing that favors direct edits and relevant checks.
+- Project context reporting for the custom-addon VENV, Odoo configuration,
+  external source roots, and effective addons path.
+- Version-matched offline documentation search and installer choices for cached,
+  packaged, local-checkout, and downloaded sources. A separate optional package
+  carries pinned Odoo 18, 19, and 20 text snapshots.
+
+### Changed
+
+- Narrow the default guidance for simple view, report, Owl, controller, and
+  translation changes so agents load deeper references only when needed.
+- Build and attach the optional documentation package to GitHub Releases while
+  keeping the core PyPI publication separate.
+
 ## [0.12.0] - 2026-09-23
 
 ### Added
@@ -203,7 +222,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementation: connection layer, core MCP server, guidelines, and the
   install wizard.
 
-[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.10.2...v0.11.0
 [0.7.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.6.0...v0.7.0

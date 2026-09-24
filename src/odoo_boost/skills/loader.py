@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 CORE_SKILLS = [
     "creating_models",
+    "extending_models",
+    "translation_edits",
     "xml_views",
     "security_rules",
     "owl_components",
@@ -131,8 +133,11 @@ def parse_skill_metadata(skill_name: str) -> dict[str, str]:
     if not isinstance(data, dict):
         return meta
 
+    metadata = data.get("metadata")
     for key in ("name", "description", "globs"):
         value = data.get(key)
+        if key == "globs" and value is None and isinstance(metadata, dict):
+            value = metadata.get("globs")
         if value is not None:
             if key == "globs" and isinstance(value, list):
                 meta[key] = ", ".join(str(item).strip() for item in value)

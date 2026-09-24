@@ -96,12 +96,14 @@ def test_generated_agent_guidelines_route_to_full_expert_content(tmp_path):
     content = compose_agent_guidelines("18.0", reference_dir)
     created = install_guideline_references(tmp_path / reference_dir, "18.0")
 
-    assert "Low (default): clear, local edits" in content
+    assert "Low (default): clear local edits" in content
     assert "Deadline (only when requested)" in content
-    assert "Medium: bounded multi-file changes" in content
+    assert "Medium: bounded new fields" in content
     assert "High:" in content
-    assert "Start at the named" in content
-    assert "failure modes the change can realistically introduce" in content
+    assert "Start at the named file or symbol" in content
+    assert "review the diff, and stop" in content
+    assert "the change depends on that fact" in content
+    assert "Handle routine edits directly" in content
     assert "Do not run a live Odoo shell" in content
     assert "list_view_tag: list" in content
     assert len(content.split()) <= 350

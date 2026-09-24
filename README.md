@@ -14,7 +14,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 - **23 MCP Tools, Resources & Prompts** — All tools are available for client-side discovery. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **12 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie, Zed.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
-- **23 Skills + Progressive Routing** — Core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
+- **25 Skills + Progressive Routing** — Focused translation and model-extension work, core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
 - **OCA Standards & Version-Aware** — Comprehensive guidelines supporting Odoo 14, 15, 16, 17, 18, 19, and 20.
 - **Odoo-Aware Diagnostics by Default** — The setup wizard installs
   `OCA/pylint-odoo` and the official `odoo/odoo-ls` binary by default, with a
@@ -31,6 +31,12 @@ odoo-boost odoo-ls status
 - **Goal-first modes** — Low, medium, and high effort follow the affected behavior. Small edits use an exact target and relevant check; explicit Deadline mode takes the shortest route to a working result. Coupled workflows, security, migrations, and audits progressively load expert references.
 
 ## Installation
+
+For custom-addon development, use the project's Python virtual environment
+(VENV) for Odoo Boost and Python checks. Activate it before the commands below,
+or invoke its Python and tools by absolute path. The generated MCP configuration
+uses that interpreter's absolute path. Odoo core and Enterprise source may live
+outside the custom-module repository; see [project layout and source scope](docs/configuration.md#project-layout-and-python-environment).
 
 ```bash
 pip install odoo-boost
@@ -55,7 +61,8 @@ pip install "odoo-boost[xml]"
 pip install "odoo-boost[all]"
 ```
 
-You can also install it as a global CLI tool:
+For setups that do not use the VENV-first convention, a global CLI installation
+is also supported:
 
 ```bash
 uv tool install odoo-boost
@@ -69,6 +76,11 @@ uv tool install odoo-boost
 cd /path/to/your/odoo-project
 odoo-boost install
 ```
+
+The wizard can use online documentation links, a matching local checkout, a
+packaged offline snapshot, or a one-time download of the matching Odoo series.
+The [offline documentation guide](docs/offline-documentation.md) explains the
+separate optional pack, shared cache, and bounded local search.
 
 The wizard will:
 - Collect your Odoo connection details (URL, database, username, password/API key)
@@ -189,7 +201,7 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
             │                                               ▼
             ▼                                  ┌───────────────────────────┐
      Guidelines, OCA,                          │     23 MCP Tools          │
-  23 Skills + Routing Map                      │ - Live ORM & DB schema    │
+  25 Skills + Routing Map                      │ - Live ORM & DB schema    │
   (Local Markdown Files)                       │ - read_group aggregation  │
                                                │ - Sub-50ms local AST scan │
                                                │ - XML ID resolution       │
@@ -200,13 +212,14 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 Odoo Boost sits between your AI agent and your Odoo instance / codebase:
 1. **23 MCP Tools** — Real-time database queries (including count-only), schema inspection, local AST parsing, and validation.
 2. **OCA Guidelines** — Version-specific guidelines (v14-v20) and OCA architectural rules.
-3. **23 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
+3. **25 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
 
-The recommended agent workflow is to understand the business requirement, inspect
-local code and configuration, load the relevant version note or skill, and call
-live MCP tools only for runtime facts. Start with small filtered results and
-expand when needed. Unknown Odoo versions require source or runtime verification
-for version-specific behavior; see [version support](docs/versions.md).
+The recommended agent workflow is to identify the exact target, make the smallest
+correct change, and run a focused check. Open a version note or skill when the
+change needs that fact or procedure; call live MCP tools only for runtime facts.
+Start with small filtered results and expand for a named uncertainty or risk.
+Unknown Odoo versions require source or runtime verification when a change
+depends on version-specific behavior; see [version support](docs/versions.md).
 
 ### Robust MCP Server Resolution
 

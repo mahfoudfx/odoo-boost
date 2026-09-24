@@ -1,12 +1,21 @@
 ---
 name: controllers-routes
-description: Create HTTP controllers and API endpoints in Odoo.
+description: Edit or create an Odoo HTTP controller, route, API endpoint, or webhook, including authentication and response behavior.
 globs: ["controllers/**/*.py", "__manifest__.py"]
 ---
 
-# Creating Controllers & Routes
+# Controllers and routes
 
-## Steps
+## Edit an existing route
+
+Find the exact decorator, handler, callers, and access boundary. Keep a text or
+template-only change local and run a focused check. For route, payload, or
+permission changes, verify the configured Odoo version and test allowed and
+denied requests, including record rules and webhook authentication where
+relevant. Review the diff once the affected behavior passes. Use the creation
+steps below when adding a route.
+
+## Create a route
 
 Load the configured version notes before copying route decorators; route types and
 response handling are version-sensitive.

@@ -25,11 +25,11 @@ class TestListSkills:
         assert isinstance(skills, list)
 
     def test_count(self):
-        assert len(list_skills()) == 23
+        assert len(list_skills()) == 25
 
     def test_categories(self):
         core = list_skills(category="core")
-        assert len(core) == 9
+        assert len(core) == 11
         assert set(core) == set(CORE_SKILLS)
 
         workflows = list_skills(category="workflows")
@@ -47,6 +47,8 @@ class TestListSkills:
         skills = list_skills()
         for expected in [
             "creating_models",
+            "extending_models",
+            "translation_edits",
             "xml_views",
             "security_rules",
             "owl_components",
@@ -96,6 +98,7 @@ class TestSkillMetadataAndRouting:
         assert meta["name"] == "code-review"
         assert "security" in meta["description"].lower()
         assert meta["globs"] != ""
+        assert "**/i18n/*.po" in parse_skill_metadata("translation_edits")["globs"]
 
     def test_generate_skills_routing(self):
         routing = generate_skills_routing()
@@ -103,6 +106,8 @@ class TestSkillMetadataAndRouting:
         assert "`code-review`" in routing
         assert "`domain-accounting`" in routing
         assert "`creating-models`" in routing
+        assert "`extending-models`" in routing
+        assert "`translation-edits`" in routing
 
     def test_generate_category_routing_only_lists_installed_category(self):
         routing = generate_skills_routing(category="workflows")

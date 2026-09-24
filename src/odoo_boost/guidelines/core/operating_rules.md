@@ -3,9 +3,9 @@
 ### 1. Adaptive Effort Levels
 - **Low effort (default for clear local edits):**
   - For labels, translations, existing view fields, formatting, and small methods with a known target.
-  - Locate the exact definition, edit directly, inspect the diff, and perform the cheapest relevant check. A label-only XML edit needs the right record and valid XML, not a new test suite.
+  - Locate the exact definition and reference, edit directly, perform the cheapest check that catches a realistic failure, inspect the diff, and stop. A label-only XML edit needs the right record and valid XML, not a new test suite.
 - **Medium effort:**
-  - For bounded multi-file features, localized refactoring, unfamiliar inheritance, packaging, integrations, and persistent schema changes.
+  - For bounded features such as fields on existing models, new smart-button actions, localized refactoring, unfamiliar inheritance, packaging, integrations, and persistent schema changes. A translation edit spanning two PO files can still be low effort.
   - Inspect direct dependencies and check the affected Odoo boundary: imports, manifest/data order, XML IDs and XPath anchors, access rights, or tests where relevant.
 - **High effort:**
   - For broad architectural refactoring, production/release readiness, shipping validation, migrations, security audits, accounting/stock integrity, and exhaustive investigations.
@@ -14,6 +14,7 @@
   - Take the shortest path to a working result: identify the target, edit, perform the cheapest check that catches a realistic error, and report briefly.
   - Skip plans, broad scans, optional skills, and unrelated cleanup. Keep the configured version, exact symbols/anchors, and relevant security checks. Report behavior that could not be verified.
 - Choose assurance from the task's affected behavior, not a fixed sequence of levels. Start inspection narrowly even for high effort. Raise effort for a named dependency or risk; high-risk work can start at high effort.
+- A new routine case follows the low-effort path when the target and intended result are precise, it preserves access and stored data meaning, and a focused check covers the plausible failure. Handle it in the active agent. Use source tracing or specialist review for a named uncertainty or risk.
 
 ### 2. Strict Prohibition on Live Environment Execution
 - **NEVER use `odoo-bin shell`** or live Python diagnostic scripts unless the user explicitly writes *"launch a shell"* or *"check in database"* (*"lance un shell"* or *"vérifie en base"*).
@@ -30,7 +31,8 @@
   files already read; do not read an unchanged file twice in the same task.
 - Start with targeted searches and compact tool responses. Load a routed skill or
   reference when its procedure addresses the task; add others for concrete uncertainty.
-  Do not load the full pattern library for a routine edit.
+  A self-evident text edit does not need a skill read. Do not load the full pattern
+  library for a routine edit.
 - Stop when the requested behavior and its applicable checks are satisfied. Avoid exploratory
   reads, broad checks, cleanup, and unrelated fixes after that point. Do not use a fixed call
   count as a substitute for first-pass correctness.
@@ -42,6 +44,8 @@
 - Never recursively scan an Odoo checkout, shared base source, or addons collection during
   ordinary custom-addon work. Resolve uncertainty with the exact inherited symbol/file; broad
   source scans require an explicit audit scope.
+- Read upstream Odoo internals only when an unresolved, version-dependent fact affects the
+  requested edit. A static label or existing PO entry does not require translation-engine analysis.
 
 ### 5. Enforcement Boundary
 - These rules guide model behavior; they cannot guarantee it. Odoo Boost can cap

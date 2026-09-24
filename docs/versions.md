@@ -33,6 +33,12 @@ The same official skill files exist on 20.0 and master and contain several
 sections explicitly labelled master-only. Odoo Boost therefore verifies stable
 20.0 APIs independently and does not treat every official skill statement as a
 20.0 compatibility fact.
+The pinned 20.0 documentation snapshot was reviewed at upstream revision
+`4b1490d173ab5a7ca07c62abab8e35955eb3f5a7` (2026-09-24). Its source
+installation guide supports the stated Python and PostgreSQL minimums, its ORM
+reference documents `fields.Domain`, and all curated 20.0 documentation paths
+resolve within the pack. This is static source and documentation validation;
+live Community and Enterprise addon behavior has not been integration-tested.
 
 Version normalization is shared by installation, guideline composition and
 `search_docs`. A configured version is enough for offline documentation lookup;
@@ -48,8 +54,9 @@ SaaS series, or an unparseable version does not inherit the highest known releas
 Shared guidance remains available with an uncertainty notice. No guessed
 version-specific documentation links or fallback-linter deprecation rules are
 emitted. Inspect the target source/configuration first; use runtime metadata
-only for facts that require it. `search_docs` is an offline curated-link lookup,
-not a full-text search or a guarantee that a remote page is currently reachable.
+only for facts that require it. `search_docs` provides offline curated links and,
+when a matching local documentation index is configured, bounded full-text
+search results. It does not guarantee that a remote page is currently reachable.
 Legacy Odoo 14 topics use the official reference index where a deep link has
 not been verified.
 

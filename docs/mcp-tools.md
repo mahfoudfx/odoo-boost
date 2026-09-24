@@ -482,12 +482,14 @@ Read Odoo log entries from `ir.logging`. Requires `log_db` to be configured in `
 
 ## 21. search_docs
 
-Look up curated official Odoo documentation links by topic and registered version. This is an offline link catalog, not a live documentation search. Unknown versions return no guessed version-specific links; see [version support](versions.md).
+Look up curated official Odoo documentation links by topic and registered version, or search an installed offline text index. With `query` empty, this remains an offline link catalog. With `query` set, it returns up to three short excerpts from the configured, version-matched documentation cache, with local file/line and online page links; no network call occurs. See [offline documentation](offline-documentation.md) and [version support](versions.md).
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `topic` | str | no | `""` | Topic keyword (e.g. `orm`, `views`, `owl`) |
 | `version` | str | no | `""` | Odoo version, e.g. `18.0` |
+| `query` | str | no | `""` | Search installed local documentation text; leaves link mode when empty. |
+| `section` | str | no | `"all"` | `developer`, `administration`, `applications`, or `all`. |
 
 ---
 
@@ -514,6 +516,7 @@ Odoo Boost exposes native MCP resources that agents can query directly without m
 | `odoo://guidelines/oca` | Returns the composed OCA standards and best practices markdown document. |
 | `odoo://guidelines/oca/compact` | Returns only the guideline titles/headings as a compact index. |
 | `odoo://skills/catalog` | Returns the `SKILLS_ROUTING.md` progressive skills catalog and intent index. |
+| `odoo://project/context` | Returns a compact view of configured VENV, Odoo configuration, ordered addon roots, framework source, optional local docs, and MCP file-access status. Reads only `addons_path` from `odoo.conf`; no database call. |
 
 ---
 

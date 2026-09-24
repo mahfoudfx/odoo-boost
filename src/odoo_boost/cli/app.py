@@ -46,6 +46,7 @@ def _main(
 
 # Import commands so they register with the app
 from odoo_boost.cli.check import check  # noqa: E402
+from odoo_boost.cli.docs_cmd import docs_app  # noqa: E402
 from odoo_boost.cli.install import install  # noqa: E402
 from odoo_boost.cli.lint_cmd import lint  # noqa: E402
 from odoo_boost.cli.mcp_cmd import mcp  # noqa: E402
@@ -62,6 +63,7 @@ app.command()(lint)
 app.command(name="mcp")(mcp)
 app.command(name="mcp-config")(mcp_config)
 app.add_typer(odoo_ls_app, name="odoo-ls")
+app.add_typer(docs_app, name="docs")
 
 
 def main() -> None:

@@ -59,6 +59,12 @@ def _run_create(monkeypatch, sample_config, **config_updates):
 
 
 class TestCreateMcpServer:
+    def test_project_context_resource(self, monkeypatch, sample_config):
+        server = _run_create(monkeypatch, sample_config)
+        assert "odoo://project/context" in server.resources
+        result = server.resources["odoo://project/context"]()
+        assert '"project_path"' in result
+
     def test_handlers_keep_their_own_server_context(self, monkeypatch, sample_config):
         monkeypatch.setattr(server_mod, "MCPServer", _FakeMCPServer)
         first_conn, second_conn = MagicMock(), MagicMock()

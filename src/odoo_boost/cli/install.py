@@ -20,9 +20,65 @@ from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
 from odoo_boost.config.settings import save_config
 from odoo_boost.connection.factory import create_connection
 from odoo_boost.mcp_launcher import detect_wsl_distro, is_loopback_host, is_wsl
+from odoo_boost.offline_docs import (
+    OfflineDocsError,
+    available_packs,
+    cached_docs,
+    download_docs,
+    install_checkout,
+    install_pack,
+)
 from odoo_boost.versions import detect_version, get_version_profile, version_guidance
 
 console = Console()
+
+
+def _detect_project_venv(project_path: Path) -> str | None:
+    """Prefer an activated VENV; ignore unrelated launcher environments."""
+    active = os.environ.get("VIRTUAL_ENV")
+    if active and (Path(active) / "pyvenv.cfg").is_file():
+        return str(Path(active).resolve())
+    if sys.prefix != sys.base_prefix:
+        interpreter_venv = Path(sys.prefix).resolve()
+        if interpreter_venv.is_relative_to(project_path.resolve()):
+            return str(interpreter_venv)
+    return None
+
+
+def _choose_offline_docs(version: str | None) -> Path | None:
+    """Offer an exact-version local, packaged, or online documentation source."""
+    if not version or get_version_profile(version) is None:
+        console.print(
+            "  [dim]Offline docs: choose a supported version later with 'odoo-boost docs'.[/]"
+        )
+        return None
+    cached = cached_docs(version)
+    choices = ["online", "path", "download"]
+    if cached is not None:
+        choices.insert(1, "cached")
+    if version in available_packs():
+        choices.insert(1, "packed")
+    console.print("\n[bold]Step 4a:[/] Offline Odoo documentation\n")
+    choice = Prompt.ask(
+        "  Documentation source (online links, existing path, packaged snapshot, or download)",
+        choices=choices,
+        default="online",
+    )
+    try:
+        if choice == "cached":
+            return cached
+        if choice == "packed":
+            return install_pack(version)
+        if choice == "download":
+            return download_docs(version)
+        if choice == "path":
+            path = Path(Prompt.ask("  Existing Odoo documentation checkout path"))
+            return install_checkout(path, version)
+    except (OfflineDocsError, OSError) as exc:
+        console.print(
+            f"  [yellow]Offline docs unavailable: {exc}. Online links remain available.[/]"
+        )
+    return None
 
 
 def install(
@@ -36,6 +92,19 @@ def install(
     gitignore: Annotated[
         bool | None,
         typer.Option("--gitignore/--no-gitignore", help="Add generated paths to .gitignore."),
+    ] = None,
+    skip_docs: Annotated[
+        bool,
+        typer.Option(
+            "--skip-docs", help="Use online documentation links without the offline-docs prompt."
+        ),
+    ] = False,
+    target_odoo_version: Annotated[
+        str | None,
+        typer.Option(
+            "--target-odoo-version",
+            help="Target source series when it differs from the connected server.",
+        ),
     ] = None,
 ) -> None:
     """Interactive wizard: configure connection, detect version, select agents, generate files."""
@@ -85,6 +154,13 @@ def install(
     # Detect Odoo version series (e.g. "17.0", "18.0")
     odoo_version = detect_version(version_info)
     console.print(f"  Detected Odoo version: [cyan]{odoo_version}[/]")
+    if target_odoo_version:
+        target_profile = get_version_profile(target_odoo_version)
+        if target_profile is None:
+            console.print(f"  [red]Unsupported target Odoo version: {target_odoo_version}[/]")
+            raise typer.Exit(1)
+        odoo_version = target_profile.series
+        console.print(f"  Target source version: [cyan]{odoo_version}[/]")
     if get_version_profile(odoo_version) is None:
         console.print(version_guidance(odoo_version), markup=False)
 
@@ -145,6 +221,8 @@ def install(
         console.print("  [dim]Both disabled — only odoo-boost.json will be created.[/]")
 
     project_path = Path.cwd()
+    active_venv = _detect_project_venv(project_path)
+    docs_path = None if skip_docs else _choose_offline_docs(odoo_version)
 
     # --- Step 4b: MCP transport / platform ---
     mcp_transport: Literal["stdio", "http"] = "stdio"
@@ -210,6 +288,8 @@ def install(
         odoo_version=odoo_version,
         agents=selected_agents,
         project_path=str(project_path),
+        venv_path=active_venv,
+        odoo_docs_path=str(docs_path) if docs_path else None,
         generate_mcp=generate_mcp,
         generate_ai_files=generate_ai_files,
         mcp_transport=mcp_transport,

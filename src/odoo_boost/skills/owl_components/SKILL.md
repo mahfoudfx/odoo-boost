@@ -1,10 +1,21 @@
 ---
 name: owl-components
-description: Create custom OWL (Odoo Web Library) frontend components.
+description: Edit an existing Odoo Owl component, template, registry entry, or asset; create a new component when requested.
 globs: ["static/src/**/*.js", "static/src/**/*.xml", "static/src/**/*.scss", "__manifest__.py"]
 ---
 
-# Creating OWL Components
+# Owl components and existing frontend edits
+
+## Edit an existing component
+
+Locate the component, matching template, asset entry, and affected test. For a
+copy, class, or layout change, edit the relevant node or rule and run the
+project's focused frontend check. For changed behavior, follow the handler,
+service, or registry entry involved and test that path. Check the configured
+Odoo version when an API or asset convention changes. Finish after the focused
+check and diff; use the creation steps below for a new component.
+
+## Create a component
 
 Load the configured version notes and inspect the component being extended before
 copying imports, hooks, services, or registry APIs. The example shows a common modern

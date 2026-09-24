@@ -14,7 +14,9 @@ trace.
    configuration and addon manifests. A short addon version such as `1.2`
    does not establish the Odoo major version; conflicting manifests do not
    establish one either. If still uncertain, inspect the target source before
-   choosing version-specific APIs.
+   choosing version-specific APIs. When external roots or the Python VENV are
+   unclear, read `odoo://project/context` once for configured paths and MCP
+   access status.
 2. Find the entry point: button or action, controller route, cron, automated
    action, computed field, or call site. Follow only the relevant calls and
    overrides through `_inherit`, `_inherits`, and `super()`. Record exact paths

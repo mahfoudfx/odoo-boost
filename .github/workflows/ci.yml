@@ -78,8 +78,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv build
+      - run: uv build packages/odoo-boost-docs --out-dir "$GITHUB_WORKSPACE/dist-docs"
       - run: uv venv /tmp/smoke
       - run: uv pip install --python /tmp/smoke/bin/python dist/*.whl
+      - run: uv pip install --python /tmp/smoke/bin/python dist-docs/*.whl
       - name: Smoke test installed wheel (package data + entry point)
         run: |
           /tmp/smoke/bin/python - <<'PY'
@@ -87,14 +89,19 @@ jobs:
           import odoo_boost
           from odoo_boost.skills.loader import list_skills
           from odoo_boost.mcp_server.server import create_mcp_server  # noqa: F401
+          from odoo_boost.offline_docs import available_packs
 
           assert odoo_boost.__version__, "missing version"
-          assert len(list_skills()) == 23, f"expected 23 skills, got {len(list_skills())}"
+          assert len(list_skills()) == 25, f"expected 25 skills, got {len(list_skills())}"
+          assert {"18.0", "19.0", "20.0"}.issubset(available_packs())
           for rel in (
               ("guidelines", "core", "coding_style.md"),
               ("guidelines", "core", "verification.md"),
               ("guidelines", "core", "versions", "v18.md"),
+              ("guidelines", "core", "versions", "v20.md"),
               ("skills", "creating_models", "SKILL.md"),
+              ("skills", "translation_edits", "SKILL.md"),
+              ("skills", "extending_models", "SKILL.md"),
               ("skills", "pattern_library", "references", "INDEX.md"),
           ):
               assert importlib.resources.files("odoo_boost").joinpath(*rel).is_file(), rel

@@ -21,7 +21,9 @@ from odoo_boost.mcp_server.auth import StaticTokenVerifier
 from odoo_boost.mcp_server.call_guard import ConsecutiveCallGuard
 from odoo_boost.mcp_server.context import ServerContext, bound_context, set_context
 from odoo_boost.mcp_server.registry import LIVE_TOOLS, LOCAL_TOOLS, resilient_live_tool
+from odoo_boost.mcp_server.tools._common import json_response
 from odoo_boost.mcp_server.tools.database_schema import database_schema
+from odoo_boost.project_context import project_context
 from odoo_boost.skills.loader import generate_skills_routing
 
 logger = logging.getLogger(__name__)
@@ -110,6 +112,12 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
     def resource_skills_catalog() -> str:
         """Progressive skills catalog and routing table."""
         return generate_skills_routing()
+
+    @mcp.resource("odoo://project/context")
+    def resource_project_context() -> str:
+        """Configured VENV, Odoo source, addon roots, and documentation paths."""
+        with bound_context(context):
+            return json_response(project_context(config))
 
     @mcp.resource("odoo://schema/{model_name}")
     def resource_model_schema(model_name: str) -> str:

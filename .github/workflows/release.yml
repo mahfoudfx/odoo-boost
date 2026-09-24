@@ -41,8 +41,11 @@ jobs:
           fi
           echo "Releasing odoo-boost $VERSION"
 
-      - name: Build sdist & wheel
+      - name: Build core sdist & wheel
         run: uv build
+
+      - name: Build optional documentation sdist & wheel
+        run: uv build packages/odoo-boost-docs --out-dir "$GITHUB_WORKSPACE/dist-docs"
 
       - name: Smoke test the built wheel
         run: |
@@ -55,19 +58,32 @@ jobs:
           from odoo_boost.mcp_server.server import create_mcp_server  # noqa: F401
 
           assert odoo_boost.__version__, "missing version"
-          assert len(list_skills()) == 23, f"expected 23 skills, got {len(list_skills())}"
+          assert len(list_skills()) == 25, f"expected 25 skills, got {len(list_skills())}"
           for rel in (
               ("guidelines", "core", "coding_style.md"),
               ("guidelines", "core", "verification.md"),
               ("guidelines", "core", "versions", "v18.md"),
+              ("guidelines", "core", "versions", "v20.md"),
               ("skills", "creating_models", "SKILL.md"),
+              ("skills", "translation_edits", "SKILL.md"),
+              ("skills", "extending_models", "SKILL.md"),
           ):
               assert importlib.resources.files("odoo_boost").joinpath(*rel).is_file(), rel
           print("wheel smoke OK")
           PY
           /tmp/smoke/bin/odoo-boost --version
 
-      - name: Publish to PyPI (Trusted Publishing)
+      - name: Smoke test optional documentation wheel
+        run: |
+          uv pip install --python /tmp/smoke/bin/python dist-docs/*.whl
+          /tmp/smoke/bin/python - <<'PY'
+          from odoo_boost.offline_docs import available_packs
+
+          assert {"18.0", "19.0", "20.0"}.issubset(available_packs())
+          print("documentation wheel smoke OK")
+          PY
+
+      - name: Publish core package to PyPI (Trusted Publishing)
         if: vars.PUBLISH_TO_PYPI == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
@@ -82,4 +98,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: dist/*
+          files: |
+            dist/*
+            dist-docs/*
