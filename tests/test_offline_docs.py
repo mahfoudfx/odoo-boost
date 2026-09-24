@@ -157,13 +157,29 @@ def test_installer_offers_pack_choice_when_available(tmp_path):
     with (
         patch("odoo_boost.cli.install.cached_docs", return_value=None),
         patch("odoo_boost.cli.install.available_packs", return_value=["18.0"]),
-        patch("odoo_boost.cli.install.Prompt.ask", return_value="packed"),
+        patch("odoo_boost.cli.install.Prompt.ask", return_value="S") as ask,
         patch("odoo_boost.cli.install.install_pack", return_value=tmp_path) as install,
     ):
         from odoo_boost.cli.install import _choose_offline_docs
 
         assert _choose_offline_docs("18.0") == tmp_path
     install.assert_called_once_with("18.0")
+    assert ask.call_args.kwargs["default"] == "D"
+    assert ask.call_args.kwargs["case_sensitive"] is False
+
+
+def test_installer_accepts_existing_path_letter(tmp_path):
+    checkout = tmp_path / "documentation"
+    with (
+        patch("odoo_boost.cli.install.cached_docs", return_value=None),
+        patch("odoo_boost.cli.install.available_packs", return_value=[]),
+        patch("odoo_boost.cli.install.Prompt.ask", side_effect=["P", str(checkout)]),
+        patch("odoo_boost.cli.install.install_checkout", return_value=tmp_path) as install,
+    ):
+        from odoo_boost.cli.install import _choose_offline_docs
+
+        assert _choose_offline_docs("18.0") == tmp_path
+    install.assert_called_once_with(checkout, "18.0")
 
 
 def test_installer_keeps_online_links_when_download_fails():

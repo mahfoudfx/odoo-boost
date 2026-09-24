@@ -53,17 +53,36 @@ def _choose_offline_docs(version: str | None) -> Path | None:
         )
         return None
     cached = cached_docs(version)
-    choices = ["online", "path", "download"]
+    options = {
+        "O": ("online", "Online links", "Versioned links; no local text search or setup download."),
+        "P": ("path", "Existing path", "Copy and index a checkout of this documentation branch."),
+        "D": ("download", "Download", "Fetch this branch once, then search its text offline."),
+    }
     if cached is not None:
-        choices.insert(1, "cached")
+        options["C"] = ("cached", "Cached copy", "Reuse documentation already indexed here.")
     if version in available_packs():
-        choices.insert(1, "packed")
+        options["S"] = (
+            "packed",
+            "Packaged snapshot",
+            "Index the pinned snapshot installed in this VENV.",
+        )
     console.print("\n[bold]Step 4a:[/] Offline Odoo documentation\n")
-    choice = Prompt.ask(
-        "  Documentation source (online links, existing path, packaged snapshot, or download)",
-        choices=choices,
-        default="online",
-    )
+    for letter, (_, label, explanation) in options.items():
+        console.print(f"  [bold]{letter}[/] — {label}: {explanation}")
+    aliases = {letter.lower(): name for letter, (name, _, _) in options.items()}
+    aliases.update({name: name for name, _, _ in options.values()})
+    if "S" in options:
+        aliases["snapshot"] = "packed"
+        aliases["packaged"] = "packed"
+    choice = aliases[
+        Prompt.ask(
+            f"  Documentation source ({'/'.join(options)})",
+            choices=list(aliases),
+            case_sensitive=False,
+            show_choices=False,
+            default="D",
+        ).lower()
+    ]
     try:
         if choice == "cached":
             return cached

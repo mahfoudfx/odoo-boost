@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-09-24
+
+### Changed
+
+- Show package version, Python interpreter, configured project paths and target
+  Odoo series in `odoo-boost check` before probing the server.
+- Explain offline documentation choices during setup, accept single-letter
+  selections, and default to downloading the matching official documentation.
+
 ## [0.13.0] - 2026-09-24
 
 ### Added
@@ -222,7 +231,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementation: connection layer, core MCP server, guidelines, and the
   install wizard.
 
-[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.10.2...v0.11.0

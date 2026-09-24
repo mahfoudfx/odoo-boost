@@ -180,7 +180,7 @@ You can also ask direct inspection questions:
 | Command | Description |
 |---|---|
 | `odoo-boost install` | Interactive setup wizard with agent configuration |
-| `odoo-boost check [--mcp]` | Test connection to Odoo instance (and the MCP server handshake) |
+| `odoo-boost check [--mcp]` | Show package and project setup, test the Odoo connection, and optionally probe MCP |
 | `odoo-boost lint [path]` | Run OCA/pylint-odoo or AST static checks on local addons |
 | `odoo-boost update` | Re-sync guidelines, configs, and skills (cleans up removed agents) |
 | `odoo-boost uninstall` | Remove generated agent files and optionally purge config |

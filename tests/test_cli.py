@@ -53,7 +53,46 @@ class TestCheckCommand:
             result = runner.invoke(app, ["check", "--config", str(cfg_path)])
 
         assert result.exit_code == 0
+        assert "Odoo Boost" in result.output
+        assert __version__ in result.output
+        assert "Target Odoo" in result.output
+        assert "Configuration" in result.output
         assert "18.0" in result.output
+
+    def test_check_shows_local_setup_when_server_is_unreachable(
+        self, tmp_path, sample_config, monkeypatch
+    ):
+        monkeypatch.chdir(tmp_path)
+        venv = tmp_path / "venv"
+        (venv / "bin").mkdir(parents=True)
+        (venv / "pyvenv.cfg").write_text("home = /usr/bin\n")
+        (venv / "bin/python").touch()
+        docs = tmp_path / "docs"
+        docs.mkdir()
+        (docs / "index.sqlite3").touch()
+        (docs / ".odoo-boost-docs.json").write_text("{}")
+        cfg = sample_config.model_copy(
+            update={
+                "project_path": str(tmp_path),
+                "venv_path": "venv",
+                "odoo_docs_path": "docs",
+            }
+        )
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(cfg.model_dump_json(indent=2))
+        mock_conn = MagicMock()
+        mock_conn.get_version.side_effect = ConnectionError("offline")
+
+        with patch("odoo_boost.cli.check.create_connection", return_value=mock_conn):
+            result = runner.invoke(app, ["check", "--config", str(cfg_path)])
+
+        assert result.exit_code == 1
+        assert __version__ in result.output
+        assert "Project VENV" in result.output
+        assert "different interpreter" in result.output
+        assert "Offline docs" in result.output
+        assert "indexed" in result.output
+        assert "Failed to reach server" in result.output
 
     def test_check_with_mcp_probe(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)
@@ -93,6 +132,8 @@ class TestCheckCommand:
             )
 
         assert result.exit_code == 0
+        assert __version__ in result.output
+        assert "CLI flags" in result.output
         assert "requires an odoo-boost.json" in result.output
 
 

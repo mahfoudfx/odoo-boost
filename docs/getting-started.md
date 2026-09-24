@@ -100,7 +100,8 @@ checks relevant to those changes.
 
 ## Step 3: Verify the Connection and Local Tools
 
-Test the live connection anytime:
+Show the installed Odoo Boost and Python versions, configured project paths,
+target Odoo series, and live connection status anytime:
 
 ```bash
 odoo-boost check

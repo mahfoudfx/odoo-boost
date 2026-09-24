@@ -1,7 +1,8 @@
-"""odoo-boost check – test connection to an Odoo instance."""
+"""odoo-boost check – show local setup and test the Odoo connection."""
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -9,12 +10,60 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from odoo_boost.__version__ import __version__
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.config.schema import OdooConnection as OdooConnectionConfig
-from odoo_boost.config.settings import load_config
+from odoo_boost.config.settings import find_config_path, load_config
 from odoo_boost.connection.factory import create_connection
+from odoo_boost.offline_docs import INDEX_FILE, METADATA_FILE
 
 console = Console()
+
+
+def _configured_path(raw: str, project: Path) -> Path:
+    path = Path(raw).expanduser()
+    return (path if path.is_absolute() else project / path).resolve()
+
+
+def _print_local_summary(
+    cfg: OdooBoostConfig | None, config_path: Path | None, *, source_label: str = "CLI flags"
+) -> None:
+    """Report useful local facts without starting Odoo or scanning source trees."""
+    table = Table(title="Odoo Boost Environment")
+    table.add_column("Property", style="bold")
+    table.add_column("Value")
+    table.add_row("Odoo Boost", __version__)
+    table.add_row("Python", f"{sys.version_info.major}.{sys.version_info.minor} ({sys.executable})")
+    table.add_row(
+        "Configuration", str(config_path.resolve()) if cfg and config_path else source_label
+    )
+    if cfg is not None:
+        project = Path(cfg.project_path).expanduser().resolve()
+        table.add_row("Project", str(project))
+        table.add_row("Target Odoo", cfg.odoo_version or "not configured")
+        if cfg.venv_path:
+            venv = _configured_path(cfg.venv_path, project)
+            venv_python = venv / (
+                "Scripts/python.exe" if (venv / "Scripts").is_dir() else "bin/python"
+            )
+            state = "active" if Path(sys.prefix).resolve() == venv else "different interpreter"
+            if not (venv / "pyvenv.cfg").is_file() or not venv_python.is_file():
+                state = "missing or invalid"
+            table.add_row("Project VENV", f"{venv} ({state})")
+        if cfg.odoo_conf_path:
+            conf = _configured_path(cfg.odoo_conf_path, project)
+            table.add_row("Odoo config", f"{conf} ({'found' if conf.is_file() else 'missing'})")
+        if cfg.odoo_source_path:
+            source = _configured_path(cfg.odoo_source_path, project)
+            table.add_row("Odoo source", f"{source} ({'found' if source.is_dir() else 'missing'})")
+        if cfg.odoo_docs_path:
+            docs = _configured_path(cfg.odoo_docs_path, project)
+            indexed = (docs / INDEX_FILE).is_file() and (docs / METADATA_FILE).is_file()
+            table.add_row("Offline docs", f"{docs} ({'indexed' if indexed else 'index missing'})")
+        table.add_row("MCP transport", cfg.mcp_transport)
+        if cfg.agents:
+            table.add_row("Agents", ", ".join(cfg.agents))
+    console.print(table)
 
 
 def check(
@@ -30,9 +79,10 @@ def check(
         typer.Option("--mcp", help="Also verify the generated MCP server can start."),
     ] = False,
 ) -> None:
-    """Test the connection to an Odoo instance."""
+    """Show local setup and test the connection to an Odoo instance."""
     # Build connection config from CLI flags or config file
     cfg = None
+    config_path = None
     if url and database:
         conn_cfg = OdooConnectionConfig(
             url=url,
@@ -42,8 +92,10 @@ def check(
         )
     else:
         try:
-            cfg = load_config(config)
+            config_path = config or find_config_path()
+            cfg = load_config(config_path)
         except FileNotFoundError:
+            _print_local_summary(None, None, source_label="not found")
             console.print(
                 "[red]No connection details provided and no odoo-boost.json found.[/]\n"
                 "Pass --url and --database, or run 'odoo-boost install' first."
@@ -51,6 +103,7 @@ def check(
             raise typer.Exit(1) from None
         conn_cfg = cfg.connection
 
+    _print_local_summary(cfg, config_path)
     conn = create_connection(conn_cfg)
 
     # 1. Version check

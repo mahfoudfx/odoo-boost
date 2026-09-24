@@ -9,15 +9,18 @@ online page links. Images and built HTML are excluded from the text packs.
 ## Choose a source
 
 During `odoo-boost install`, choose one of these options for the detected Odoo
-series (or the explicit `--target-odoo-version`):
+series (or the explicit `--target-odoo-version`). Enter the letter or full name:
 
 | Choice | Effect |
 |---|---|
-| `online` (default) | Keep curated web links; install no local documentation. |
-| `cached` | Reuse the matching revision already in the shared cache. Shown when available. |
-| `packed` | Expand the matching snapshot from the optional `odoo-boost-docs` package. Shown when available. |
-| `path` | Copy and index an existing, matching `odoo/documentation` checkout. |
-| `download` | Fetch only `.rst` pages and `LICENSE` from the matching official Git branch, then index them. Requires Git and network access. |
+| `O` / `online` | Keep curated versioned links; install no local documentation or full-text index. |
+| `P` / `path` | Copy and index an existing, matching `odoo/documentation` checkout. Requires its filesystem path. |
+| `D` / `download` (default) | Fetch `.rst` pages and `LICENSE` from the matching official Git branch once, then search locally. Requires Git and network access during setup. |
+| `S` / `packed` / `snapshot` | Expand a pinned snapshot without a setup download. Shown when a matching pack is available, normally from `odoo-boost-docs` installed in the same VENV. |
+| `C` / `cached` | Reuse a matching version already indexed in the shared cache. Shown when available. |
+
+If the selected local source cannot be installed, setup continues with online
+links and reports the reason. Pass `--skip-docs` to skip this prompt entirely.
 
 The optional [pack package](../packages/odoo-boost-docs/README.md) currently
 contains pinned 18.0, 19.0, and 20.0 snapshots. From this repository, install
