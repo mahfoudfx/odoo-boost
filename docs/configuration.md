@@ -138,7 +138,7 @@ source, configuration, and documentation locations, absolute paths are clearer.
 | `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |
 | `allowed_roots` | string[] | `[]` | Restrict local file tools to these roots. Empty uses `project_path` as the effective root by default. |
 | `allow_external_local_paths` | bool | `false` | Allow file tools outside `project_path` when `allowed_roots` is empty. Enable only for deliberate shared-source inspection. |
-| `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed user-bin location. |
+| `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed install. Its `typeshed` stub directory must sit next to it. |
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |

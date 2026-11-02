@@ -155,12 +155,16 @@ odoo-boost odoo-ls install
 odoo-boost odoo-ls status
 ```
 
-This explicit command downloads the stable platform binary only from the
-official `odoo/odoo-ls` GitHub releases. Odoo Boost otherwise keeps using its
-built-in scanner and OCA linter.
+This explicit command downloads the latest stable platform binary and the
+Python stubs (`typeshed.zip`) it needs, only from the official `odoo/odoo-ls`
+GitHub releases. Run it again to update; `status` reports an outdated or
+stub-less install. Odoo Boost otherwise keeps using its built-in scanner and
+OCA linter.
 
-The install wizard chooses these diagnostics by default: it installs the
-official Odoo LS binary and `pylint-odoo` in the active Python environment.
+The install wizard chooses these diagnostics by default: it installs, repairs or
+updates the official Odoo LS and installs `pylint-odoo` in the active Python
+environment. A working Odoo LS from elsewhere, such as an editor extension, is
+kept as is.
 Answer **No** to its development-tools prompt, or use the following option,
 when a small or offline setup is preferable:
 

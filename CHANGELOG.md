@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `odoo-boost odoo-ls install` now also installs the release's `typeshed`
+  stubs next to the executable. Without them Odoo LS stopped during
+  initialization and `check_odoo_ls` reported zero diagnostics as a success.
+  The managed install moves to `~/.local/share/odoo-boost/odoo-ls` (linked from
+  `~/.local/bin` on Linux and macOS); a stub-less executable left there by an
+  earlier version is replaced.
+
+### Changed
+
+- `odoo-boost odoo-ls install` updates to the latest release or repairs a
+  broken managed install, and does nothing when it is current; `--force`
+  reinstalls. `status` reports missing stubs and available updates. The install
+  wizard repairs or updates a managed Odoo LS instead of skipping it.
+- `check_odoo_ls` returns only diagnostics under the requested path, most severe
+  first, with counts per severity and code. Compact records are one line each.
+  It refuses a stub-less executable, warns when the Odoo framework was not
+  loaded, and passes the configured Odoo source, addons path and VENV
+  interpreter when no `odools.toml` is found.
+
 ## [0.14.0] - 2026-09-24
 
 ### Changed

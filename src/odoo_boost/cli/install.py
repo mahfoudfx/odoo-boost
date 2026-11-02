@@ -183,11 +183,16 @@ def install(
     if get_version_profile(odoo_version) is None:
         console.print(version_guidance(odoo_version), markup=False)
 
-    from odoo_boost.odoo_ls import find_odoo_ls
+    from odoo_boost.odoo_ls import find_odoo_ls, is_usable
 
     ls_bin = find_odoo_ls()
-    if ls_bin:
+    if ls_bin and is_usable(ls_bin):
         console.print(f"  Detected Odoo Language Server: [green]{ls_bin}[/]")
+    elif ls_bin:
+        console.print(
+            f"  Odoo Language Server: [yellow]{ls_bin} has no typeshed stubs "
+            "(unusable; the development tools step repairs it)[/]"
+        )
     else:
         console.print(
             "  Odoo Language Server: [dim]not on PATH (using built-in pure-Python AST scanner)[/]"
@@ -382,14 +387,18 @@ def install(
 
 def _install_development_tools() -> None:
     """Install optional diagnostics without making project setup depend on them."""
-    from odoo_boost.odoo_ls import find_odoo_ls, install_official_odoo_ls
+    from odoo_boost.odoo_ls import find_odoo_ls, install_official_odoo_ls, is_managed, is_usable
 
-    if find_odoo_ls():
-        console.print("  [green]Odoo LS already available.[/]")
+    existing = find_odoo_ls()
+    if existing and is_usable(existing) and not is_managed(existing):
+        # A working server from elsewhere (editor extension, manual install): keep it.
+        console.print(f"  [green]Odoo LS already available:[/] {existing}")
     else:
+        # Missing, stub-less or managed: install, repair or update to the latest release.
         try:
-            path, version = install_official_odoo_ls()
-            console.print(f"  [green]Installed official Odoo LS {version}:[/] {path}")
+            result = install_official_odoo_ls()
+            state = "Installed" if result.changed else "Up to date:"
+            console.print(f"  [green]{state} official Odoo LS {result.tag}:[/] {result.path}")
         except Exception as exc:
             console.print(f"  [yellow]Could not install Odoo LS:[/] {exc}")
 

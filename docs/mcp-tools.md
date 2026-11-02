@@ -311,19 +311,37 @@ Lint an Odoo module or file with `pylint-odoo` when installed. Its fallback AST 
 ## 10. check_odoo_ls
 
 Run the official `odoo_ls_server --parse` diagnostic mode on a local path and
-return its JSON diagnostics. Odoo Boost detects the configured `odoo_ls_path`,
-the executable on `PATH`, or its managed user-bin installation. Install the
-latest stable binary directly from official `odoo/odoo-ls` release assets with:
+return its diagnostics. A run takes several seconds: Odoo LS loads the whole
+Odoo framework before checking the path. Odoo Boost uses the configured
+`odoo_ls_path`, otherwise the first usable executable on `PATH` or in its
+managed install. Install, update or repair it from the official `odoo/odoo-ls`
+release assets with:
 
 ```bash
 odoo-boost odoo-ls install
 odoo-boost odoo-ls status
 ```
 
-Downloads happen only through this explicit command. The installer accepts
-only the expected platform archive from the official GitHub repository and
-installs it atomically. Use `--version 1.4.0` to pin a release and `--force` to
-replace an existing managed binary.
+Odoo LS loads its Python stubs from a `typeshed` directory next to its
+executable. Release archives ship only the executable, so the installer also
+downloads the release's `typeshed.zip` and rebuilds the managed directory
+(`~/.local/share/odoo-boost/odoo-ls`, or `%LOCALAPPDATA%\odoo-boost\odoo-ls` on
+Windows) atomically. On Linux and macOS it links `~/.local/bin/odoo_ls_server`
+to it, replacing only a stub-less executable or an earlier managed link, never a
+working foreign one. Without the stubs the server reports no diagnostics at all;
+`status` and this tool detect that case instead of returning an empty result.
+Running `install` again updates to the latest release, or does nothing when it
+is current. Use `--version 1.6.1` to pin a release and `--force` to reinstall.
+
+The tool passes the nearest `odools.toml` above `path` to Odoo LS. Without one,
+it passes the configured `odoo_source_path`, the existing `addons_path` entries
+and the `venv_path` interpreter. When Odoo LS does not load the framework, the
+response carries a `warning`: only syntax and JavaScript checks ran.
+
+Only diagnostics for files under `path` are returned (`outside_path_count`
+counts the others), most severe first. Compact responses hold the 30 most
+severe as one-line records plus counts per severity and code; `full` returns
+every diagnostic with its raw Odoo LS fields.
 
 Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"`).
 
@@ -331,10 +349,24 @@ Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"
 ```json
 {
   "installed": true,
-  "binary": "/usr/local/bin/odoo-ls",
-  "exit_code": 0,
-  "diagnostic_count": 0,
-  "diagnostics": [],
+  "binary": "/home/me/.local/share/odoo-boost/odoo-ls/odoo_ls_server",
+  "success": true,
+  "odoo_version": "18.0.0",
+  "config": "/home/me/project/odools.toml",
+  "diagnostic_count": 1,
+  "outside_path_count": 7,
+  "by_severity": {"error": 1},
+  "by_code": {"OLS03014": 1},
+  "diagnostics": [
+    {
+      "file": "models/sale.py",
+      "line": 42,
+      "column": 18,
+      "severity": "error",
+      "message": "Field does not exist on model or not in dependencies",
+      "code": "OLS03014"
+    }
+  ],
   "truncated": false,
   "response_format": "compact"
 }
