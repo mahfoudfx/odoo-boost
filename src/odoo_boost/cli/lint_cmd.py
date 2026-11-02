@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Annotated
 
@@ -10,7 +9,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from odoo_boost.mcp_server.tools.lint_odoo_code import lint_odoo_code
+from odoo_boost.diagnostics import run_lint
 
 console = Console()
 
@@ -24,14 +23,7 @@ def lint(
     """Run OCA coding standard checks on Odoo modules (using pylint-odoo)."""
     console.print(f"[bold cyan]Running Odoo Boost Linter on:[/] {path}\n")
 
-    res_str = lint_odoo_code(str(path))
-    res = json.loads(res_str)
-
-    if not isinstance(res, dict) or res.get("truncated"):
-        console.print(
-            "[bold red]Linter response was truncated; narrow the input or increase the response budget.[/]"
-        )
-        raise typer.Exit(1)
+    res = run_lint(path.resolve())
 
     if "error" in res:
         console.print(f"[bold red]Error:[/] {res['error']}")
@@ -51,36 +43,21 @@ def lint(
     table.add_column("Location")
     table.add_column("Message")
 
-    # If pylint-odoo output
-    if "errors" in res or "warnings" in res or "conventions" in res:
-        for err in res.get("errors", []):
-            table.add_row(
-                "[red]Error[/]",
-                err.get("symbol", err.get("code", "")),
-                f"{err.get('path', '')}:{err.get('line', '')}",
-                err.get("message", ""),
+    groups = (
+        ("errors", "[red]Error[/]"),
+        ("warnings", "[yellow]Warning[/]"),
+        ("conventions", "[blue]Convention[/]"),
+        ("issues", ""),
+    )
+    for key, label in groups:
+        for issue in res.get(key, []):
+            fallback_label = (
+                "[red]Error[/]" if issue.get("type") == "error" else "[yellow]Warning[/]"
             )
-        for warn in res.get("warnings", []):
             table.add_row(
-                "[yellow]Warning[/]",
-                warn.get("symbol", warn.get("code", "")),
-                f"{warn.get('path', '')}:{warn.get('line', '')}",
-                warn.get("message", ""),
-            )
-        for conv in res.get("conventions", []):
-            table.add_row(
-                "[blue]Convention[/]",
-                conv.get("symbol", conv.get("code", "")),
-                f"{conv.get('path', '')}:{conv.get('line', '')}",
-                conv.get("message", ""),
-            )
-    elif "issues" in res:
-        for issue in res.get("issues", []):
-            t_style = "[red]Error[/]" if issue.get("type") == "error" else "[yellow]Warning[/]"
-            table.add_row(
-                t_style,
-                issue.get("code", ""),
-                f"{issue.get('file', '')}:{issue.get('line', '')}",
+                label or fallback_label,
+                issue.get("symbol", issue.get("code", "")),
+                f"{issue.get('path', issue.get('file', ''))}:{issue.get('line', '')}",
                 issue.get("message", ""),
             )
 

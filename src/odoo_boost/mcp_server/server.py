@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import functools
 import logging
+import time
 from collections.abc import Callable
+from threading import Lock
 from typing import Any
 
 from mcp.server import MCPServer
 from mcp.server.auth.settings import AuthSettings
+from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import AnyHttpUrl
 
 from odoo_boost.__version__ import __version__
@@ -36,9 +39,17 @@ def _bind_handler(
 
     @functools.wraps(fn)
     def wrapped(*args: Any, **kwargs: Any) -> Any:
-        guard.check(fn.__name__, args, kwargs)
-        with bound_context(context):
-            return fn(*args, **kwargs)
+        started = time.perf_counter()
+        failed, size = True, 0
+        try:
+            guard.check(fn.__name__, args, kwargs)
+            with bound_context(context):
+                result = fn(*args, **kwargs)
+                size = len(result) if isinstance(result, str) else len(str(result))
+                failed = False
+                return result
+        finally:
+            context.metrics.record(fn.__name__, time.perf_counter() - started, size, failed)
 
     return wrapped
 
@@ -133,7 +144,7 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
         """Prompt to perform a comprehensive OCA code review on a local addon."""
         return (
             f"Please review the Odoo addon at '{path}'. "
-            "Check it against OCA standards, verify security/ir.model.access.csv, "
+            "Run diagnose_odoo_code first and distinguish executed checks from manual review. Check it against OCA standards, verify security/ir.model.access.csv, "
             "audit for direct SQL injection risks, check compute method dependencies, "
             "and ensure multi-company security rules are properly respected."
         )
@@ -156,9 +167,28 @@ def create_mcp_server(config: OdooBoostConfig) -> Any:
         config.max_repeated_calls_per_window,
         config.repeated_call_window_size,
     )
+    budget_lock = Lock()
+    calls = 0
+
+    def budgeted(fn: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(fn)
+        def invoke(*args: Any, **kwargs: Any) -> Any:
+            nonlocal calls
+            with budget_lock:
+                if (
+                    config.max_tool_calls
+                    and calls >= config.max_tool_calls
+                    and fn.__name__ != "tool_metrics"
+                ):
+                    raise ToolError("MCP call budget exhausted; restart the server to reset it.")
+                calls += 1
+            return fn(*args, **kwargs)
+
+        return invoke
+
     for tool in LIVE_TOOLS:
-        mcp.tool()(_bind_handler(resilient_live_tool(tool), context, call_guard))
+        mcp.tool()(_bind_handler(budgeted(resilient_live_tool(tool)), context, call_guard))
     for local_tool in LOCAL_TOOLS:
-        mcp.tool()(_bind_handler(local_tool, context, call_guard))
+        mcp.tool()(_bind_handler(budgeted(local_tool), context, call_guard))
 
     return mcp

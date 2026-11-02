@@ -65,6 +65,13 @@ app.command(name="mcp-config")(mcp_config)
 app.add_typer(odoo_ls_app, name="odoo-ls")
 app.add_typer(docs_app, name="docs")
 
+from odoo_boost.cli.development import changed_checks, diagnose_cmd, profiles_app, test_cmd  # noqa: E402
+
+app.add_typer(profiles_app, name="profiles")
+app.command(name="diagnose")(diagnose_cmd)
+app.command(name="changed-checks")(changed_checks)
+app.command(name="test")(test_cmd)
+
 
 def main() -> None:
     app()

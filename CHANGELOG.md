@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Development workflow improvements
+
+- Add unified diagnostics, conservative XML/ACL/security checks, source/route
+  tracing, change-aware check planning, field/XML ID/runtime module comparison,
+  named environment profiles, disposable-database test execution, readiness
+  reporting, per-server metrics/cache statistics and optional MCP call budgets.
+- Connect review/security/XML/testing/source-trace skills to executable checks.
+- **Breaking:** remove `database_query`; use `search_records` (default limit 20).
+  Rename `get_model_inheritance` to `get_model_field_contributors` and
+  `list_routes` to `list_website_pages`, without compatibility aliases.
+
+
 ### Fixed
 
 - `odoo-boost odoo-ls install` now also installs the release's `typeshed`

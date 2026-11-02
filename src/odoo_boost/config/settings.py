@@ -33,6 +33,13 @@ def load_config(path: Path | None = None) -> OdooBoostConfig:
         raise FileNotFoundError(f"No {CONFIG_FILENAME} found. Run 'odoo-boost install' first.")
     data = json.loads(path.read_text(encoding="utf-8"))
     config = OdooBoostConfig.model_validate(data)
+    selected = os.environ.get("ODOO_BOOST_PROFILE") or config.active_profile
+    if selected:
+        if selected not in config.profiles:
+            raise ValueError(f"Unknown environment profile: {selected}")
+        config.connection = config.profiles[selected].model_copy(deep=True)
+        config.readonly = config.profile_readonly.get(selected, True)
+        config.active_profile = selected
     config._config_path = path.absolute()
     project = Path(config.project_path).expanduser()
     if not project.is_absolute():

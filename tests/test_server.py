@@ -116,9 +116,9 @@ class TestCreateMcpServer:
     def test_registers_all_tools(self, monkeypatch, sample_config):
         server = _run_create(monkeypatch, sample_config)
         names = {fn.__name__ for fn in server.registered}
-        assert len(names) == 23
+        assert len(names) == 30
         assert {"list_views", "list_access_rights", "resolve_local_xml_id"} <= names
-        assert "list_routes" in names
+        assert "list_website_pages" in names
 
     def test_live_tool_error_when_offline(self, monkeypatch, sample_config):
         monkeypatch.setattr(server_mod, "MCPServer", _FakeMCPServer)

@@ -1,4 +1,4 @@
-"""MCP tool: get_model_inheritance – field contributors (legacy tool name)."""
+"""MCP tool: get_model_field_contributors – field contributors."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from odoo_boost.mcp_server.context import get_connection
 from odoo_boost.mcp_server.tools._common import json_response, resolve_full
 
 
-def get_model_inheritance(model: str, response_format: str | None = None) -> str:
+def get_model_field_contributors(model: str, response_format: str | None = None) -> str:
     """Inspect field counts and modules contributing fields to a model.
 
-    The legacy tool name is retained for compatibility. This metadata does not
+    This metadata does not
     expose Python _inherit chains or _inherits delegation; inspect addon source
     for those relationships.
 

@@ -133,3 +133,14 @@ The creation examples and checklist below apply when creating a new view, action
 - [ ] Search view includes useful filters and group-by
 - [ ] Action `view_mode` includes all relevant view types
 - [ ] Menu item linked to action
+
+## Executable validation
+
+Use `plan_changed_checks` for changes spanning multiple technical surfaces. Run
+`diagnose_odoo_code` on the exact addon or file for relevant static checks; enable
+Odoo LS when framework diagnostics are needed. Use `trace_odoo_source` and
+`list_controller_routes` for source relationships. Run `run_odoo_tests` only with
+the explicitly configured disposable test database. Report executed checks,
+review-required findings and unavailable checks separately. Reading this skill
+is not a successful audit or test run. For tiny presentation edits, run the
+smallest relevant syntax check instead of a broad scan.

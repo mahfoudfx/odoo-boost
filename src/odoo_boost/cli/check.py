@@ -41,6 +41,8 @@ def _print_local_summary(
         project = Path(cfg.project_path).expanduser().resolve()
         table.add_row("Project", str(project))
         table.add_row("Target Odoo", cfg.odoo_version or "not configured")
+        table.add_row("Environment profile", cfg.active_profile or "default connection")
+        table.add_row("Readonly methods", str(cfg.readonly))
         if cfg.venv_path:
             venv = _configured_path(cfg.venv_path, project)
             venv_python = venv / (

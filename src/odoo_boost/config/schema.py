@@ -28,7 +28,21 @@ class OdooBoostConfig(BaseModel):
         """File this configuration was loaded from; excluded from saved settings."""
         return self._config_path
 
+    @property
+    def project_root(self) -> Path:
+        """Resolved project directory; loaded configs are anchored by load_config."""
+        return Path(self.project_path).expanduser().resolve()
+
     connection: OdooConnection
+    profiles: dict[str, OdooConnection] = Field(default_factory=dict)
+    profile_readonly: dict[str, bool] = Field(default_factory=dict)
+    active_profile: str | None = None
+    test_database: str | None = None
+    test_odoo_conf_path: str | None = None
+    test_timeout_seconds: int = Field(default=300, ge=1, le=3600)
+    max_tool_calls: int = Field(
+        default=0, ge=0, description="Per-process MCP call budget; 0 disables. Restart to reset."
+    )
     odoo_version: str | None = Field(
         default=None, description="Detected Odoo version (e.g. '18.0', '19.0', '20.0')"
     )

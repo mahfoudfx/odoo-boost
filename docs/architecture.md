@@ -27,7 +27,7 @@ standard XML-RPC.
 | `config/` | Pydantic schema and `odoo-boost.json` load/save (owner-only perms) |
 | `mcp_launcher.py` | Resolves the stdio command for native/WSL targets and builds HTTP URLs |
 | `mcp_server/server.py` | Assembles the MCP v2 server (resources, prompts, tool loop) |
-| `mcp_server/registry.py` | Single source of truth for the 23 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
+| `mcp_server/registry.py` | Single source of truth for the 30 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
 | `mcp_server/context.py` | `ContextVar` holding the active connection + config |
 | `mcp_server/auth.py` | Static bearer-token verifier for HTTP |
 | `mcp_server/policy.py` | Opt-in `readonly` / `allowed_roots` guardrails |

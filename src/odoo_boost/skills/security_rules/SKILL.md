@@ -95,3 +95,14 @@ For a security audit, also inspect `Markup`/`markup`, HTML sinks, `eval`/`safe_e
 Judge each hit by its data flow rather than reporting string matches mechanically.
 On Odoo 20, load the version note for `fields.Domain`, `@api.private`, related-field,
 and controller-specific guidance.
+
+## Executable validation
+
+Use `plan_changed_checks` for changes spanning multiple technical surfaces. Run
+`diagnose_odoo_code` on the exact addon or file for relevant static checks; enable
+Odoo LS when framework diagnostics are needed. Use `trace_odoo_source` and
+`list_controller_routes` for source relationships. Run `run_odoo_tests` only with
+the explicitly configured disposable test database. Report executed checks,
+review-required findings and unavailable checks separately. Reading this skill
+is not a successful audit or test run. For tiny presentation edits, run the
+smallest relevant syntax check instead of a broad scan.

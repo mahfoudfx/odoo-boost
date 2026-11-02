@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-Odoo Boost provides 23 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
+Odoo Boost provides 30 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
 
 All tools return JSON strings.
 
@@ -36,7 +36,7 @@ must still satisfy the configured filesystem boundary.
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
 `max_response_chars` (default 40000, `0` disables), and `redact_config_secrets`
-(default `true`). All 23 tools are registered; the agent client controls whether
+(default `true`). All 30 tools are registered; the agent client controls whether
 tool definitions are loaded eagerly or discovered on demand; the MCP server
 cannot require one behavior. Per-call `response_format` controls detail
 where supported. Oversized responses are replaced by a bounded
@@ -122,36 +122,6 @@ Get the field definitions (schema) of an Odoo model.
 
 ---
 
-## 3. database_query
-
-Compatibility alias for `search_records` with a default limit of 80 instead of 20. Both perform the same ORM `search_read`; use `search_records` for new calls. Odoo access rights apply.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `model` | str | yes | — | Technical model name |
-| `domain` | str | no | `"[]"` | Odoo domain as JSON string |
-| `fields` | str | no | `"[]"` | JSON list of field names. Empty for all |
-| `limit` | int | no | `80` | Max records to return |
-| `offset` | int | no | `0` | Records to skip |
-| `order` | str | no | `""` | Sort order, e.g. `"name asc"` |
-| `compact` | bool | no | `false` | When true, strips false/null values and uses compact JSON |
-
-**Returns:**
-```json
-{
-  "model": "res.partner",
-  "total_count": 523,
-  "returned_count": 5,
-  "offset": 0,
-  "limit": 5,
-  "records": [
-    { "id": 1, "name": "My Company", "email": "info@example.com" }
-  ]
-}
-```
-
----
-
 ## 4. aggregate_records
 
 Perform server-side `read_group` aggregations (e.g. sums, counts, averages, and group-bys) without fetching thousands of individual records.
@@ -207,11 +177,10 @@ Resolve an external ID (`ir.model.data` XML ID like `base.main_company` or `acco
 
 ---
 
-## 6. get_model_inheritance
+## 6. get_model_field_contributors
 
 Inspect field counts, custom field names, and modules contributing fields to an
-Odoo model. The legacy tool name is retained for compatibility: this tool does
-not expose `_inherit` chains, `_inherits` delegation pointers, or parent models.
+Odoo model. This tool does not expose `_inherit` chains, `_inherits` delegation pointers, or parent models.
 Inspect the addon source for those relationships. Responses explicitly report
 `scope: "field_contributors"` and `hierarchy_available: false`.
 
@@ -427,7 +396,7 @@ List Odoo menu items (`ir.ui.menu`).
 
 ---
 
-## 14. list_routes
+## 14. list_website_pages
 
 List `website.page` and `website.rewrite` ORM records. This does not enumerate Python controller routes. The result includes `complete` and `unavailable` fields when a model is missing or access is denied; connection failures surface as tool errors.
 
@@ -586,3 +555,30 @@ Pre-populates a migration analysis prompt that asks the agent to verify view, OR
 - **Arguments**:
   - `path` (string, required): Directory path of the addon to analyze.
   - `target_version` (string, optional, defaults to configured `odoo_version`): Target Odoo version.
+
+## Development workflows
+
+| Tool | Arguments | Behavior |
+|---|---|---|
+| `trace_odoo_source` | `path`, optional `model`, `method` | Static model definitions, `_inherit`, `_inherits`, method locations and view parents. Scoped declarations, not runtime MRO. |
+| `list_controller_routes` | `path`, optional `filter_url` | Python route decorators, explicit options and inherited-route overrides. Dynamic values and effective routing need runtime/source review. |
+| `diagnose_odoo_code` | `path`, `include_odoo_ls=false` | Unified static, pylint/fallback and optional LS diagnostics. Reports passed, failed, partial, not-run and unavailable coverage. |
+| `plan_changed_checks` | `path="."`, `base="HEAD"` | Check recommendations for tracked/staged/untracked git changes; executes no validation. |
+| `compare_local_runtime` | `addon_path`, `model` | Local field/XML ID presence and module-version metadata versus runtime. Runtime extras are informational. No effective view or field-semantics comparison. |
+| `tool_readiness` | none | Registered tools and linter/LS prerequisites. Live permissions remain explicitly unprobed. |
+| `tool_metrics` | none | Per-server calls, failures, latency, response characters, consecutive same-tool calls; process-wide scanner cache hits/misses. No arguments or record payloads. |
+| `run_odoo_tests` | `addon_path`, `test_tags`, `database` | Focused tests using explicitly configured disposable DB, dedicated test configuration, framework and VENV. Returns partial if no test execution summary is found. |
+
+Static checks include Python/XML parsing, manifest data/demo existence, local ACL
+candidates, SQL-construction/sudo/public-route review candidates and local XML
+references. Warnings requiring review are not proof of a vulnerability. Static
+checks do not prove company isolation, effective permissions, runtime XPath
+validity or absence of N+1 queries.
+
+### Breaking tool-name changes
+
+`get_model_inheritance` is replaced by `get_model_field_contributors`.
+`list_routes` is replaced by `list_website_pages` (pages and rewrites).
+`database_query` is removed; use `search_records`, whose default limit is 20.
+No compatibility aliases are registered. Update saved prompts/integrations and
+restart your MCP clients to refresh discovery.

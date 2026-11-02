@@ -18,7 +18,11 @@ from odoo_boost.mcp_server.registry import (
 
 class TestToolInventory:
     def test_tool_count(self):
-        assert len(ALL_TOOLS) == 23
+        assert len(ALL_TOOLS) == 30
+
+    def test_removed_names_are_not_registered(self):
+        names = {tool.__name__ for tool in ALL_TOOLS}
+        assert names.isdisjoint({"database_query", "get_model_inheritance", "list_routes"})
 
     def test_no_duplicates(self):
         names = [tool.__name__ for tool in ALL_TOOLS]
