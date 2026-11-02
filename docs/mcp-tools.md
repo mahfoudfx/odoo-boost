@@ -209,21 +209,34 @@ Resolve an external ID (`ir.model.data` XML ID like `base.main_company` or `acco
 
 ## 6. get_model_inheritance
 
-Inspect an Odoo model's inheritance hierarchy, including `_inherit` extension chains, `_inherits` delegation pointers, and parent models.
+Inspect field counts, custom field names, and modules contributing fields to an
+Odoo model. The legacy tool name is retained for compatibility: this tool does
+not expose `_inherit` chains, `_inherits` delegation pointers, or parent models.
+Inspect the addon source for those relationships. Responses explicitly report
+`scope: "field_contributors"` and `hierarchy_available: false`.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `model_name` | str | yes | — | Technical model name, e.g. `product.product` |
+| `model` | str | yes | — | Technical model name, e.g. `product.product` |
+| `response_format` | str | no | `"compact"` | Compact returns up to 20 custom field names; full returns up to 50. |
+
+Field counts and contributing modules cover all matching fields visible to the
+configured Odoo user. `custom_fields_truncated` indicates whether the name list
+was shortened.
 
 **Returns:**
 ```json
 {
   "model": "product.product",
   "name": "Product Variant",
-  "inherit": ["mail.thread", "mail.activity.mixin"],
-  "inherits": {
-    "product.template": "product_tmpl_id"
-  }
+  "scope": "field_contributors",
+  "hierarchy_available": false,
+  "hierarchy_note": "Field metadata does not expose _inherit chains or _inherits delegation. Inspect the model definitions in addon source for those relationships.",
+  "total_fields": 280,
+  "custom_fields_count": 1,
+  "custom_fields": ["x_reference"],
+  "custom_fields_truncated": false,
+  "contributing_modules": ["product", "sale"]
 }
 ```
 
@@ -528,6 +541,11 @@ Look up curated official Odoo documentation links by topic and registered versio
 ## 22. list_workflows
 
 List automated actions (`base.automation`) and server actions (`ir.actions.server`).
+
+Connection failures are reported as tool errors. If a model is unavailable or a
+query is denied, the response includes `success: false` and an `errors` mapping
+keyed by model name, alongside any results from the other query. An empty list
+for a failed query does not mean that no actions exist.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|

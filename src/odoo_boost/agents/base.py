@@ -15,7 +15,7 @@ from odoo_boost.agents.files import (
     update_guidelines,
     update_mcp_config,
 )
-from odoo_boost.agents.spec import AgentSpec
+from odoo_boost.agents.spec import MCP_ROOT_KEYS, AgentSpec
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.guidelines.composer import (
     compose_agent_guidelines,
@@ -237,24 +237,22 @@ class Agent(ABC):
             if self._is_http()
             else self._stdio_server_entry(windows)
         )
-        if self.spec.mcp_format == "vscode":
-            return json.dumps({"servers": {"odoo-boost": server}}, indent=2) + "\n"
-        if self.spec.mcp_format == "zed":
-            return json.dumps({"context_servers": {"odoo-boost": server}}, indent=2) + "\n"
-        return json.dumps({"mcpServers": {"odoo-boost": server}}, indent=2) + "\n"
+        key = MCP_ROOT_KEYS[self.spec.mcp_format]
+        return json.dumps({key: {"odoo-boost": server}}, indent=2) + "\n"
 
     def _render_opencode(self, windows: bool) -> str:
         if self._is_http():
             server = {"enabled": True, **self._http_server_entry(server_type="remote")}
         else:
             server = {"type": "local", "command": self._mcp_command(windows=windows)}
-        return json.dumps({"mcp": {"odoo-boost": server}}, indent=2) + "\n"
+        key = MCP_ROOT_KEYS[self.spec.mcp_format]
+        return json.dumps({key: {"odoo-boost": server}}, indent=2) + "\n"
 
     def _render_hermes(self, windows: bool) -> str:
         server = self._http_server_entry() if self._is_http() else self._stdio_server_entry(windows)
         return str(
             yaml.dump(
-                {"mcp_servers": {"odoo-boost": server}},
+                {MCP_ROOT_KEYS[self.spec.mcp_format]: {"odoo-boost": server}},
                 default_flow_style=False,
                 sort_keys=False,
             )

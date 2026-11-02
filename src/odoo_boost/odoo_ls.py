@@ -76,7 +76,7 @@ def typeshed_dir(binary: Path) -> Path:
 
 def is_usable(binary: Path) -> bool:
     """Return True when the typeshed stdlib stubs sit next to ``binary``."""
-    return (typeshed_dir(binary) / "stdlib" / "builtins.pyi").is_file()
+    return binary.is_file() and (typeshed_dir(binary) / "stdlib" / "builtins.pyi").is_file()
 
 
 def is_managed(binary: Path) -> bool:

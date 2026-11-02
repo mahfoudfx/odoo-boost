@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from odoo_boost.ast_scanner.analyzer import find_local_xml_id, scan_addon, scan_addon_cached
+from odoo_boost.ast_scanner.analyzer import (
+    find_local_xml_id,
+    model_matches,
+    scan_addon,
+    scan_addon_cached,
+)
 from odoo_boost.mcp_server.policy import enforce_path
 from odoo_boost.mcp_server.tools._common import (
     active_config,
@@ -81,11 +86,7 @@ def inspect_local_addon(
     )
 
     if model:
-        matches = [
-            m
-            for m in scanned.get("models", [])
-            if m.get("_name") == model or m.get("_inherit") == model
-        ]
+        matches = [m for m in scanned.get("models", []) if model_matches(m, model)]
         return json_response({"model": model, "found": bool(matches), "definitions": matches})
 
     if full:

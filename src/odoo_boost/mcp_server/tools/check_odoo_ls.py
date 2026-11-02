@@ -117,7 +117,7 @@ def check_odoo_ls(path: str = ".", response_format: str | None = None) -> str:
     odoo_version = next(
         (m.group(1) for m in (_ODOO_VERSION_RE.match(msg) for _, msg in logs) if m), None
     )
-    in_scope = [item for item in diagnostics if _is_under(item.get("uri"), tracked)]
+    in_scope = [item for item in diagnostics if _is_under(item.get("uri"), target)]
     in_scope.sort(key=_sort_key)
     shown: list[dict[str, Any]] = (
         in_scope if full else [_compact(item, tracked) for item in in_scope[:COMPACT_LIMIT]]

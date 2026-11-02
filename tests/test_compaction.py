@@ -77,7 +77,8 @@ class TestListViews:
         data = json.loads(list_views())
         assert data["included_arch"] is False
         assert "arch" not in data["views"][0]
-        assert "arch_length" in data["views"][0]
+        assert data["views"][0]["arch_length"] == len("<form><field name='name'/></form>")
+        assert data["views"][0]["has_arch"] is True
         assert data["returned"] == 2
 
     def test_full_includes_arch(self, server_context):

@@ -129,6 +129,18 @@ def test_install_repairs_managed_install_without_typeshed(release, tmp_path):
     assert result.changed and odoo_ls.is_usable(result.path)
 
 
+def test_install_repairs_missing_executable(release, tmp_path):
+    first = odoo_ls.install_official_odoo_ls(tmp_path / "ls")
+    first.path.unlink()
+    assert not odoo_ls.is_usable(first.path)
+
+    repaired = odoo_ls.install_official_odoo_ls(tmp_path / "ls")
+
+    assert repaired.changed
+    assert repaired.path.read_bytes() == b"1.6.1"
+    assert odoo_ls.is_usable(repaired.path)
+
+
 def test_install_never_replaces_a_foreign_directory(release, tmp_path):
     foreign = tmp_path / "bin-of-user"
     foreign.mkdir()
@@ -277,6 +289,27 @@ def test_check_full_format_returns_raw_records(monkeypatch, tmp_path):
 
     assert result["diagnostics"][0]["uri"] == (tmp_path / "a.py").as_uri()
     assert result["truncated"] is False
+
+
+def test_check_single_file_excludes_sibling_diagnostics(monkeypatch, tmp_path):
+    binary = _usable_binary(tmp_path / "ls")
+    target = tmp_path / "target.py"
+    target.touch()
+    sibling = tmp_path / "sibling.py"
+    sibling.touch()
+    monkeypatch.setattr(check_module, "find_odoo_ls", lambda _configured=None: binary)
+    events = [
+        _ODOO_LOADED,
+        _diagnostic(target, 0, 2, "TARGET"),
+        _diagnostic(sibling, 0, 1, "SIBLING"),
+    ]
+    monkeypatch.setattr(check_module.subprocess, "run", _fake_run(events))
+
+    result = json.loads(check_module.check_odoo_ls(str(target)))
+
+    assert result["diagnostic_count"] == 1
+    assert result["outside_path_count"] == 1
+    assert result["diagnostics"][0]["file"] == "target.py"
 
 
 def test_check_warns_when_odoo_framework_not_loaded(monkeypatch, tmp_path):

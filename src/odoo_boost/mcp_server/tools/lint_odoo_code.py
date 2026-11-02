@@ -201,6 +201,12 @@ def lint_odoo_code(path: str, response_format: str | None = None) -> str:
     if not target.exists():
         return error_response(f"Path '{path}' does not exist.")
 
+    # Validate descendants as well: a permitted directory can contain symlinked files.
+    if target.is_dir():
+        for source in target.rglob("*"):
+            if source.is_file() and source.suffix in {".py", ".xml"}:
+                enforce_path(str(source))
+
     # Check if pylint_odoo is available
     has_pylint_odoo = False
     try:

@@ -77,7 +77,7 @@ def build_stdio_command(
         "odoo_boost",
         "mcp",
         "-c",
-        str(config_path_for(project_path)),
+        str(config.config_path or config_path_for(project_path)),
     ]
 
     target = "wsl" if windows else config.mcp_target
@@ -108,4 +108,6 @@ def build_http_url(config: OdooBoostConfig) -> str:
     host = config.mcp_host
     if host in ("0.0.0.0", "::", ""):
         host = "127.0.0.1"
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
     return f"http://{host}:{config.mcp_port}{HTTP_PATH}"

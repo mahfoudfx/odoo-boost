@@ -106,3 +106,16 @@ class TestToolIntegration:
         (tmp_path / "model.py").write_text("from odoo import models\n")
         result = json.loads(inspect_local_addon(str(tmp_path), allow_collection_scan=True))
         assert result["python_files_count"] == 1
+
+
+def test_lint_rejects_symlinked_descendant_outside_roots(policy_config, tmp_path):
+    from odoo_boost.mcp_server.tools.lint_odoo_code import lint_odoo_code
+
+    project = tmp_path / "project"
+    project.mkdir()
+    outside = tmp_path / "outside.py"
+    outside.write_text("value = 1")
+    (project / "linked.py").symlink_to(outside)
+    policy_config(project_path=str(project), allowed_roots=[str(project)])
+    with pytest.raises(ToolError, match="outside the allowed roots"):
+        lint_odoo_code(str(project))

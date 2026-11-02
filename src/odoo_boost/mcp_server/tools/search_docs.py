@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import json
 from contextlib import suppress
 from pathlib import Path
 
 from odoo_boost.mcp_server.context import get_context
 from odoo_boost.mcp_server.tools._common import active_config, error_response, json_response
-from odoo_boost.offline_docs import OfflineDocsError, search_local_docs
+from odoo_boost.offline_docs import METADATA_FILE, OfflineDocsError, search_local_docs
 from odoo_boost.versions import DOC_BASE, get_version_profile, normalize_version, version_guidance
 
 # Static map of documentation topics to URLs.
@@ -93,13 +94,19 @@ _TOPICS: dict[str, dict[str, str]] = {
 }
 
 
-def _local_source(web_path: str) -> str | None:
+def _local_source(web_path: str, version: str) -> str | None:
     config = active_config()
     if config is None or not config.odoo_docs_path:
         return None
     root = Path(config.odoo_docs_path).expanduser()
     if not root.is_absolute():
         root = Path(config.project_path).expanduser() / root
+    try:
+        metadata = json.loads((root / METADATA_FILE).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(metadata, dict) or metadata.get("series") != normalize_version(version):
+        return None
     relative = web_path.split("#", 1)[0].lstrip("/").removesuffix(".html") + ".rst"
     candidate = (root / "content" / relative).resolve()
     return str(candidate) if candidate.is_file() else None
@@ -169,7 +176,7 @@ def search_docs(
                 "url": url,
                 "description": info["description"],
             }
-            local = _local_source(info["path"])
+            local = _local_source(profile.doc_paths.get(key, info["path"]), version)
             if local:
                 result["local_source"] = local
             matches.append(result)

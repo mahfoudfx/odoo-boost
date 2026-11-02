@@ -64,7 +64,9 @@ Default: `[]` (all configured agents).
 
 ### `project_path` (optional)
 
-Path to the project root directory. Default: `"."`.
+Path to the project root directory. Default: `"."`. Relative paths are resolved
+from the directory containing `odoo-boost.json`, including when a command finds
+the config in a parent directory.
 
 ### Project layout and Python environment
 
@@ -250,6 +252,11 @@ Verifies live connection and prints server diagnostics.
 | `--password` | Password or API key (overrides config) |
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
 | `--mcp` | Also spawn the configured MCP server and verify the `initialize` handshake |
+
+With `--mcp`, failed initialization exits with a nonzero status and reports the
+server's protocol error. Stdio, HTTP JSON, and HTTP SSE responses must contain a
+valid initialize result matching the probe request; an error response does not
+count as successful verification.
 
 ### `odoo-boost lint [path]`
 Runs static checks on local addons or files using `pylint-odoo` (if installed). The fallback AST scanner detects Python syntax errors, direct cursor commits, and version-aware `name_get` deprecation.

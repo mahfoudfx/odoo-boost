@@ -16,6 +16,8 @@ try:
 except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
+from odoo_boost.agents.spec import MCP_ROOT_KEYS
+from odoo_boost.generated_files import remove_owned_files
 from odoo_boost.guidelines import composer
 from odoo_boost.skills.loader import (
     generate_skills_routing,
@@ -180,17 +182,7 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
         )
     except (yaml.YAMLError, json.JSONDecodeError) as exc:
         raise ValueError(f"Invalid MCP config: {path}") from exc
-    key = (
-        "mcp_servers"
-        if fmt == "hermes"
-        else "mcp"
-        if fmt == "opencode"
-        else "servers"
-        if fmt == "vscode"
-        else "context_servers"
-        if fmt == "zed"
-        else "mcpServers"
-    )
+    key = MCP_ROOT_KEYS[fmt]
     if not isinstance(data, dict) or (key in data and not isinstance(data[key], dict)):
         raise ValueError(f"Invalid MCP server mapping: {path}")
     servers = data.get(key, {})
@@ -216,7 +208,8 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
 
 def remove_generated_skills(skills_dir: Path) -> list[Path]:
     """Delete unchanged packaged files, preserving custom and edited skill content."""
-    removed: list[Path] = []
+    removed = remove_owned_files(skills_dir)
+    removed.extend(remove_owned_files(skills_dir / "guidelines"))
     expected = {
         skills_dir / skill_id(name) / relative: content
         for name in list_skills()

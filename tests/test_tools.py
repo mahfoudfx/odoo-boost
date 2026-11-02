@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from xmlrpc.client import Fault
 
 import pytest
 
@@ -357,6 +358,35 @@ class TestSearchDocs:
 
 
 class TestListWorkflows:
+    @pytest.mark.parametrize("failed_model", ["base.automation", "ir.actions.server"])
+    def test_connection_failure_propagates(self, server_context, monkeypatch, failed_model):
+        original = server_context.connection.search_read
+
+        def search_read(model, **kwargs):
+            if model == failed_model:
+                raise ConnectionError("Odoo unreachable")
+            return original(model, **kwargs)
+
+        monkeypatch.setattr(server_context.connection, "search_read", search_read)
+        with pytest.raises(ConnectionError, match="Odoo unreachable"):
+            list_workflows()
+
+    @pytest.mark.parametrize("failed_model", ["base.automation", "ir.actions.server"])
+    def test_query_failure_reports_partial_results(self, server_context, monkeypatch, failed_model):
+        original = server_context.connection.search_read
+
+        def search_read(model, **kwargs):
+            if model == failed_model:
+                raise Fault(1, "Access denied or model unavailable")
+            return original(model, **kwargs)
+
+        monkeypatch.setattr(server_context.connection, "search_read", search_read)
+        result = json.loads(list_workflows())
+        assert result["success"] is False
+        assert "Access denied" in result["errors"][failed_model]
+        remaining = "server_actions" if failed_model == "base.automation" else "automated_actions"
+        assert len(result[remaining]) == 1
+
     def test_returns_both_types(self):
         result = json.loads(list_workflows())
         assert "automated_actions" in result
@@ -405,6 +435,46 @@ class TestResolveXmlId:
 
 
 class TestGetModelInheritance:
+    def test_reports_metadata_scope_without_claiming_hierarchy(self):
+        result = json.loads(get_model_inheritance("res.partner"))
+        assert result["scope"] == "field_contributors"
+        assert result["hierarchy_available"] is False
+        assert "addon source" in result["hierarchy_note"]
+
+    @pytest.mark.parametrize("response_format", ["compact", "full"])
+    def test_counts_all_fields_and_modules_beyond_first_page(self, server_context, response_format):
+        server_context.connection.seed(
+            "ir.model.fields",
+            [
+                {
+                    "id": n,
+                    "model": "res.partner",
+                    "name": f"field_{n}",
+                    "modules": "base",
+                    "state": "base",
+                }
+                for n in range(1, 201)
+            ]
+            + [
+                {
+                    "id": n,
+                    "model": "res.partner",
+                    "name": f"x_field_{n}",
+                    "modules": "late_module",
+                    "state": "manual",
+                }
+                for n in range(201, 261)
+            ],
+        )
+
+        result = json.loads(get_model_inheritance("res.partner", response_format=response_format))
+
+        assert result["total_fields"] == 260
+        assert result["custom_fields_count"] == 60
+        assert result["contributing_modules"] == ["base", "late_module"]
+        assert len(result["custom_fields"]) == (50 if response_format == "full" else 20)
+        assert result["custom_fields_truncated"] is True
+
     def test_get_model_inheritance_existing(self):
         result = json.loads(get_model_inheritance("res.partner"))
         assert result["found"] is True

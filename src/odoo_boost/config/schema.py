@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 
 class OdooConnection(BaseModel):
@@ -19,6 +20,13 @@ class OdooConnection(BaseModel):
 
 class OdooBoostConfig(BaseModel):
     """Root configuration model for odoo-boost.json."""
+
+    _config_path: Path | None = PrivateAttr(default=None)
+
+    @property
+    def config_path(self) -> Path | None:
+        """File this configuration was loaded from; excluded from saved settings."""
+        return self._config_path
 
     connection: OdooConnection
     odoo_version: str | None = Field(

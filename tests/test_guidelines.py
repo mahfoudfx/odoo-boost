@@ -116,4 +116,4 @@ def test_generated_agent_guidelines_route_to_full_expert_content(tmp_path):
     assert f"{reference_dir}/verification.md" in content
     assert f"{reference_dir}/versions/v18.md" in content
     assert all(path.is_file() for path in created)
-    assert len(created) == len(_CORE_FILES) + 1
+    assert len(created) == len(_CORE_FILES) + 2  # version note and ownership manifest

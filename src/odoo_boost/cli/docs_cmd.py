@@ -60,7 +60,9 @@ def docs_install(
         try:
             cfg = load_config(config_path)
             if normalize_version(cfg.odoo_version) == normalize_version(version):
-                save_config(cfg.model_copy(update={"odoo_docs_path": str(root)}), config_path)
+                save_config(
+                    cfg.model_copy(update={"odoo_docs_path": str(root.resolve())}), config_path
+                )
                 console.print(f"Configured offline docs in {config_path}")
             else:
                 console.print(

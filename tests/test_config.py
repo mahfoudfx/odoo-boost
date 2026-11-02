@@ -230,6 +230,16 @@ class TestFindConfigPath:
 
 
 class TestLoadSaveConfig:
+    def test_source_path_is_retained_without_serializing_it(self, tmp_path, sample_config):
+        path = tmp_path / "external.json"
+        save_config(sample_config, path)
+        assert sample_config.config_path == path
+        loaded = load_config(path)
+        assert loaded.config_path == path
+        assert loaded.model_copy().config_path == path
+        assert "config_path" not in loaded.model_dump()
+        assert "_config_path" not in loaded.model_dump()
+
     def test_save_and_load(self, tmp_path, sample_config):
         path = tmp_path / CONFIG_FILENAME
         save_config(sample_config, path)
@@ -256,3 +266,16 @@ class TestLoadSaveConfig:
         if os.name == "posix":
             mode = stat.S_IMODE(path.stat().st_mode)
             assert mode == 0o600
+
+
+@pytest.mark.parametrize("project_path", [".", "addons", "../shared"])
+def test_load_resolves_project_relative_to_config(
+    tmp_path, sample_config, monkeypatch, project_path
+):
+    cfg_file = tmp_path / CONFIG_FILENAME
+    save_config(sample_config.model_copy(update={"project_path": project_path}), cfg_file)
+    child = tmp_path / "child"
+    child.mkdir()
+    monkeypatch.chdir(child)
+    assert load_config().project_path == str((tmp_path / project_path).resolve())
+    assert load_config(cfg_file).project_path == str((tmp_path / project_path).resolve())

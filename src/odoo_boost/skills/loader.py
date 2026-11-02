@@ -10,6 +10,8 @@ from typing import Any
 
 import yaml
 
+from odoo_boost.generated_files import write_owned_files
+
 logger = logging.getLogger(__name__)
 
 CORE_SKILLS = [
@@ -182,21 +184,14 @@ def install_skills(
 
     Returns a list of created file paths.
     """
-    target_dir.mkdir(parents=True, exist_ok=True)
-    created: list[Path] = []
+    files: dict[str, str] = {}
     skills = list_skills(category=category)
 
     for skill_name in skills:
-        dest = target_dir / skill_id(skill_name)
         for relative, content in load_skill_files(skill_name).items():
-            skill_file = dest / relative
-            skill_file.parent.mkdir(parents=True, exist_ok=True)
-            skill_file.write_text(content, encoding="utf-8")
-            created.append(skill_file)
+            files[f"{skill_id(skill_name)}/{relative}"] = content
 
     if write_routing:
-        routing_file = target_dir / "SKILLS_ROUTING.md"
-        routing_file.write_text(generate_skills_routing(category=category), encoding="utf-8")
-        created.append(routing_file)
+        files["SKILLS_ROUTING.md"] = generate_skills_routing(category=category)
 
-    return created
+    return write_owned_files(target_dir, files)

@@ -12,6 +12,14 @@ from typing import Literal
 # How the MCP config file is serialized for a given agent.
 McpFormat = Literal["mcpServers", "vscode", "opencode", "codex", "hermes", "zed"]
 RemoteUrlKey = Literal["url", "serverUrl"]
+MCP_ROOT_KEYS = {
+    "mcpServers": "mcpServers",
+    "vscode": "servers",
+    "opencode": "mcp",
+    "codex": "mcp_servers",
+    "hermes": "mcp_servers",
+    "zed": "context_servers",
+}
 
 
 @dataclass(frozen=True)

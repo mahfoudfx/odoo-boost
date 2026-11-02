@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 from rich.console import Console
@@ -168,6 +168,8 @@ def _check_mcp(cfg: OdooBoostConfig | None, console: Console) -> None:
         ok, detail = _probe_http(url, token=cfg.mcp_token)
         style = "green" if ok else "red"
         console.print(f"  [{style}]{detail}[/]  ({url})")
+        if not ok:
+            raise typer.Exit(1)
         return
 
     project_path = Path(cfg.project_path).resolve() if cfg.project_path != "." else Path.cwd()
@@ -176,6 +178,35 @@ def _check_mcp(cfg: OdooBoostConfig | None, console: Console) -> None:
     style = "green" if ok else "red"
     console.print(f"  [{style}]{detail}[/]")
     console.print(f"  [dim]{' '.join(command)}[/]")
+    if not ok:
+        raise typer.Exit(1)
+
+
+def _validate_initialize_response(payload: Any) -> tuple[bool, str]:
+    """Accept only the matching JSON-RPC response with a valid initialize result."""
+    from mcp.types import InitializeResult
+    from mcp_types.version import HANDSHAKE_PROTOCOL_VERSIONS
+    from pydantic import ValidationError
+
+    if (
+        not isinstance(payload, dict)
+        or payload.get("jsonrpc") != "2.0"
+        or type(payload.get("id")) is not int
+        or payload["id"] != 1
+    ):
+        return False, "Unexpected MCP initialize response"
+    if "error" in payload:
+        error = payload["error"]
+        if isinstance(error, dict):
+            return False, f"MCP initialize failed ({error.get('code')}): {error.get('message')}"
+        return False, "MCP initialize failed with an invalid error response"
+    try:
+        result = InitializeResult.model_validate(payload.get("result"))
+    except ValidationError:
+        return False, "MCP server returned an invalid initialize result"
+    if result.protocol_version not in HANDSHAKE_PROTOCOL_VERSIONS:
+        return False, f"Unsupported protocol version from the MCP server: {result.protocol_version}"
+    return True, "MCP server responded to initialize"
 
 
 def _probe_stdio(command: list[str], timeout: float = 20.0) -> tuple[bool, str]:
@@ -239,9 +270,7 @@ def _probe_stdio(command: list[str], timeout: float = 20.0) -> tuple[bool, str]:
     except json.JSONDecodeError:
         return False, f"Invalid MCP response: {line[:120]}"
 
-    if "result" in payload or "error" in payload:
-        return True, "MCP server responded to initialize"
-    return False, f"Unexpected MCP response: {line[:120]}"
+    return _validate_initialize_response(payload)
 
 
 def _probe_http(url: str, timeout: float = 5.0, token: str | None = None) -> tuple[bool, str]:
@@ -275,13 +304,24 @@ def _probe_http(url: str, timeout: float = 5.0, token: str | None = None) -> tup
     if response.status_code != 200:
         return False, f"HTTP endpoint did not accept MCP initialize (HTTP {response.status_code})"
     if "text/event-stream" in response.headers.get("content-type", ""):
-        if '"result"' in response.text or "event: message" in response.text:
-            return True, "HTTP MCP server responded to initialize"
+        stream = response.text.replace("\r\n", "\n").replace("\r", "\n")
+        for event in stream.split("\n\n"):
+            data = "\n".join(
+                line[5:].removeprefix(" ")
+                for line in event.splitlines()
+                if line.startswith("data:")
+            )
+            if not data:
+                continue
+            try:
+                payload = json.loads(data)
+            except json.JSONDecodeError:
+                return False, "HTTP MCP stream returned invalid JSON"
+            if isinstance(payload, dict) and payload.get("id") == 1:
+                return _validate_initialize_response(payload)
         return False, "HTTP MCP stream returned no initialize response"
     try:
         payload = response.json()
     except (json.JSONDecodeError, ValueError):
         return False, "HTTP MCP server returned an invalid initialize response"
-    if isinstance(payload, dict) and ("result" in payload or "error" in payload):
-        return True, "HTTP MCP server responded to initialize"
-    return False, "HTTP MCP server returned an unexpected initialize response"
+    return _validate_initialize_response(payload)

@@ -248,6 +248,16 @@ def _cached_xml(path: Path) -> dict[str, Any]:
     return _parse_xml_file_cached(str(path), stat.st_mtime_ns, stat.st_size)
 
 
+def _scan_source_allowed(source: Path, root: Path) -> bool:
+    """Ignore generated descendants and file symlinks escaping the scan root."""
+    relative = source.relative_to(root)
+    if any(
+        part.startswith(".") or part in {"__pycache__", "build", "dist"} for part in relative.parts
+    ):
+        return False
+    return source.resolve().is_relative_to(root)
+
+
 def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     """Scan an entire local addon directory on disk for models, fields, and XML definitions."""
     path = Path(addon_path).resolve()
@@ -270,7 +280,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     manifest_file = path / "__manifest__.py"
     if not manifest_file.exists():
         manifest_file = path / "__openerp__.py"
-    if manifest_file.exists():
+    if manifest_file.exists() and _scan_source_allowed(manifest_file, path):
         try:
             m_content = manifest_file.read_text(encoding="utf-8", errors="replace")
             m_val = ast.literal_eval(m_content)
@@ -289,7 +299,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     # Scan Python files
     for py_file in sorted(path.rglob("*.py")):
         # Skip hidden or build directories
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
+        if not _scan_source_allowed(py_file, path):
             continue
         result["python_files_count"] += 1
         models = _cached_python(py_file)
@@ -297,7 +307,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
 
     # Scan XML files
     for xml_file in sorted(path.rglob("*.xml")):
-        if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
+        if not _scan_source_allowed(xml_file, path):
             continue
         result["xml_files_count"] += 1
         xml_data = _cached_xml(xml_file)
@@ -312,7 +322,7 @@ def _addon_fingerprint(path: Path) -> tuple[tuple[str, int, int], ...]:
     """Return a cheap signature that changes with relevant addon source files."""
     entries: list[tuple[str, int, int]] = []
     for source in sorted((*path.rglob("*.py"), *path.rglob("*.xml"))):
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in source.parts):
+        if not _scan_source_allowed(source, path):
             continue
         try:
             stat = source.stat()
@@ -336,25 +346,44 @@ def scan_addon_cached(addon_path: str | Path) -> dict[str, Any]:
 
 
 def find_local_xml_id(addon_path: str | Path, xml_id: str) -> dict[str, Any] | None:
-    """Find a specific XML ID definition in the local addon directory."""
+    """Find an XML ID, preserving explicit namespaces and addon ownership."""
     path = Path(addon_path).resolve()
-    target_id = xml_id.split(".")[-1] if "." in xml_id else xml_id
-
     for xml_file in sorted(path.rglob("*.xml")):
-        if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
+        if not _scan_source_allowed(xml_file, path):
             continue
+        module = path.name
+        for parent in xml_file.parents:
+            if (parent / "__manifest__.py").is_file() or (parent / "__openerp__.py").is_file():
+                module = parent.name
+                break
+            if parent == path:
+                break
         data = _cached_xml(xml_file)
-        for rec in data["records"]:
-            if rec["id"] == target_id:
-                return {"type": "record", **rec}
-        for tmpl in data["templates"]:
-            if tmpl["id"] == target_id:
-                return {"type": "template", **tmpl}
-        for menu in data["menuitems"]:
-            if menu["id"] == target_id:
-                return {"type": "menuitem", **menu}
-
+        for key, kind in (
+            ("records", "record"),
+            ("templates", "template"),
+            ("menuitems", "menuitem"),
+        ):
+            for definition in data[key]:
+                declared = definition["id"]
+                qualified = declared if "." in declared else f"{module}.{declared}"
+                matches = (
+                    qualified == xml_id if "." in xml_id else qualified.split(".", 1)[-1] == xml_id
+                )
+                if matches:
+                    return {"type": kind, **definition}
     return None
+
+
+def model_matches(definition: dict[str, Any], model_name: str) -> bool:
+    """Match a model declaration or any model extended through _inherit."""
+    inherited = definition.get("_inherit")
+    return (
+        definition.get("_name") == model_name
+        or inherited == model_name
+        or isinstance(inherited, (list, tuple))
+        and model_name in inherited
+    )
 
 
 def find_model_in_local_files(addon_path: str | Path, model_name: str) -> dict[str, Any] | None:
@@ -362,11 +391,11 @@ def find_model_in_local_files(addon_path: str | Path, model_name: str) -> dict[s
     path = Path(addon_path).resolve()
 
     for py_file in sorted(path.rglob("*.py")):
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
+        if not _scan_source_allowed(py_file, path):
             continue
         models = _cached_python(py_file)
         for m in models:
-            if m.get("_name") == model_name or m.get("_inherit") == model_name:
+            if model_matches(m, model_name):
                 return m
 
     return None
