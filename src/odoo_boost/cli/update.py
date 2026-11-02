@@ -8,8 +8,9 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from odoo_boost.agents import AGENTS
+from odoo_boost.agents import install_agents
 from odoo_boost.agents.reconcile import clean_orphaned_agent_files, find_orphaned_agent_files
+from odoo_boost.cli.files import report_paths
 from odoo_boost.config.settings import load_config
 
 console = Console()
@@ -42,7 +43,7 @@ def update(
         console.print("[red]No odoo-boost.json found. Run 'odoo-boost install' first.[/]")
         raise typer.Exit(1) from None
 
-    project_path = Path(cfg.project_path).resolve() if cfg.project_path != "." else Path.cwd()
+    project_path = cfg.project_root
 
     console.print("[bold]Updating Odoo Boost files…[/]\n")
 
@@ -58,31 +59,13 @@ def update(
             )
         if not should_keep:
             cleaned = clean_orphaned_agent_files(orphans, project_path)
-            for p in cleaned:
-                try:
-                    rel = p.relative_to(project_path)
-                except ValueError:
-                    rel = p
-                console.print(f"  [red]Removed orphaned[/] {rel}")
+            report_paths(console, cleaned, project_path, "[red]Removed orphaned[/]")
 
     if not cfg.generate_mcp:
         console.print("  [dim]MCP config generation disabled[/]")
     if not cfg.generate_ai_files:
         console.print("  [dim]AI file generation disabled[/]")
 
-    for agent_id in cfg.agents:
-        agent_cls = AGENTS.get(agent_id)
-        if agent_cls is None:
-            console.print(f"  [yellow]Unknown agent '{agent_id}', skipping.[/]")
-            continue
-
-        agent = agent_cls(config=cfg, project_path=project_path)
-        created = agent.install()
-        for p in created:
-            try:
-                rel = p.relative_to(project_path)
-            except ValueError:
-                rel = p
-            console.print(f"  [green]Updated[/] {rel}")
+    report_paths(console, install_agents(cfg, project_path), project_path, "[green]Updated[/]")
 
     console.print("\n[green]Update complete![/]")

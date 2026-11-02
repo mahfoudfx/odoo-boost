@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Remove the unused `xml` and redundant `all` installation extras, including
+  their `lxml` dependency. Use `odoo-boost[lint]` for OCA linting or
+  `odoo-boost[dev]` for development tools. Built-in XML inspection is included
+  in the base package.
 - `odoo-boost odoo-ls install` updates to the latest release or repairs a
   broken managed install, and does nothing when it is current; `--force`
   reinstalls. `status` reports missing stubs and available updates. The install

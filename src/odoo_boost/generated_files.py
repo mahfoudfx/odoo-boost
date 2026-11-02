@@ -48,18 +48,25 @@ def write_owned_files(root: Path, files: dict[str, str]) -> list[Path]:
     written = []
     for relative, content in files.items():
         path = _safe_file(root, relative)
+        digest = _digest(content)
         if path.exists():
             current = path.read_text(encoding="utf-8")
-            if current != content and _digest(current) != owned.get(relative):
+            if current == content:
+                owned[relative] = digest
+                written.append(path)
+                continue
+            if _digest(current) != owned.get(relative):
                 logger.warning("Preserving custom or edited generated file: %s", path)
                 continue
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-        owned[relative] = _digest(content)
+        owned[relative] = digest
         written.append(path)
     if owned:
         manifest = _safe_file(root, MANIFEST)
-        manifest.write_text(json.dumps(owned, indent=2) + "\n", encoding="utf-8")
+        content = json.dumps(owned, indent=2) + "\n"
+        if not manifest.exists() or manifest.read_text(encoding="utf-8") != content:
+            manifest.write_text(content, encoding="utf-8")
         written.append(manifest)
     return written
 
@@ -84,3 +91,14 @@ def remove_owned_files(root: Path) -> list[Path]:
         manifest.unlink()
         removed.append(manifest)
     return removed
+
+
+def remove_empty_parents(candidates: list[Path], root: Path) -> None:
+    """Remove empty ancestor directories, stopping at the project root."""
+    for current in candidates:
+        while current != root and current.is_relative_to(root) and current != current.parent:
+            try:
+                current.rmdir()
+            except OSError:
+                break
+            current = current.parent

@@ -17,6 +17,7 @@ from odoo_boost.agents.files import (
 )
 from odoo_boost.agents.spec import MCP_ROOT_KEYS, AgentSpec
 from odoo_boost.config.schema import OdooBoostConfig
+from odoo_boost.generated_files import remove_empty_parents
 from odoo_boost.guidelines.composer import (
     compose_agent_guidelines,
     install_guideline_references,
@@ -55,7 +56,7 @@ class Agent(ABC):
 
     # -- public API ----------------------------------------------------------
 
-    def install(self) -> list[Path]:
+    def install(self, *, include_skills: bool = True) -> list[Path]:
         """Generate all files for this agent. Returns paths created."""
         for path in (
             self.guidelines_path,
@@ -67,9 +68,10 @@ class Agent(ABC):
         created: list[Path] = []
         if self.config.generate_ai_files:
             created.append(self._write_guidelines())
-            created.extend(self._write_skills())
+            if include_skills:
+                created.extend(self._write_skills())
         if self.config.generate_mcp:
-            created.extend(self._write_mcp_config())
+            created.extend(self.write_all_mcp_configs())
         return created
 
     def uninstall(self) -> list[Path]:
@@ -96,25 +98,10 @@ class Agent(ABC):
             removed.extend(remove_generated_skills(self.skills_dir))
 
         # Clean up empty parent directories (e.g. .agents/, .cursor/rules/)
-        for candidate in [
-            self.skills_dir.parent,
-            self.mcp_config_path.parent,
-            self.guidelines_path.parent,
-        ]:
-            curr = candidate
-            while (
-                curr != self.project_path
-                and curr.is_relative_to(self.project_path)
-                and curr != curr.parent
-            ):
-                try:
-                    if curr.is_dir() and not any(curr.iterdir()):
-                        curr.rmdir()
-                        curr = curr.parent
-                    else:
-                        break
-                except OSError:
-                    break
+        remove_empty_parents(
+            [self.skills_dir.parent, self.mcp_config_path.parent, self.guidelines_path.parent],
+            self.project_path,
+        )
         return removed
 
     # -- paths derived from the spec -----------------------------------------
@@ -148,7 +135,6 @@ class Agent(ABC):
             self.config.mcp_transport == "stdio"
             and self.config.mcp_target == "auto"
             and not self.config.mcp_command
-            and self.mcp_config_path != self.windows_mcp_config_path
         )
 
     def _is_http(self) -> bool:
@@ -183,7 +169,12 @@ class Agent(ABC):
 
     def _guidelines_content(self) -> str:
         reference_dir = Path(*self.spec.skills_dir).as_posix() + "/guidelines"
-        content = compose_agent_guidelines(self.config.odoo_version, reference_dir)
+        return self._format_guidelines(
+            compose_agent_guidelines(self.config.odoo_version, reference_dir)
+        )
+
+    def _format_guidelines(self, content: str) -> str:
+        """Apply the agent's native wrapper to current or legacy instructions."""
         if self.spec.cursor_rules:
             content = (
                 "---\n"
@@ -197,16 +188,7 @@ class Agent(ABC):
     def _legacy_guidelines_content(self) -> str:
         from odoo_boost.guidelines.composer import compose_guidelines
 
-        content = compose_guidelines(self.config.odoo_version)
-        if self.spec.cursor_rules:
-            content = (
-                "---\n"
-                "description: Odoo development guidelines from Odoo Boost\n"
-                "globs:\n"
-                "alwaysApply: true\n"
-                "---\n\n" + content
-            )
-        return content
+        return self._format_guidelines(compose_guidelines(self.config.odoo_version))
 
     def _write_guidelines(self) -> Path:
         """Compose and update the owned section of the guidelines file."""
@@ -269,10 +251,6 @@ class Agent(ABC):
         cmd = self._mcp_command(windows=windows)
         args_toml = ", ".join(f'"{_toml_escape(a)}"' for a in cmd[1:])
         return f'{header}command = "{_toml_escape(cmd[0])}"\nargs = [{args_toml}]\n'
-
-    def _write_mcp_config(self) -> list[Path]:
-        """Write the MCP config file(s) for this agent."""
-        return self.write_all_mcp_configs()
 
     def write_all_mcp_configs(self) -> list[Path]:
         """Write the primary config plus the Windows companion when applicable."""

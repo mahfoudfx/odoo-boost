@@ -19,8 +19,8 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from odoo_boost.config.schema import OdooBoostConfig
+from odoo_boost.config.settings import CONFIG_FILENAME
 
-CONFIG_FILENAME = "odoo-boost.json"
 WINDOWS_LAUNCHER = "wsl.exe"
 DEFAULT_WSL_DISTRO = "Ubuntu"
 HTTP_PATH = "/mcp"

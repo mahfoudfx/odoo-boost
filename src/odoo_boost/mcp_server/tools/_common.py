@@ -12,25 +12,14 @@ import os
 import re
 from typing import Any
 
-from odoo_boost.config.schema import OdooBoostConfig
-
-DEFAULT_MAX_RESPONSE_CHARS = 40000
+from odoo_boost.config.schema import DEFAULT_MAX_RESPONSE_CHARS
+from odoo_boost.mcp_server.context import active_config as active_config
 
 # Config keys that commonly hold secrets. Used to redact get_config output.
 _SECRET_KEY_RE = re.compile(
     r"(password|passwd|secret|token|api[_-]?key|private[_-]?key|smtp_pass|auth)",
     re.IGNORECASE,
 )
-
-
-def active_config() -> OdooBoostConfig | None:
-    """Return the active server config, or None outside an MCP server (CLI)."""
-    try:
-        from odoo_boost.mcp_server.context import get_context
-
-        return get_context().config
-    except RuntimeError:
-        return None
 
 
 def resolve_full(response_format: str | None) -> bool:

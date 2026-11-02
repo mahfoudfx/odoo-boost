@@ -61,24 +61,16 @@ class TestResilientLiveTool:
         def boom() -> str:
             raise ConnectionError("Cannot reach Odoo")
 
-        try:
+        with pytest.raises(ToolError, match="Cannot reach Odoo"):
             boom()
-        except ToolError as exc:
-            assert "Cannot reach Odoo" in str(exc)
-        else:  # pragma: no cover - defensive
-            raise AssertionError("ToolError was not raised")
 
     def test_does_not_swallow_other_errors(self):
         @resilient_live_tool
         def boom() -> str:
             raise ValueError("nope")
 
-        try:
+        with pytest.raises(ValueError, match="nope"):
             boom()
-        except ValueError:
-            pass
-        else:  # pragma: no cover - defensive
-            raise AssertionError("ValueError was swallowed")
 
     def test_compacts_odoo_access_fault(self):
         @resilient_live_tool

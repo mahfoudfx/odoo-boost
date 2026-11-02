@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 from contextlib import suppress
-from pathlib import Path
 
+from odoo_boost.local_paths import resolve_path
 from odoo_boost.mcp_server.context import get_context
 from odoo_boost.mcp_server.tools._common import active_config, error_response, json_response
 from odoo_boost.offline_docs import METADATA_FILE, OfflineDocsError, search_local_docs
@@ -98,9 +98,7 @@ def _local_source(web_path: str, version: str) -> str | None:
     config = active_config()
     if config is None or not config.odoo_docs_path:
         return None
-    root = Path(config.odoo_docs_path).expanduser()
-    if not root.is_absolute():
-        root = Path(config.project_path).expanduser() / root
+    root = resolve_path(config.odoo_docs_path, config.project_root)
     try:
         metadata = json.loads((root / METADATA_FILE).read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -134,9 +132,7 @@ def search_docs(
         config = active_config()
         if config is None or not config.odoo_docs_path:
             return error_response("No offline Odoo documentation is configured for this project.")
-        root = Path(config.odoo_docs_path).expanduser()
-        if not root.is_absolute():
-            root = Path(config.project_path).expanduser() / root
+        root = resolve_path(config.odoo_docs_path, config.project_root)
         try:
             return json_response(search_local_docs(root, query, version=version, section=section))
         except OfflineDocsError as exc:

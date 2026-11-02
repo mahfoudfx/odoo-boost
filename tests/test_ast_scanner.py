@@ -125,7 +125,7 @@ def test_cached_scan_reuses_unchanged_files_and_invalidates(tmp_path: Path, monk
 
     source = tmp_path / "model.py"
     source.write_text("from odoo import models\nclass A(models.Model):\n    _name = 'x.a'\n")
-    original = analyzer.scan_addon
+    original = analyzer.parse_python_file
     calls = 0
 
     def counted(path):
@@ -134,7 +134,7 @@ def test_cached_scan_reuses_unchanged_files_and_invalidates(tmp_path: Path, monk
         return original(path)
 
     _scan_addon_cached.cache_clear()
-    monkeypatch.setattr(analyzer, "scan_addon", counted)
+    monkeypatch.setattr(analyzer, "parse_python_file", counted)
     assert scan_addon_cached(tmp_path)["models"][0]["_name"] == "x.a"
     assert scan_addon_cached(tmp_path)["models"][0]["_name"] == "x.a"
     assert calls == 1
@@ -157,6 +157,41 @@ def test_scan_ignores_only_generated_descendants(tmp_path):
         assert len(scan_addon_cached(addon)["models"]) == 1
         assert find_model_in_local_files(addon, "x.a") is not None
         assert find_local_xml_id(addon, "view") is not None
+
+
+def test_scan_does_not_enter_excluded_directories(tmp_path, monkeypatch):
+    import os
+
+    entered = []
+    original = os.scandir
+
+    def scandir(path):
+        entered.append(Path(path))
+        return original(path)
+
+    (tmp_path / "models").mkdir()
+    (tmp_path / "models" / "model.py").write_text("class Model:\n    _name = 'x.model'\n")
+    for excluded in (".hidden", "build", "dist", "__pycache__"):
+        (tmp_path / excluded / "nested").mkdir(parents=True)
+        (tmp_path / excluded / "nested" / "ignored.py").write_text("invalid python!")
+    monkeypatch.setattr(os, "scandir", scandir)
+
+    assert len(scan_addon_cached(tmp_path)["models"]) == 1
+    assert set(entered) == {tmp_path, tmp_path / "models"}
+
+
+def test_cached_scan_tracks_added_deleted_files_and_manifest_changes(tmp_path):
+    manifest = tmp_path / "__manifest__.py"
+    manifest.write_text("{'name': 'Original'}")
+    assert scan_addon_cached(tmp_path)["manifest"]["name"] == "Original"
+    view = tmp_path / "view.xml"
+    view.write_text('<odoo><record id="new_view" model="ir.ui.view"/></odoo>')
+    assert scan_addon_cached(tmp_path)["records"][0]["id"] == "new_view"
+    view.unlink()
+    manifest.write_text("{'name': 'Changed manifest'}")
+    result = scan_addon_cached(tmp_path)
+    assert result["manifest"]["name"] == "Changed manifest"
+    assert result["records"] == []
 
 
 def test_scan_skips_external_symlinks_and_preserves_internal_links(tmp_path):

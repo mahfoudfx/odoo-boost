@@ -102,3 +102,9 @@ content = compose_guidelines("19.0")
 # Core guidelines only
 core_only = compose_guidelines()
 ```
+
+## Upstream maintenance
+
+[Upstream review decisions](upstream-guidance-review.md) explain which external
+ideas were adapted or retained. [upstream-sources.json](../upstream-sources.json)
+records reviewed commits and local hashes for future selective updates.

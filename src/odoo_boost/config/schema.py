@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, PrivateAttr
 
+DEFAULT_MAX_RESPONSE_CHARS = 40000
+
 
 class OdooConnection(BaseModel):
     """Odoo server connection settings."""
@@ -157,7 +159,7 @@ class OdooBoostConfig(BaseModel):
         ),
     )
     max_response_chars: int = Field(
-        default=40000,
+        default=DEFAULT_MAX_RESPONSE_CHARS,
         ge=0,
         description=(
             "Safety cap for a single tool response (0 disables). Oversized payloads are "

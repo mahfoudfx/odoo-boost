@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import importlib
 import json
+
+import pytest
 
 from odoo_boost.mcp_server.tools._common import (
     compact_text,
@@ -19,6 +22,30 @@ from odoo_boost.mcp_server.tools.list_access_rights import list_access_rights
 from odoo_boost.mcp_server.tools.list_views import list_views
 from odoo_boost.mcp_server.tools.read_log_entries import read_log_entries
 from odoo_boost.mcp_server.tools.search_records import search_records
+
+
+@pytest.mark.parametrize(("response_format", "expected_count"), [("compact", 30), ("full", 40)])
+def test_lint_compaction_preserves_total_and_full_escape_hatch(
+    monkeypatch, tmp_path, server_context, response_format, expected_count
+):
+    module = importlib.import_module("odoo_boost.mcp_server.tools.lint_odoo_code")
+    server_context.config.project_path = str(tmp_path)
+    messages = [{"type": "warning", "message": f"warning {i}"} for i in range(40)]
+    monkeypatch.setattr(
+        module,
+        "run_lint",
+        lambda *a, **kw: {
+            "success": True,
+            "total_issues": 40,
+            "warnings": messages,
+        },
+    )
+
+    result = json.loads(module.lint_odoo_code(str(tmp_path), response_format=response_format))
+
+    assert result["total_issues"] == 40
+    assert result["response_format"] == response_format
+    assert result["warnings"] == messages[:expected_count]
 
 
 class TestResolveFull:

@@ -28,18 +28,14 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv pip install odoo-boost
 ```
 
-For package-managed optional features:
+For the optional OCA code linter:
 
 ```bash
-# Optional OCA code linting (pylint-odoo)
 pip install "odoo-boost[lint]"
-
-# Optional RelaxNG XML view validation (lxml)
-pip install "odoo-boost[xml]"
-
-# All optional packages
-pip install "odoo-boost[all]"
 ```
+
+Built-in XML inspection uses the included `defusedxml` dependency. RelaxNG
+schema validation requires separate tooling.
 
 Verify your installation:
 

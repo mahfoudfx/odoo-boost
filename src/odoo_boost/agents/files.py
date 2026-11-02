@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib.resources
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -26,7 +27,7 @@ from odoo_boost.skills.loader import (
     skill_id,
 )
 
-_TOML_TABLE = re.compile(r"(?m)^\[([^\]\n]+)\][ \t]*(?:\n|$)")
+_TOML_TABLE = re.compile(r"(?m)^[ \t]*\[([^\r\n]+?)\][ \t]*(?:#[^\r\n]*)?\r?$")
 _GUIDE_BLOCK = re.compile(
     r"(?ms)^<!-- odoo-boost:start sha256=([0-9a-f]{64}) -->\n(.*?)"
     r"^<!-- odoo-boost:end -->\n?"
@@ -111,6 +112,16 @@ def update_guidelines(
     return True
 
 
+def _write_private_config(path: Path, content: str) -> None:
+    """Create configs privately and restrict existing files before writing secrets."""
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+        if os.name == "posix":
+            os.fchmod(stream.fileno(), 0o600)
+        stream.truncate(0)
+        stream.write(content)
+
+
 def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = False) -> bool:
     """Update only the Odoo Boost server; reject malformed existing configuration.
 
@@ -120,7 +131,7 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
         if remove:
             return False
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        _write_private_config(path, content)
         return True
     original = path.read_text(encoding="utf-8")
     if fmt == "codex":
@@ -153,7 +164,8 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
         else:
             updated = original
         if not remove:
-            updated = updated.rstrip() + "\n\n" + content.strip() + "\n"
+            prefix = updated.rstrip()
+            updated = (prefix + "\n\n" if prefix else "") + content.strip() + "\n"
         try:
             parsed_updated = tomllib.loads(updated)
         except tomllib.TOMLDecodeError as exc:
@@ -165,12 +177,18 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
             expected_servers["odoo-boost"] = tomllib.loads(content)["mcp_servers"]["odoo-boost"]
         if parsed_updated.get("mcp_servers", {}) != expected_servers:
             raise ValueError(f"Cannot preserve TOML MCP server mapping: {path}")
+        if {k: v for k, v in parsed_updated.items() if k != "mcp_servers"} != {
+            k: v for k, v in parsed_original.items() if k != "mcp_servers"
+        }:
+            raise ValueError(f"Cannot preserve unrelated TOML configuration: {path}")
         if updated == original:
+            if os.name == "posix":
+                os.chmod(path, 0o600)
             return False
         if remove and not updated.strip():
             path.unlink()
         else:
-            path.write_text(updated, encoding="utf-8")
+            _write_private_config(path, updated)
         return True
 
     try:
@@ -202,7 +220,11 @@ def update_mcp_config(path: Path, content: str, fmt: str, *, remove: bool = Fals
             if fmt == "hermes"
             else json.dumps(data, indent=2) + "\n"
         )
-        path.write_text(rendered, encoding="utf-8")
+        if rendered == original:
+            if os.name == "posix":
+                os.chmod(path, 0o600)
+            return False
+        _write_private_config(path, rendered)
     return True
 
 

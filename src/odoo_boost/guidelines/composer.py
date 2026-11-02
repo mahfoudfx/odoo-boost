@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.resources
+from functools import lru_cache
 from pathlib import Path
 
 from odoo_boost.generated_files import write_owned_files
@@ -24,6 +25,7 @@ _CORE_FILES = [
 ]
 
 
+@lru_cache(maxsize=32)
 def _read_resource(subpath: str) -> str:
     """Read a markdown file from the guidelines/core package data."""
     ref = importlib.resources.files("odoo_boost.guidelines") / "core" / subpath

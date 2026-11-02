@@ -14,7 +14,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 
-from odoo_boost.agents import AGENTS, ALL_AGENT_IDS
+from odoo_boost.agents import AGENTS, ALL_AGENT_IDS, install_agents
+from odoo_boost.cli.files import report_paths
 from odoo_boost.cli.gitignore import ignore_entry, managed_entries, update_gitignore
 from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
 from odoo_boost.config.settings import save_config
@@ -332,20 +333,9 @@ def install(
     console.print(
         "  [yellow]Credentials are stored in plaintext — keep odoo-boost.json out of version control.[/]"
     )
-    generated_paths = [config_path]
-
-    # Install each agent
-    for agent_id in selected_agents:
-        agent_cls = AGENTS[agent_id]
-        agent = agent_cls(config=config, project_path=project_path)
-        created = agent.install()
-        generated_paths.extend(created)
-        for p in created:
-            try:
-                rel = p.relative_to(project_path)
-            except ValueError:
-                rel = p
-            console.print(f"  [green]Created[/] {rel}")
+    created = install_agents(config, project_path)
+    report_paths(console, created, project_path, "[green]Created[/]")
+    generated_paths = [config_path, *created]
 
     # Claude Code also creates the shared AGENTS.md file.
     if "claude_code" in selected_agents and generate_ai_files:

@@ -116,6 +116,14 @@ class TestSkillMetadataAndRouting:
 
 
 class TestLoadSkill:
+    def test_loaded_files_cannot_mutate_the_bundled_content_cache(self):
+        from odoo_boost.skills.loader import load_skill_files
+
+        files = load_skill_files("creating_models")
+        original = files["SKILL.md"]
+        files["SKILL.md"] = "Caller mutation"
+        assert load_skill_files("creating_models")["SKILL.md"] == original
+
     def test_load_each_skill(self):
         for skill_name in list_skills():
             content = load_skill(skill_name)
@@ -138,6 +146,17 @@ class TestLoadSkill:
 
 
 class TestInstallSkills:
+    def test_unchanged_update_preserves_file_and_manifest_timestamps(self, tmp_path):
+        target = tmp_path / "skills"
+        installed = install_skills(target)
+        # Fixed timestamps make this check independent of filesystem clock resolution.
+        import os
+
+        for path in installed:
+            os.utime(path, ns=(1_000_000_000, 1_000_000_000))
+        assert install_skills(target) == installed
+        assert all(path.stat().st_mtime_ns == 1_000_000_000 for path in installed)
+
     def test_reports_ownership_manifest_during_install_and_uninstall(self, tmp_path):
         from odoo_boost.generated_files import MANIFEST, remove_owned_files
 

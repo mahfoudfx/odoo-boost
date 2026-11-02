@@ -20,6 +20,7 @@ from odoo_boost.offline_docs import (
     _pack_for,
     available_packs,
     cached_docs,
+    install_checkout,
     install_pack,
     search_local_docs,
 )
@@ -67,6 +68,27 @@ def test_pack_install_and_search_all_sections(tmp_path):
     assert search_local_docs(root, "sales", version="18.0", section="applications")["results"]
     with pytest.raises(OfflineDocsError, match="requested 19.0"):
         search_local_docs(root, "fields", version="19.0")
+
+
+def test_checkout_cache_reuses_content_revision_and_invalidates_edits(tmp_path):
+    checkout = tmp_path / "checkout"
+    page = checkout / "content" / "developer" / "orm.rst"
+    page.parent.mkdir(parents=True)
+    (checkout / "LICENSE").write_text("Documentation license")
+    page.write_text("Computed fields have dependencies.\n")
+    cache = tmp_path / "cache"
+
+    original = install_checkout(checkout, "18.0", cache_dir=cache)
+    assert install_checkout(checkout, "18.0", cache_dir=cache) == original
+    # Downloaded non-git trees use the same content hash fallback.
+    assert install_checkout(checkout, "18.0", cache_dir=cache, source_kind="download") == original
+
+    page.write_text("Computed fields now use changed dependencies.\n")
+    updated = install_checkout(checkout, "18.0", cache_dir=cache)
+    assert updated != original
+    assert cached_docs("18.0", cache_dir=cache) == updated
+    result = search_local_docs(updated, "changed dependencies", version="18.0")
+    assert "changed dependencies" in result["results"][0]["excerpt"]
 
 
 def test_pack_rejects_version_mismatch_and_traversal(tmp_path):

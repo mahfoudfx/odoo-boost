@@ -7,33 +7,21 @@ from pathlib import Path
 from typing import Any
 
 from odoo_boost.config.schema import OdooBoostConfig
+from odoo_boost.local_paths import path_allowed, resolve_path, venv_python
 
 
-def _resolve(raw: str, project: Path) -> Path:
-    path = Path(raw).expanduser()
-    return (path if path.is_absolute() else project / path).resolve()
-
-
-def _access(path: Path, config: OdooBoostConfig, project: Path) -> str:
-    if config.allow_external_local_paths and not config.allowed_roots:
-        return "allowed"
-    roots = config.allowed_roots or [str(project)]
-    for raw in roots:
-        # Match enforce_path: relative allowed_roots use the server working directory.
-        root = Path(raw).expanduser().resolve()
-        if path == root or path.is_relative_to(root):
-            return "allowed"
-    return "outside_allowed_roots"
+def _access(path: Path, config: OdooBoostConfig) -> str:
+    return "allowed" if path_allowed(path, config) else "outside_allowed_roots"
 
 
 def _location(raw: str | None, config: OdooBoostConfig, project: Path) -> dict[str, Any] | None:
     if not raw:
         return None
-    path = _resolve(raw, project)
+    path = resolve_path(raw, project)
     return {
         "path": str(path),
         "exists": path.exists(),
-        "mcp_file_access": _access(path, config, project),
+        "mcp_file_access": _access(path, config),
     }
 
 
@@ -54,7 +42,7 @@ def project_context(config: OdooBoostConfig) -> dict[str, Any]:
     Relative config fields use project_path. Relative addons_path entries use
     the explicitly configured Odoo launch directory or remain unresolved.
     """
-    project = Path(config.project_path).expanduser().resolve()
+    project = config.project_root
     conf = _location(config.odoo_conf_path, config, project)
     launch_cwd = _location(config.odoo_launch_cwd, config, project)
     source = "not_configured"
@@ -75,7 +63,7 @@ def project_context(config: OdooBoostConfig) -> dict[str, Any]:
                 {
                     "path": str(resolved),
                     "exists": resolved.is_dir(),
-                    "mcp_file_access": _access(resolved, config, project),
+                    "mcp_file_access": _access(resolved, config),
                 }
             )
         else:
@@ -88,14 +76,14 @@ def project_context(config: OdooBoostConfig) -> dict[str, Any]:
                     "raw_path": raw,
                     "path": str(resolved),
                     "exists": resolved.is_dir(),
-                    "mcp_file_access": _access(resolved, config, project),
+                    "mcp_file_access": _access(resolved, config),
                 }
             )
 
     venv = _location(config.venv_path, config, project)
     if venv is not None:
         root = Path(venv["path"])
-        python = root / ("Scripts/python.exe" if (root / "Scripts").is_dir() else "bin/python")
+        python = venv_python(root)
         venv = {
             "path": str(root),
             "valid": (root / "pyvenv.cfg").is_file() and python.is_file(),

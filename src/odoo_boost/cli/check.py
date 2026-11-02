@@ -15,14 +15,10 @@ from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.config.schema import OdooConnection as OdooConnectionConfig
 from odoo_boost.config.settings import find_config_path, load_config
 from odoo_boost.connection.factory import create_connection
+from odoo_boost.local_paths import resolve_path, venv_python
 from odoo_boost.offline_docs import INDEX_FILE, METADATA_FILE
 
 console = Console()
-
-
-def _configured_path(raw: str, project: Path) -> Path:
-    path = Path(raw).expanduser()
-    return (path if path.is_absolute() else project / path).resolve()
 
 
 def _print_local_summary(
@@ -38,28 +34,25 @@ def _print_local_summary(
         "Configuration", str(config_path.resolve()) if cfg and config_path else source_label
     )
     if cfg is not None:
-        project = Path(cfg.project_path).expanduser().resolve()
+        project = cfg.project_root
         table.add_row("Project", str(project))
         table.add_row("Target Odoo", cfg.odoo_version or "not configured")
         table.add_row("Environment profile", cfg.active_profile or "default connection")
         table.add_row("Readonly methods", str(cfg.readonly))
         if cfg.venv_path:
-            venv = _configured_path(cfg.venv_path, project)
-            venv_python = venv / (
-                "Scripts/python.exe" if (venv / "Scripts").is_dir() else "bin/python"
-            )
+            venv = resolve_path(cfg.venv_path, project)
             state = "active" if Path(sys.prefix).resolve() == venv else "different interpreter"
-            if not (venv / "pyvenv.cfg").is_file() or not venv_python.is_file():
+            if not (venv / "pyvenv.cfg").is_file() or not venv_python(venv).is_file():
                 state = "missing or invalid"
             table.add_row("Project VENV", f"{venv} ({state})")
         if cfg.odoo_conf_path:
-            conf = _configured_path(cfg.odoo_conf_path, project)
+            conf = resolve_path(cfg.odoo_conf_path, project)
             table.add_row("Odoo config", f"{conf} ({'found' if conf.is_file() else 'missing'})")
         if cfg.odoo_source_path:
-            source = _configured_path(cfg.odoo_source_path, project)
+            source = resolve_path(cfg.odoo_source_path, project)
             table.add_row("Odoo source", f"{source} ({'found' if source.is_dir() else 'missing'})")
         if cfg.odoo_docs_path:
-            docs = _configured_path(cfg.odoo_docs_path, project)
+            docs = resolve_path(cfg.odoo_docs_path, project)
             indexed = (docs / INDEX_FILE).is_file() and (docs / METADATA_FILE).is_file()
             table.add_row("Offline docs", f"{docs} ({'indexed' if indexed else 'index missing'})")
         table.add_row("MCP transport", cfg.mcp_transport)
@@ -174,8 +167,7 @@ def _check_mcp(cfg: OdooBoostConfig | None, console: Console) -> None:
             raise typer.Exit(1)
         return
 
-    project_path = Path(cfg.project_path).resolve() if cfg.project_path != "." else Path.cwd()
-    command = build_stdio_command(cfg, project_path)
+    command = build_stdio_command(cfg, cfg.project_root)
     ok, detail = _probe_stdio(command)
     style = "green" if ok else "red"
     console.print(f"  [{style}]{detail}[/]")
@@ -211,6 +203,20 @@ def _validate_initialize_response(payload: Any) -> tuple[bool, str]:
     return True, "MCP server responded to initialize"
 
 
+def _initialize_request() -> dict[str, Any]:
+    """Build the same MCP handshake for stdio and HTTP probes."""
+    return {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2025-06-18",
+            "capabilities": {},
+            "clientInfo": {"name": "odoo-boost-check", "version": "1"},
+        },
+    }
+
+
 def _probe_stdio(command: list[str], timeout: float = 20.0) -> tuple[bool, str]:
     """Spawn the stdio server and perform an MCP initialize handshake."""
     import json
@@ -240,16 +246,7 @@ def _probe_stdio(command: list[str], timeout: float = 20.0) -> tuple[bool, str]:
     reader = threading.Thread(target=_read, daemon=True)
     reader.start()
 
-    initialize = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-            "protocolVersion": "2025-06-18",
-            "capabilities": {},
-            "clientInfo": {"name": "odoo-boost-check", "version": "1"},
-        },
-    }
+    initialize = _initialize_request()
     try:
         assert proc.stdin is not None
         proc.stdin.write(json.dumps(initialize) + "\n")
@@ -287,16 +284,7 @@ def _probe_http(url: str, timeout: float = 5.0, token: str | None = None) -> tup
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    initialize = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-            "protocolVersion": "2025-06-18",
-            "capabilities": {},
-            "clientInfo": {"name": "odoo-boost-check", "version": "1"},
-        },
-    }
+    initialize = _initialize_request()
     try:
         response = httpx.post(url, timeout=timeout, headers=headers, json=initialize)
     except Exception as exc:
