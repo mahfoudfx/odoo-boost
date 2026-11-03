@@ -1,4 +1,4 @@
-"""MCP tool: list_routes – website pages and URL rewrites."""
+"""MCP tool: list_website_pages – website pages and URL rewrites."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from odoo_boost.mcp_server.tools._common import json_response
 logger = logging.getLogger(__name__)
 
 
-def list_routes(
+def list_website_pages(
     filter_url: str = "",
     limit: int = 100,
 ) -> str:

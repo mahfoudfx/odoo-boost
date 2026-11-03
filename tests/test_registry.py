@@ -18,7 +18,11 @@ from odoo_boost.mcp_server.registry import (
 
 class TestToolInventory:
     def test_tool_count(self):
-        assert len(ALL_TOOLS) == 23
+        assert len(ALL_TOOLS) == 30
+
+    def test_removed_names_are_not_registered(self):
+        names = {tool.__name__ for tool in ALL_TOOLS}
+        assert names.isdisjoint({"database_query", "get_model_inheritance", "list_routes"})
 
     def test_no_duplicates(self):
         names = [tool.__name__ for tool in ALL_TOOLS]
@@ -57,24 +61,16 @@ class TestResilientLiveTool:
         def boom() -> str:
             raise ConnectionError("Cannot reach Odoo")
 
-        try:
+        with pytest.raises(ToolError, match="Cannot reach Odoo"):
             boom()
-        except ToolError as exc:
-            assert "Cannot reach Odoo" in str(exc)
-        else:  # pragma: no cover - defensive
-            raise AssertionError("ToolError was not raised")
 
     def test_does_not_swallow_other_errors(self):
         @resilient_live_tool
         def boom() -> str:
             raise ValueError("nope")
 
-        try:
+        with pytest.raises(ValueError, match="nope"):
             boom()
-        except ValueError:
-            pass
-        else:  # pragma: no cover - defensive
-            raise AssertionError("ValueError was swallowed")
 
     def test_compacts_odoo_access_fault(self):
         @resilient_live_tool

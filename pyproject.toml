@@ -47,7 +47,6 @@ dependencies = [
     "pydantic>=2.10.0",
     "httpx>=0.28.0",
     "pyyaml>=6.0",
-    "packaging>=24.0",
     "defusedxml>=0.7.1",
     "tomli>=2.0; python_version < '3.11'",
 ]
@@ -57,9 +56,6 @@ lint = [
     "pylint>=3.2.0",
     "pylint-odoo>=10.0.11",
 ]
-xml = [
-    "lxml>=5.2.0",
-]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=6.0",
@@ -67,12 +63,6 @@ dev = [
     "mypy>=1.13",
     "pylint>=3.2.0",
     "pylint-odoo>=10.0.11",
-]
-all = [
-    "pylint>=3.2.0",
-    "pylint-odoo>=10.0.11",
-    "pyyaml>=6.0",
-    "lxml>=5.2.0",
 ]
 
 [project.scripts]

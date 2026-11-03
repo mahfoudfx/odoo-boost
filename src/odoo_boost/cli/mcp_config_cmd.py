@@ -8,7 +8,8 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from odoo_boost.agents import AGENTS
+from odoo_boost.agents import iter_agents
+from odoo_boost.cli.files import report_paths
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.config.settings import load_config
 from odoo_boost.mcp_launcher import build_http_url, build_stdio_command
@@ -48,7 +49,7 @@ def mcp_config(
         console.print("[red]No odoo-boost.json found. Run 'odoo-boost install' first.[/]")
         raise typer.Exit(1) from None
 
-    project_path = Path(cfg.project_path).resolve() if cfg.project_path != "." else Path.cwd()
+    project_path = cfg.project_root
 
     selected = [a.strip() for a in agents.split(",") if a.strip()] if agents else list(cfg.agents)
 
@@ -67,16 +68,9 @@ def mcp_config(
         console.print(f"  stdio command: [cyan]{' '.join(command)}[/]")
 
     console.print()
-    for agent_id in selected:
-        agent_cls = AGENTS.get(agent_id)
-        if agent_cls is None:
-            console.print(f"  [yellow]Unknown agent '{agent_id}', skipping.[/]")
-            continue
-
-        agent = agent_cls(config=effective, project_path=project_path)
+    for agent in iter_agents(effective, project_path, selected):
         paths = agent.write_all_mcp_configs() if platform == "auto" else [agent.write_mcp_config()]
-        for path in paths:
-            console.print(f"  [green]Wrote[/] {_relative(path, project_path)}")
+        report_paths(console, paths, project_path, "[green]Wrote[/]")
 
     console.print("\n[green]MCP config regenerated![/]")
 
@@ -91,10 +85,3 @@ def _effective_config(cfg: OdooBoostConfig, platform: str) -> OdooBoostConfig:
     elif platform == "http":
         updates = {"mcp_transport": "http"}
     return cfg.model_copy(update=updates)
-
-
-def _relative(path: Path, root: Path) -> Path | str:
-    try:
-        return path.relative_to(root)
-    except ValueError:
-        return path

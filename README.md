@@ -11,7 +11,7 @@ Inspired by [Laravel Boost](https://github.com/laravel/boost), Odoo Boost equips
 
 ## Highlights
 
-- **23 MCP Tools, Resources & Prompts** — All tools are available for client-side discovery. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
+- **30 MCP Tools, Resources & Prompts** — All tools are available for client-side discovery. Includes live introspection, local AST scanning, dynamic resources (`odoo://schema/{model}`), and prompts (`review_odoo_addon`, `upgrade_odoo_addon`).
 - **12 Modern AI Agents** — Antigravity (App & CLI `agy`), Claude Code, Cursor, GitHub Copilot, OpenAI Codex, OpenCode, Pi, Hermes, Windsurf, Cline, Junie, Zed.
 - **Local Inspection Without Docker** — AST and XML scanning works on local addons; optional lint and language-server checks use installed tools.
 - **25 Skills + Progressive Routing** — Focused translation and model-extension work, core tasks, spec-driven development, code reviews, upgrade migrations, git commits, and specialized domain patterns (Accounting, Stock, Multi-Company, Chatter, Wizards, Crons, Computed Fields, Inheritance).
@@ -48,18 +48,14 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv pip install odoo-boost
 ```
 
-To include optional features:
+To install the optional OCA code linter:
 
 ```bash
-# Optional OCA code linter (pylint-odoo)
 pip install "odoo-boost[lint]"
-
-# Optional RelaxNG XML schema validation (lxml)
-pip install "odoo-boost[xml]"
-
-# All optional dependencies
-pip install "odoo-boost[all]"
 ```
+
+Built-in XML inspection uses the included `defusedxml` dependency. RelaxNG
+schema validation requires separate tooling.
 
 For setups that do not use the VENV-first convention, a global CLI installation
 is also supported:
@@ -200,7 +196,7 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 └───────────┬─────────────┘                                 │
             │                                               ▼
             ▼                                  ┌───────────────────────────┐
-     Guidelines, OCA,                          │     23 MCP Tools          │
+     Guidelines, OCA,                          │     30 MCP Tools          │
   25 Skills + Routing Map                      │ - Live ORM & DB schema    │
   (Local Markdown Files)                       │ - read_group aggregation  │
                                                │ - Sub-50ms local AST scan │
@@ -210,7 +206,7 @@ You can also run any command via `python -m odoo_boost`, e.g. `python -m odoo_bo
 ```
 
 Odoo Boost sits between your AI agent and your Odoo instance / codebase:
-1. **23 MCP Tools** — Real-time database queries (including count-only), schema inspection, local AST parsing, and validation.
+1. **30 MCP Tools** — Real-time database queries (including count-only), schema inspection, local AST parsing, and validation.
 2. **OCA Guidelines** — Version-specific guidelines (v14-v20) and OCA architectural rules.
 3. **25 Progressive Skills** — Focused task and domain guidance indexed in `SKILLS_ROUTING.md` for on-demand loading.
 
@@ -330,9 +326,9 @@ opencode.json
 ## Documentation
 
 - [Getting Started](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/getting-started.md) — Full setup walkthrough
-- [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 23 tools with examples
+- [MCP Tools Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/mcp-tools.md) — Complete guide to all 30 tools with examples
 - [Agent Configuration](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/agents.md) — Configuration guide for all 12 supported agents
-- [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 23 progressive skills and routing table
+- [Skills Catalog](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/skills.md) — 25 progressive skills and routing table
 - [Guidelines](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/guidelines.md) — Bundled guidelines (v14-v20 and OCA rules)
 - [Configuration Reference](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/configuration.md) — `odoo-boost.json` schema and options
 - [Architecture](https://github.com/mahfoudfx/odoo-boost/blob/main/docs/architecture.md) — Components, tool-call lifecycle, and extension points

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "odoo-boost-docs"
-version = "0.1.0"
+version = "0.1.1"
 description = "Optional versioned Odoo documentation text snapshots for Odoo Boost"
 requires-python = ">=3.10"
 license = "CC-BY-SA-4.0"

@@ -1,0 +1,106 @@
+{
+  "batch_id": "LEARN-2026-11-03-04",
+  "references": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books",
+  "sources": [
+    {
+      "source_id": "B15-CODE",
+      "root": "Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples",
+      "files": 419,
+      "distinct_contents": 96,
+      "revision": "34cceb82db42f8401b2b5957d4ed88177982374e2b50b6fa5987c44ed5b681ad",
+      "available": true
+    },
+    {
+      "source_id": "E17-CODE",
+      "root": "Odoo-17-Development-Essentials/Odoo-17-Development-Essentials-Examples",
+      "files": 2,
+      "distinct_contents": 2,
+      "revision": "68018ff658ebff5c51681f00bd85a560bc5c04bc769f35462eac8c33b67286c7",
+      "available": true
+    },
+    {
+      "source_id": "B17-CODE",
+      "root": "Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples",
+      "files": 3233,
+      "distinct_contents": 478,
+      "revision": "702b4aeea1928820367b887ad247601052afe149a4c8b0cbb79af3a8a72ace1c",
+      "available": true
+    },
+    {
+      "source_id": "B19-CODE",
+      "root": "Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples",
+      "files": 2503,
+      "distinct_contents": 626,
+      "revision": "8dba29ea2e6032628c08f04e9a9422208bf6975e64e19aabd63628868a89823c",
+      "available": true
+    },
+    {
+      "source_id": "B15",
+      "epub": "Odoo 15 Development Essentials/Odoo 15 Development Essentials.epub",
+      "revision": "2b4784a112012b71743ba2883c6e3e836c5539cb838fd6d2050344b169b0c6b9",
+      "documents": 26,
+      "sections": 881,
+      "other_epub_artifacts": 95
+    },
+    {
+      "source_id": "B17",
+      "epub": "Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub",
+      "revision": "a06bed6415f46b2d99f8ebb347b77852f43bc63f9cf253805458a2c30cf8fe4b",
+      "documents": 32,
+      "sections": 2306,
+      "other_epub_artifacts": 325
+    },
+    {
+      "source_id": "B19",
+      "epub": "Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub",
+      "revision": "d723e41f29bd24ec8a9b5d308995874189b36a6410aadc0aeef412ce5716e2d6",
+      "documents": 29,
+      "sections": 1055,
+      "other_epub_artifacts": 276
+    },
+    {
+      "source_id": "CY18-DEV",
+      "saved_pages": 148,
+      "recovered_pages": 6
+    },
+    {
+      "source_id": "CY18-COM",
+      "saved_pages": 195,
+      "recovered_pages": 0
+    },
+    {
+      "source_id": "CY18-ENT",
+      "saved_pages": 354,
+      "recovered_pages": 16
+    },
+    {
+      "source_id": "CY18-ACC",
+      "saved_pages": 52,
+      "recovered_pages": 1
+    }
+  ],
+  "unit_counts_by_type": {
+    "example-file": 6157,
+    "epub-artifact": 696,
+    "epub-document": 87,
+    "epub-section": 4242,
+    "acquisition-entry": 47,
+    "saved-page": 772
+  },
+  "reading_counts": {
+    "read": 758,
+    "pending": 11215,
+    "partial": 28
+  },
+  "acquisition_counts": {
+    "recovered": 23,
+    "present": 19,
+    "missing": 5
+  },
+  "acquisition_status_counts": {
+    "recovered": 23,
+    "resolved-alias": 19,
+    "unresolved-http": 5
+  },
+  "limits": "Document, section, file and acquisition totals are separate denominators; automated inventory is not reading."
+}

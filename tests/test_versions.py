@@ -73,6 +73,34 @@ def test_version_isolation(version, tag, modifiers, display, route):
         profile.features["list_view_tag"] = "invalid"
 
 
+@pytest.mark.parametrize(
+    ("series", "security", "progress", "domain"),
+    [
+        ("15.0", "ir.model.access + ir.rule", None, None),
+        ("17.0", "ir.model.access + ir.rule", None, None),
+        ("18.0", "ir.model.access + ir.rule", "_notify_progress", None),
+        ("19.0", "ir.model.access + ir.rule", "_commit_progress", "fields.Domain"),
+        ("20.0", "ir.access permissions/restrictions", "_commit_progress", "fields.Domain"),
+    ],
+)
+def test_audited_boundaries_reach_generated_guidance(series, security, progress, domain):
+    """Newer access and scheduler contracts must not leak into older targets."""
+    profile = get_version_profile(series)
+    assert profile.features["security_declarations"] == security
+    assert profile.features.get("cron_progress") == progress
+    assert profile.features.get("domain_composition") == domain
+    content = compose_agent_guidelines(series, ".agents/skills/guidelines")
+    assert f"security_declarations: {security}" in content
+    if progress:
+        assert f"cron_progress: {progress}" in content
+    else:
+        assert "cron_progress:" not in content
+    if domain:
+        assert f"domain_composition: {domain}" in content
+    else:
+        assert "domain_composition:" not in content
+
+
 @pytest.mark.parametrize("version", [None, "invalid", "21.0", "18.2", "saas~20.1"])
 def test_unknown_versions_never_inherit(version, tmp_path):
     assert get_version_profile(version) is None

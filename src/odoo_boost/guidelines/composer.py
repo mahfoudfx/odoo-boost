@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import importlib.resources
+from functools import lru_cache
 from pathlib import Path
 
+from odoo_boost.generated_files import write_owned_files
 from odoo_boost.versions import get_version_profile, version_guidance
 
 _CORE_FILES = [
@@ -23,6 +25,7 @@ _CORE_FILES = [
 ]
 
 
+@lru_cache(maxsize=32)
 def _read_resource(subpath: str) -> str:
     """Read a markdown file from the guidelines/core package data."""
     ref = importlib.resources.files("odoo_boost.guidelines") / "core" / subpath
@@ -88,13 +91,7 @@ def install_guideline_references(target_dir: Path, version: str | None) -> list[
     version_file = _version_file(version)
     if version_file:
         filenames.append(version_file)
-    created = []
-    for filename in filenames:
-        path = target_dir / filename
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(_read_resource(filename), encoding="utf-8")
-        created.append(path)
-    return created
+    return write_owned_files(target_dir, {name: _read_resource(name) for name in filenames})
 
 
 def compose_guidelines_index(version: str | None = None) -> str:

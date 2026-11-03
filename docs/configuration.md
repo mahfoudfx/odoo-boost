@@ -64,7 +64,9 @@ Default: `[]` (all configured agents).
 
 ### `project_path` (optional)
 
-Path to the project root directory. Default: `"."`.
+Path to the project root directory. Default: `"."`. Relative paths are resolved
+from the directory containing `odoo-boost.json`, including when a command finds
+the config in a parent directory.
 
 ### Project layout and Python environment
 
@@ -138,7 +140,7 @@ source, configuration, and documentation locations, absolute paths are clearer.
 | `readonly` | bool | `false` | When true, `execute_method` allows only known read/metadata methods. Other tools still use Odoo access rights. |
 | `allowed_roots` | string[] | `[]` | Restrict local file tools to these roots. Empty uses `project_path` as the effective root by default. |
 | `allow_external_local_paths` | bool | `false` | Allow file tools outside `project_path` when `allowed_roots` is empty. Enable only for deliberate shared-source inspection. |
-| `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed user-bin location. |
+| `odoo_ls_path` | string | — | Explicit path to the official `odoo_ls_server` binary when it is not on `PATH` or in Odoo Boost's managed install. Its `typeshed` stub directory must sit next to it. |
 | `compact_responses` | bool | `true` | Default tools to token-efficient compact responses. Per-call `response_format="full"` overrides. |
 | `max_response_chars` | int | `40000` | Safety cap per tool response (`0` disables). Oversized payloads become a `truncated` envelope. |
 | `redact_config_secrets` | bool | `true` | Redact secret-looking `ir.config_parameter` values in `get_config`. |
@@ -147,7 +149,7 @@ source, configuration, and documentation locations, absolute paths are clearer.
 | `max_repeated_calls_per_window` | int | `2` | Block the third identical MCP request in the rolling window, even if the model alternates tools; `0` disables. |
 | `repeated_call_window_size` | int | `12` | Number of recent MCP calls considered by the rolling repetition guard; `0` disables it. |
 
-All 23 MCP tools are registered. Tool registration is not profile-dependent.
+All 30 MCP tools are registered. Tool registration is not profile-dependent.
 An agent client may load tool schemas on demand, as Codex can, or include all
 definitions in its model requests. The MCP server cannot require deferred
 loading from a client.
@@ -157,8 +159,7 @@ loading from a client.
 Broad tools (`list_views`, `inspect_local_addon`, `application_info`,
 `database_schema`, `get_config`, `read_log_entries`, `list_access_rights`,
 `list_workflows`, `get_module_info`) return summaries by default and accept
-`response_format: "full"` for detail. Data tools (`search_records`,
-`database_query`) return values verbatim by default; pass `compact=true` to
+`response_format: "full"` for detail. Data tools (`search_records`) return values verbatim by default; pass `compact=true` to
 skim. `execute_method` returns the method result under the response budget;
 its `response_format="full"` explicitly bypasses that cap. See
 [MCP Tools → Token efficiency](mcp-tools.md#token-efficiency-compact-by-default).
@@ -251,6 +252,11 @@ Verifies live connection and prints server diagnostics.
 | `--config`, `-c` | Explicit path to `odoo-boost.json` |
 | `--mcp` | Also spawn the configured MCP server and verify the `initialize` handshake |
 
+With `--mcp`, failed initialization exits with a nonzero status and reports the
+server's protocol error. Stdio, HTTP JSON, and HTTP SSE responses must contain a
+valid initialize result matching the probe request; an error response does not
+count as successful verification.
+
 ### `odoo-boost lint [path]`
 Runs static checks on local addons or files using `pylint-odoo` (if installed). The fallback AST scanner detects Python syntax errors, direct cursor commits, and version-aware `name_get` deprecation.
 
@@ -323,3 +329,49 @@ odoo-boost mcp-config --platform http --agents antigravity,cursor
 - Ensure `odoo-boost.json` is added to `.gitignore`.
 - Prefer Odoo API Keys over passwords whenever possible.
 - Use a dedicated Odoo technical user with appropriate access permissions.
+
+## Named environments and development checks
+
+Connection profiles can be selected with `ODOO_BOOST_PROFILE=staging` for one
+process, or persisted using `odoo-boost profiles use staging`. List names and
+policies with `odoo-boost profiles list`; credentials are not printed. Unknown
+profiles fail immediately. Existing MCP processes keep their configuration;
+restart them after switching. Profiles default to readonly unless explicitly
+set in `profile_readonly`. Both HTTP clients and stdio clients use the profile
+selected by their server process; the environment variable overrides a persisted
+selection. Generated files are not automatically regenerated on profile switch.
+
+Add these optional settings to `odoo-boost.json`:
+
+```json
+{
+  "profiles": {
+    "staging": {"url": "http://localhost:8069", "database": "staging", "username": "admin", "password": "replace-me"}
+  },
+  "profile_readonly": {"staging": true},
+  "active_profile": "staging",
+  "max_tool_calls": 0,
+  "test_database": "disposable_tests",
+  "test_odoo_conf_path": "/absolute/path/to/test-odoo.conf",
+  "test_timeout_seconds": 300
+}
+```
+
+The test runner also requires `odoo_source_path` and `venv_path`. Use absolute
+paths for these settings. The dedicated test configuration supplies test-only
+PostgreSQL credentials and addon paths; its database must be disposable. The
+runner refuses the currently connected database and requires the supplied name
+to equal `test_database`. It upgrades the named addon, which must already be
+installed. It does not provision, clone or delete databases.
+
+```bash
+odoo-boost diagnose --path ./addons/demo --odoo-ls
+odoo-boost changed-checks --path . --base HEAD
+odoo-boost test ./addons/demo /demo disposable_tests
+```
+
+`max_tool_calls` limits calls per server process (0 disables). `tool_metrics`
+remains callable after budget exhaustion. Existing tool subprocess timeouts
+still apply. Native shell calls, model turns and tools from other servers are
+outside this budget. Metrics are in-memory and reset on restart; scanner cache
+statistics are process-wide. Repeated-call guards remain independently active.

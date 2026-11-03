@@ -26,13 +26,26 @@ def find_config_path(start: Path | None = None) -> Path | None:
 
 
 def load_config(path: Path | None = None) -> OdooBoostConfig:
-    """Load config from an explicit path or by searching upward."""
+    """Load config and anchor relative project paths to its containing directory."""
     if path is None:
         path = find_config_path()
     if path is None:
         raise FileNotFoundError(f"No {CONFIG_FILENAME} found. Run 'odoo-boost install' first.")
     data = json.loads(path.read_text(encoding="utf-8"))
-    return OdooBoostConfig.model_validate(data)
+    config = OdooBoostConfig.model_validate(data)
+    selected = os.environ.get("ODOO_BOOST_PROFILE") or config.active_profile
+    if selected:
+        if selected not in config.profiles:
+            raise ValueError(f"Unknown environment profile: {selected}")
+        config.connection = config.profiles[selected].model_copy(deep=True)
+        config.readonly = config.profile_readonly.get(selected, True)
+        config.active_profile = selected
+    config._config_path = path.absolute()
+    project = Path(config.project_path).expanduser()
+    if not project.is_absolute():
+        project = path.absolute().parent / project
+    config.project_path = str(project.resolve())
+    return config
 
 
 def save_config(config: OdooBoostConfig, path: Path | None = None) -> Path:
@@ -50,4 +63,5 @@ def save_config(config: OdooBoostConfig, path: Path | None = None) -> Path:
     if os.name == "posix":
         with contextlib.suppress(OSError):  # best effort on exotic filesystems
             os.chmod(path, 0o600)
+    config._config_path = path.absolute()
     return path

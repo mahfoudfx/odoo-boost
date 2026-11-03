@@ -3,14 +3,27 @@
 from __future__ import annotations
 
 import json
+from io import StringIO
 from unittest.mock import MagicMock, patch
 
+import pytest
+from mcp_types.version import HANDSHAKE_PROTOCOL_VERSIONS, MODERN_PROTOCOL_VERSIONS
 from typer.testing import CliRunner
 
 from odoo_boost.__version__ import __version__
 from odoo_boost.cli.app import app
 
 runner = CliRunner()
+
+INITIALIZE_RESPONSE = {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {},
+        "serverInfo": {"name": "test-server", "version": "1"},
+    },
+}
 
 
 class TestVersionFlag:
@@ -291,7 +304,10 @@ class TestUpdateCommand:
 
 
 class TestInstallWizard:
-    def test_gitignore_opt_in_and_uninstall_removes_only_managed_entry(self, tmp_path, monkeypatch):
+    @pytest.mark.parametrize("generate_ai", ["n", "y"])
+    def test_gitignore_opt_in_and_uninstall_removes_only_managed_entry(
+        self, tmp_path, monkeypatch, generate_ai
+    ):
         monkeypatch.chdir(tmp_path)
         (tmp_path / ".gitignore").write_text("__pycache__/\n")
         mock_conn = MagicMock()
@@ -302,10 +318,17 @@ class TestInstallWizard:
             result = runner.invoke(
                 app,
                 ["install", "--skip-dev-tools", "--skip-docs", "--gitignore"],
-                input="\ndb\n\n\n1\nn\nn\n",
+                input=f"\ndb\n\n\n1\nn\n{generate_ai}\n",
             )
         assert result.exit_code == 0, result.output
         assert "/odoo-boost.json" in (tmp_path / ".gitignore").read_text()
+        manifests = list(tmp_path.rglob(".odoo-boost-files.json"))
+        assert len(manifests) == (2 if generate_ai == "y" else 0)
+        for manifest in manifests:
+            assert (
+                "/" + manifest.relative_to(tmp_path).as_posix()
+                in (tmp_path / ".gitignore").read_text().splitlines()
+            )
 
         result = runner.invoke(app, ["uninstall", "-y", "--gitignore"])
         assert result.exit_code == 0, result.output
@@ -392,6 +415,26 @@ class TestMcpCommand:
 
 
 class TestCheckMcpHttp:
+    @pytest.mark.parametrize("transport", ["stdio", "http"])
+    def test_failed_handshake_exits_with_failure(self, tmp_path, sample_config, transport):
+        sample_config.mcp_transport = transport
+        cfg_path = tmp_path / "odoo-boost.json"
+        cfg_path.write_text(sample_config.model_dump_json())
+        mock_conn = MagicMock()
+        mock_conn.get_version.return_value = {"server_version": "18.0"}
+        mock_conn.authenticate.return_value = 2
+        mock_conn.search_count.return_value = 10
+        probe = "_probe_http" if transport == "http" else "_probe_stdio"
+
+        with (
+            patch("odoo_boost.cli.check.create_connection", return_value=mock_conn),
+            patch(f"odoo_boost.cli.check.{probe}", return_value=(False, "MCP initialize failed")),
+        ):
+            result = runner.invoke(app, ["check", "--config", str(cfg_path), "--mcp"])
+
+        assert result.exit_code == 1
+        assert "MCP initialize failed" in result.output
+
     def test_check_mcp_http_passes_token(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.chdir(tmp_path)
         cfg = sample_config.model_copy(
@@ -427,7 +470,7 @@ class TestHttpProbe:
             status_code=200,
             headers={"content-type": "application/json"},
         )
-        response.json.return_value = {"jsonrpc": "2.0", "id": 1, "result": {}}
+        response.json.return_value = INITIALIZE_RESPONSE
         with patch("httpx.post", return_value=response) as post:
             ok, detail = _probe_http("http://localhost:8765/mcp", token="secret")
 
@@ -458,7 +501,136 @@ class TestHttpProbe:
         assert "rejected" in detail
 
 
+class TestInitializeResponses:
+    @pytest.mark.parametrize(
+        "protocol_version", HANDSHAKE_PROTOCOL_VERSIONS + MODERN_PROTOCOL_VERSIONS
+    )
+    def test_accepts_only_versions_supported_for_handshakes(self, protocol_version):
+        from odoo_boost.cli.check import _validate_initialize_response
+
+        payload = {
+            **INITIALIZE_RESPONSE,
+            "result": {**INITIALIZE_RESPONSE["result"], "protocolVersion": protocol_version},
+        }
+
+        ok, detail = _validate_initialize_response(payload)
+
+        assert ok is (protocol_version in HANDSHAKE_PROTOCOL_VERSIONS)
+        if not ok:
+            assert protocol_version in detail
+
+    @pytest.mark.parametrize("transport", ["stdio", "json", "sse"])
+    @pytest.mark.parametrize(
+        ("payload", "expected_ok", "detail_text"),
+        [
+            (INITIALIZE_RESPONSE, True, "responded to initialize"),
+            (
+                {
+                    **INITIALIZE_RESPONSE,
+                    "result": {**INITIALIZE_RESPONSE["result"], "protocolVersion": "2099-01-01"},
+                },
+                False,
+                "Unsupported protocol version from the MCP server: 2099-01-01",
+            ),
+            (
+                {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "error": {"code": -32602, "message": "Unsupported protocol version"},
+                },
+                False,
+                "Unsupported protocol version",
+            ),
+            ({"jsonrpc": "2.0", "id": 1, "result": {}}, False, "invalid initialize result"),
+            ({**INITIALIZE_RESPONSE, "id": 2}, False, "response"),
+            ({**INITIALIZE_RESPONSE, "id": True}, False, "response"),
+            ({**INITIALIZE_RESPONSE, "jsonrpc": "1.0"}, False, "response"),
+            ([INITIALIZE_RESPONSE], False, "response"),
+            (None, False, "response"),
+        ],
+    )
+    def test_validates_initialize_result_across_transports(
+        self, transport, payload, expected_ok, detail_text
+    ):
+        from odoo_boost.cli.check import _probe_http, _probe_stdio
+
+        if transport == "stdio":
+            process = MagicMock(stdin=StringIO(), stdout=StringIO(json.dumps(payload) + "\n"))
+            with patch("subprocess.Popen", return_value=process):
+                ok, detail = _probe_stdio(["test-server"])
+        else:
+            response = MagicMock(status_code=200)
+            response.headers = {
+                "content-type": "text/event-stream" if transport == "sse" else "application/json"
+            }
+            response.json.return_value = payload
+            response.text = "event: message\ndata: " + json.dumps(payload) + "\n\n"
+            with patch("httpx.post", return_value=response):
+                ok, detail = _probe_http("http://localhost:8765/mcp")
+
+        assert ok is expected_ok
+        assert detail_text in detail
+
+    @pytest.mark.parametrize(
+        "stream",
+        [
+            "event: message\n\n",
+            'event: message\ndata: {"jsonrpc":"2.0","method":"notifications/message","params":{"result":"not initialization"}}\n\n',
+            "event: message\ndata: invalid-json\n\n",
+        ],
+    )
+    def test_sse_rejects_events_without_initialize_result(self, stream):
+        from odoo_boost.cli.check import _probe_http
+
+        response = MagicMock(
+            status_code=200, headers={"content-type": "text/event-stream"}, text=stream
+        )
+        with patch("httpx.post", return_value=response):
+            ok, _detail = _probe_http("http://localhost:8765/mcp")
+        assert ok is False
+
+    def test_sse_parses_multiline_data_after_notifications(self):
+        from odoo_boost.cli.check import _probe_http
+
+        stream = (
+            ': keepalive\r\n\r\ndata: {"jsonrpc":"2.0","method":"notifications/message"}\r\n\r\n'
+        )
+        stream += (
+            "event: message\r\n"
+            + "\r\n".join(
+                "data: " + line for line in json.dumps(INITIALIZE_RESPONSE, indent=2).splitlines()
+            )
+            + "\r\n\r\n"
+        )
+        response = MagicMock(
+            status_code=200, headers={"content-type": "text/event-stream"}, text=stream
+        )
+        with patch("httpx.post", return_value=response):
+            ok, _detail = _probe_http("http://localhost:8765/mcp")
+        assert ok is True
+
+
 class TestMcpConfigCommand:
+    @pytest.mark.parametrize("command", [["update", "--yes"], ["mcp-config"]])
+    def test_external_config_path_survives_generation(self, tmp_path, sample_config, command):
+        project = tmp_path / "project"
+        project.mkdir()
+        config = tmp_path / "external.json"
+        sample_config.project_path = str(project)
+        sample_config.agents = ["antigravity"]
+        config.write_text(sample_config.model_dump_json())
+
+        result = runner.invoke(app, [*command, "--config", str(config)])
+
+        assert result.exit_code == 0, result.output
+        for filename in ("mcp_config.json", "mcp_config.windows.json"):
+            server = json.loads((project / ".agents" / filename).read_text())["mcpServers"][
+                "odoo-boost"
+            ]
+            args = server["args"]
+            assert args[args.index("-c") + 1] == str(config)
+        assert not (project / "odoo-boost.json").exists()
+
     def _write_config(self, tmp_path, sample_config):
         cfg_path = tmp_path / "odoo-boost.json"
         cfg_path.write_text(sample_config.model_dump_json(indent=2))
@@ -670,3 +842,57 @@ class TestUninstallCommand:
         assert result.exit_code == 0
         assert not (tmp_path / "AGENTS.md").exists()
         assert cfg_path.exists()
+
+
+def test_uninstall_keeps_ignore_rule_for_surviving_shared_config(
+    tmp_path, sample_config, monkeypatch
+):
+    from odoo_boost.cli.gitignore import managed_entries, update_gitignore
+
+    monkeypatch.chdir(tmp_path)
+    cfg = sample_config.model_copy(
+        update={
+            "project_path": str(tmp_path),
+            "agents": ["claude_code"],
+            "mcp_target": "native",
+        }
+    )
+    cfg_path = tmp_path / "odoo-boost.json"
+    cfg_path.write_text(cfg.model_dump_json())
+    assert runner.invoke(app, ["update", "--config", str(cfg_path)]).exit_code == 0
+    mcp_path = tmp_path / ".mcp.json"
+    data = json.loads(mcp_path.read_text())
+    data["mcpServers"]["other"] = {"command": "other", "env": {"TOKEN": "private"}}
+    mcp_path.write_text(json.dumps(data))
+    update_gitignore(tmp_path, add={"/.mcp.json", "/odoo-boost.json"})
+    result = runner.invoke(app, ["uninstall", "--config", str(cfg_path), "--yes", "--gitignore"])
+    assert result.exit_code == 0, result.output
+    assert json.loads(mcp_path.read_text())["mcpServers"] == {"other": data["mcpServers"]["other"]}
+    assert managed_entries(tmp_path) == {"/.mcp.json"}
+
+
+def test_commands_from_subdirectory_use_parent_project(tmp_path, sample_config, monkeypatch):
+    cfg = sample_config.model_copy(
+        update={
+            "project_path": ".",
+            "agents": ["claude_code"],
+            "mcp_target": "native",
+        }
+    )
+    cfg_path = tmp_path / "odoo-boost.json"
+    cfg_path.write_text(cfg.model_dump_json())
+    child = tmp_path / "subdir"
+    child.mkdir()
+    monkeypatch.chdir(child)
+    for command in (["update", "--yes"], ["mcp-config"]):
+        result = runner.invoke(app, command)
+        assert result.exit_code == 0, result.output
+        assert (tmp_path / ".mcp.json").exists()
+        assert not (child / ".mcp.json").exists()
+    assert (tmp_path / "AGENTS.md").exists()
+    assert not (child / "AGENTS.md").exists()
+    result = runner.invoke(app, ["uninstall", "--yes"])
+    assert result.exit_code == 0, result.output
+    assert not cfg_path.exists()
+    assert not (tmp_path / "AGENTS.md").exists()
+    assert not (tmp_path / ".mcp.json").exists()

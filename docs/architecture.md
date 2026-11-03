@@ -27,13 +27,17 @@ standard XML-RPC.
 | `config/` | Pydantic schema and `odoo-boost.json` load/save (owner-only perms) |
 | `mcp_launcher.py` | Resolves the stdio command for native/WSL targets and builds HTTP URLs |
 | `mcp_server/server.py` | Assembles the MCP v2 server (resources, prompts, tool loop) |
-| `mcp_server/registry.py` | Single source of truth for the 23 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
+| `mcp_server/registry.py` | Single source of truth for the 30 tools (`LIVE_TOOLS` / `LOCAL_TOOLS`) |
 | `mcp_server/context.py` | `ContextVar` holding the active connection + config |
 | `mcp_server/auth.py` | Static bearer-token verifier for HTTP |
 | `mcp_server/policy.py` | Opt-in `readonly` / `allowed_roots` guardrails |
 | `mcp_server/tools/` | One module per tool plus `_common.py` response helpers |
 | `versions.py` | Registered Odoo series, inherited compatibility facts and documentation paths |
 | `agents/` | Declarative `AgentSpec` registry + spec-driven base class |
+| `diagnostics.py` | Structured lint execution shared by CLI and MCP |
+| `local_paths.py` | Project path resolution, VENV interpreter paths, and local access rules |
+| `source_files.py` | Source traversal with directory pruning and file symlink checks |
+| `generated_files.py` | Ownership checks and idempotent writes for skills and references |
 | `connection/` | Abstract connection interface and the XML-RPC implementation |
 | `ast_scanner/` | Pure-Python AST/XML analysis of local addons (no Docker) |
 | `guidelines/`, `skills/` | Bundled markdown content loaded via `importlib.resources` |
@@ -63,8 +67,25 @@ standard XML-RPC.
 
 Generated guideline sections and Odoo Boost MCP entries are updated in place;
 unrelated user content and other MCP servers are preserved. Edited generated
-sections are left for the user to reconcile. Older configurations containing
-Unknown configuration keys are ignored when reading a project config.
+sections are left for the user to reconcile. Unknown configuration keys are
+ignored when reading a project config.
+
+`install_agents()` is shared by install and update. It processes each selected
+agent once and installs each shared skills directory once. Bundled skill text,
+routing, and guideline resources are cached in process; project files are always
+read again so ownership checks notice local edits. Identical owned files and
+ownership manifests retain their timestamps. MCP configurations still have their
+private permissions enforced on an unchanged update.
+
+Local addon scans discover Python and XML sources in one traversal, pruning
+hidden and generated directories before entering them. A cached scan checks
+source timestamps and sizes; when files change, the same inventory supplies the
+new scan without another walk. Internal file symlinks remain supported and
+external file symlinks are excluded.
+
+The lint CLI consumes complete structured diagnostics directly. The MCP lint
+tool applies its compact format and response budget when serializing the same
+diagnostics, keeping transport limits out of CLI output.
 
 Version guidance follows shared Odoo topics → registered version facts and
 delta note → task-specific skill or tool. Unknown series receive shared topics

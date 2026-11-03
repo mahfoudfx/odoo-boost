@@ -5,10 +5,13 @@ from __future__ import annotations
 import importlib.resources
 import logging
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+from odoo_boost.generated_files import write_owned_files
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +87,7 @@ def get_skill_category(skill_name: str) -> str:
     return "Custom"
 
 
+@lru_cache(maxsize=32)
 def load_skill(skill_name: str) -> str:
     """Read and return the SKILL.md content for a skill."""
     if skill_name not in _SKILL_DIRS:
@@ -92,8 +96,9 @@ def load_skill(skill_name: str) -> str:
     return ref.read_text(encoding="utf-8")
 
 
-def load_skill_files(skill_name: str) -> dict[str, str]:
-    """Return every bundled text file for a skill, keyed by relative path."""
+@lru_cache(maxsize=32)
+def _load_skill_files(skill_name: str) -> tuple[tuple[str, str], ...]:
+    """Cache immutable package resources, never project or user files."""
     if skill_name not in _SKILL_DIRS:
         raise FileNotFoundError(f"Unknown bundled skill: {skill_name}")
     root = importlib.resources.files("odoo_boost.skills") / skill_name
@@ -108,7 +113,12 @@ def load_skill_files(skill_name: str) -> dict[str, str]:
                 files[relative.as_posix()] = entry.read_text(encoding="utf-8")
 
     collect(root)
-    return files
+    return tuple(files.items())
+
+
+def load_skill_files(skill_name: str) -> dict[str, str]:
+    """Return bundled text with a fresh mapping so callers cannot alter the cache."""
+    return dict(_load_skill_files(skill_name))
 
 
 def parse_skill_metadata(skill_name: str) -> dict[str, str]:
@@ -147,6 +157,7 @@ def parse_skill_metadata(skill_name: str) -> dict[str, str]:
     return meta
 
 
+@lru_cache(maxsize=8)
 def generate_skills_routing(category: str | None = None) -> str:
     """Generate a markdown routing table summarizing all available skills.
 
@@ -164,10 +175,10 @@ def generate_skills_routing(category: str | None = None) -> str:
 
     for skill_name in list_skills(category=category):
         meta = parse_skill_metadata(skill_name)
-        category = get_skill_category(skill_name)
+        category_label = get_skill_category(skill_name)
         globs = meta.get("globs", "-") or "-"
         desc = meta.get("description", "").replace("|", "\\|").replace("\n", " ")
-        lines.append(f"| `{skill_id(skill_name)}` | {category} | `{globs}` | {desc} |")
+        lines.append(f"| `{skill_id(skill_name)}` | {category_label} | `{globs}` | {desc} |")
 
     lines.append("")
     return "\n".join(lines)
@@ -182,21 +193,14 @@ def install_skills(
 
     Returns a list of created file paths.
     """
-    target_dir.mkdir(parents=True, exist_ok=True)
-    created: list[Path] = []
+    files: dict[str, str] = {}
     skills = list_skills(category=category)
 
     for skill_name in skills:
-        dest = target_dir / skill_id(skill_name)
         for relative, content in load_skill_files(skill_name).items():
-            skill_file = dest / relative
-            skill_file.parent.mkdir(parents=True, exist_ok=True)
-            skill_file.write_text(content, encoding="utf-8")
-            created.append(skill_file)
+            files[f"{skill_id(skill_name)}/{relative}"] = content
 
     if write_routing:
-        routing_file = target_dir / "SKILLS_ROUTING.md"
-        routing_file.write_text(generate_skills_routing(category=category), encoding="utf-8")
-        created.append(routing_file)
+        files["SKILLS_ROUTING.md"] = generate_skills_routing(category=category)
 
-    return created
+    return write_owned_files(target_dir, files)

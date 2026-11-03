@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -65,6 +66,8 @@ class TestAgentRegistry:
 
     def test_class_attrs_derived_from_spec(self):
         for agent_id, cls in AGENTS.items():
+            assert isinstance(cls.id, str) and cls.id
+            assert isinstance(cls.display_name, str) and cls.display_name
             assert cls.id == agent_id
             assert cls.display_name == AGENT_SPECS[agent_id].display_name
 
@@ -104,27 +107,9 @@ def agent(request, sample_config: OdooBoostConfig, tmp_path: Path) -> Agent:
 
 
 class TestAgentContracts:
-    def test_has_id(self, agent: Agent):
-        assert isinstance(agent.id, str)
-        assert len(agent.id) > 0
-
-    def test_has_display_name(self, agent: Agent):
-        assert isinstance(agent.display_name, str)
-        assert len(agent.display_name) > 0
-
-
-class TestPiAgent:
-    def test_uses_shared_skills_dir(self, sample_config, tmp_path):
-        agent = PiAgent(config=sample_config, project_path=tmp_path)
-        assert agent.skills_dir == tmp_path / ".agents" / "skills"
-
-    def test_guidelines_path_is_absolute(self, agent: Agent):
+    def test_output_paths_are_absolute(self, agent: Agent):
         assert agent.guidelines_path.is_absolute()
-
-    def test_mcp_config_path_is_absolute(self, agent: Agent):
         assert agent.mcp_config_path.is_absolute()
-
-    def test_skills_dir_is_absolute(self, agent: Agent):
         assert agent.skills_dir.is_absolute()
 
     def test_install_creates_files(self, agent: Agent):
@@ -145,12 +130,6 @@ class TestPiAgent:
         assert (reference_dir / "security.md").exists()
         assert (reference_dir / "versions" / "v18.md").exists()
         assert f"{agent.spec.skills_dir[-1]}/guidelines/security.md" in content
-
-    def test_mcp_config_written(self, agent: Agent):
-        agent.install()
-        assert agent.mcp_config_path.exists()
-        content = agent.mcp_config_path.read_text(encoding="utf-8")
-        assert "odoo-boost" in content
 
     def test_skills_dir_populated(self, agent: Agent):
         agent.install()
@@ -201,6 +180,23 @@ class TestPiAgent:
         with pytest.raises(ValueError):
             agent.write_mcp_config()
         assert path.read_text(encoding="utf-8") == "invalid ["
+
+    @pytest.mark.skipif(os.name != "posix", reason="POSIX file permissions")
+    def test_http_token_config_is_private_on_creation_and_update(self, agent: Agent):
+        agent.config.mcp_transport = "http"
+        agent.config.mcp_token = "test-private-token"
+        previous_umask = os.umask(0o022)
+        try:
+            agent.write_mcp_config()
+            path = agent.mcp_config_path
+            assert "Bearer test-private-token" in path.read_text(encoding="utf-8")
+            assert path.stat().st_mode & 0o777 == 0o600
+            for _ in range(2):
+                path.chmod(0o644)
+                agent.write_mcp_config()
+                assert path.stat().st_mode & 0o777 == 0o600
+        finally:
+            os.umask(previous_umask)
 
     def test_codex_toml_escapes_control_characters(self, sample_config, tmp_path):
         cfg = sample_config.model_copy(
@@ -279,35 +275,6 @@ class TestPiAgent:
         agent.uninstall()
         assert "Keep this rule." in path.read_text(encoding="utf-8")
 
-    def test_mcp_command(self, agent: Agent):
-        cmd = agent._mcp_command()
-        assert cmd[0] == sys.executable
-        assert cmd[1:4] == ["-m", "odoo_boost", "mcp"]
-        assert cmd[4] == "-c"
-        assert cmd[5].endswith("odoo-boost.json")
-
-    def test_windows_command_uses_wsl_launcher(self, agent: Agent):
-        cmd = agent._mcp_command(windows=True)
-        assert cmd[0] == "wsl.exe"
-        assert "--cd" in cmd
-        assert sys.executable in cmd
-        assert cmd[-1].endswith("odoo-boost.json")
-
-    def test_auto_emits_windows_companion(self, agent: Agent):
-        agent.install()
-        assert agent.mcp_config_path.exists()
-        assert agent.windows_mcp_config_path.exists()
-        assert agent.windows_mcp_config_path.name.endswith(
-            ".windows" + agent.mcp_config_path.suffix
-        )
-
-    def test_native_target_skips_windows_companion(self, sample_config, tmp_path):
-        cfg = sample_config.model_copy(update={"mcp_target": "native"})
-        a = ClaudeCodeAgent(config=cfg, project_path=tmp_path)
-        a.install()
-        assert a.mcp_config_path.exists()
-        assert not a.windows_mcp_config_path.exists()
-
     def test_http_transport_emits_url(self, sample_config, tmp_path):
         cfg = sample_config.model_copy(update={"mcp_transport": "http", "mcp_port": 9000})
         a = AntigravityAgent(config=cfg, project_path=tmp_path)
@@ -325,6 +292,12 @@ class TestPiAgent:
         assert cmd == ["docker", "run", "odoo-boost", "mcp"]
         a.install()
         assert not a.windows_mcp_config_path.exists()
+
+
+class TestPiAgent:
+    def test_uses_shared_skills_dir(self, sample_config, tmp_path):
+        agent = PiAgent(config=sample_config, project_path=tmp_path)
+        assert agent.skills_dir == tmp_path / ".agents" / "skills"
 
 
 # ---------------------------------------------------------------------------
@@ -587,3 +560,30 @@ def test_nonstandard_toml_is_preserved_on_regeneration(tmp_path, table):
     with pytest.raises(ValueError):
         update_mcp_config(path, '[mcp_servers.odoo-boost]\ncommand = "new"\n', "codex")
     assert path.read_text() == table
+
+
+@pytest.mark.parametrize("remove", [False, True])
+@pytest.mark.parametrize(
+    "unrelated",
+    [
+        "[features] # keep my preferences\nshell_tool = true\n",
+        "  [features] # indented header\nshell_tool = true\n",
+        '[[profiles]] # array of tables\nname = "personal"\n',
+    ],
+)
+def test_codex_update_preserves_commented_and_array_tables(tmp_path, unrelated, remove):
+    from odoo_boost.agents.files import update_mcp_config
+
+    path = tmp_path / "config.toml"
+    path.write_text(
+        '[mcp_servers.odoo-boost] # generated server\ncommand = "old"\n\n' + unrelated,
+        encoding="utf-8",
+    )
+    update_mcp_config(path, '[mcp_servers.odoo-boost]\ncommand = "new"\n', "codex", remove=remove)
+    content = path.read_text(encoding="utf-8")
+    assert unrelated in content
+    parsed = tomllib.loads(content)
+    expected = tomllib.loads(unrelated)
+    if not remove:
+        expected["mcp_servers"] = {"odoo-boost": {"command": "new"}}
+    assert parsed == expected

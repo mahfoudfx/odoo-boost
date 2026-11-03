@@ -5,10 +5,11 @@ from __future__ import annotations
 from collections.abc import Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.connection.base import OdooConnection
+from odoo_boost.mcp_server.metrics import ToolMetrics
 
 
 @dataclass
@@ -17,6 +18,7 @@ class ServerContext:
 
     connection: OdooConnection
     config: OdooBoostConfig
+    metrics: ToolMetrics = field(default_factory=ToolMetrics)
 
 
 # Context-local singleton set at server start. Using a ContextVar keeps state
@@ -52,3 +54,9 @@ def get_context() -> ServerContext:
 
 def get_connection() -> OdooConnection:
     return get_context().connection
+
+
+def active_config() -> OdooBoostConfig | None:
+    """Return the active configuration, or None outside an MCP handler."""
+    ctx = _ctx.get()
+    return ctx.config if ctx is not None else None

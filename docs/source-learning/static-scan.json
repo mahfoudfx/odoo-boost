@@ -1,0 +1,76 @@
+{
+  "batch_id": "LEARN-2026-11-03-04",
+  "parsed": {
+    "python-parse": 2510,
+    "xml-parse": 1735
+  },
+  "manifest_count": 335,
+  "parse_errors": [
+    {
+      "unit_id": "B17-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/reports/report.xml",
+      "error": "no element found: line 1, column 0"
+    },
+    {
+      "unit_id": "B17-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/views/views.xml",
+      "error": "no element found: line 1, column 0"
+    },
+    {
+      "unit_id": "B19-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/reports/report.xml",
+      "error": "no element found: line 1, column 0"
+    },
+    {
+      "unit_id": "B19-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/views/views.xml",
+      "error": "no element found: line 1, column 0"
+    }
+  ],
+  "unresolved_manifests": [],
+  "missing_references": [],
+  "manifest_warnings": [
+    {
+      "unit_id": "B15-CODE:example:ch11/library_checkout/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    },
+    {
+      "unit_id": "B15-CODE:example:ch12/library_checkout/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    },
+    {
+      "unit_id": "B15-CODE:example:ch13/library_checkout/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    },
+    {
+      "unit_id": "B15-CODE:example:ch13/library_portal/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    },
+    {
+      "unit_id": "B15-CODE:example:final/library_checkout/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    },
+    {
+      "unit_id": "B15-CODE:example:final/library_portal/__manifest__.py",
+      "error": "web.assets_backend uses unordered set"
+    }
+  ],
+  "limits": [
+    "Syntax and local literal declarations only; no Odoo installation or runtime validation.",
+    "External-addon asset paths, dynamic expressions and XML schema semantics require review.",
+    "Every file is inventoried; automated scanning never marks content read."
+  ],
+  "issue_groups": {
+    "parse_errors": [
+      {
+        "error": "no element found: line 1, column 0",
+        "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "unit_ids": [
+          "B17-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/reports/report.xml",
+          "B17-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/views/views.xml",
+          "B19-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/reports/report.xml",
+          "B19-CODE:example:Chapter03/03_new_addon_file_structure/my_hostel/views/views.xml"
+        ],
+        "count": 4
+      }
+    ],
+    "unresolved_manifests": [],
+    "missing_references": []
+  }
+}

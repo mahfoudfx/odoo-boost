@@ -28,18 +28,14 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv pip install odoo-boost
 ```
 
-For package-managed optional features:
+For the optional OCA code linter:
 
 ```bash
-# Optional OCA code linting (pylint-odoo)
 pip install "odoo-boost[lint]"
-
-# Optional RelaxNG XML view validation (lxml)
-pip install "odoo-boost[xml]"
-
-# All optional packages
-pip install "odoo-boost[all]"
 ```
+
+Built-in XML inspection uses the included `defusedxml` dependency. RelaxNG
+schema validation requires separate tooling.
 
 Verify your installation:
 
@@ -155,12 +151,16 @@ odoo-boost odoo-ls install
 odoo-boost odoo-ls status
 ```
 
-This explicit command downloads the stable platform binary only from the
-official `odoo/odoo-ls` GitHub releases. Odoo Boost otherwise keeps using its
-built-in scanner and OCA linter.
+This explicit command downloads the latest stable platform binary and the
+Python stubs (`typeshed.zip`) it needs, only from the official `odoo/odoo-ls`
+GitHub releases. Run it again to update; `status` reports an outdated or
+stub-less install. Odoo Boost otherwise keeps using its built-in scanner and
+OCA linter.
 
-The install wizard chooses these diagnostics by default: it installs the
-official Odoo LS binary and `pylint-odoo` in the active Python environment.
+The install wizard chooses these diagnostics by default: it installs, repairs or
+updates the official Odoo LS and installs `pylint-odoo` in the active Python
+environment. A working Odoo LS from elsewhere, such as an editor extension, is
+kept as is.
 Answer **No** to its development-tools prompt, or use the following option,
 when a small or offline setup is preferable:
 

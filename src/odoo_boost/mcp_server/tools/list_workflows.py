@@ -32,6 +32,7 @@ def list_workflows(
 
     automations: list[dict] = []
     server_actions: list[dict] = []
+    errors: dict[str, str] = {}
 
     # 1. base.automation (automated actions)
     try:
@@ -58,8 +59,11 @@ def list_workflows(
                     "server_action_count": len(a.get("action_server_ids", [])),
                 }
             )
+    except ConnectionError:
+        raise
     except Exception as exc:  # base_automation module may not be installed
         logger.debug("base.automation unavailable: %s", exc)
+        errors["base.automation"] = str(exc)
 
     # 2. ir.actions.server
     sa_domain: list = []
@@ -90,8 +94,11 @@ def list_workflows(
                 entry["code_preview"] = compact_text(code, 120)
                 entry["code_length"] = len(code)
             server_actions.append(entry)
+    except ConnectionError:
+        raise
     except Exception as exc:
         logger.debug("ir.actions.server unavailable: %s", exc)
+        errors["ir.actions.server"] = str(exc)
 
     result = {
         "model_filter": model_name or "(all)",
@@ -101,4 +108,7 @@ def list_workflows(
         "automated_actions": automations,
         "server_actions": server_actions,
     }
+    if errors:
+        result["success"] = False
+        result["errors"] = errors
     return json_response(result)

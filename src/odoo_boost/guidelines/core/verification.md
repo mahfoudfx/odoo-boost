@@ -14,3 +14,11 @@ Choose the cheapest check that can catch a realistic failure. Review the final d
 | Migration, accounting, or stock valuation | Invariants, affected data paths, and targeted regression checks | Release or data integrity evidence requires broader validation |
 
 Do not create a test that merely repeats the implementation. Report any behavior that could not be verified. Live database checks and module upgrades still require the user's explicit request.
+
+
+## Reference-derived guidance
+
+When extracting rules from books or third-party examples, compare each rule with
+Odoo's official documentation for the configured series. Use official source code
+when documentation is unclear, record the source, and identify version boundaries.
+Keep unresolved claims out of packaged guidance until verified.

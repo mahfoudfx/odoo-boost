@@ -19,6 +19,7 @@
 │   ├── common.py              # Shared test data and base classes
 │   ├── test_{model_name}.py   # Model unit tests
 │   ├── test_security.py       # Security/access tests
+│   ├── test_translation.py    # Translation contracts, when applicable
 │   └── test_integration.py    # Integration tests
 ```
 
@@ -35,17 +36,25 @@ from . import test_integration
 
 ### Common Test Setup
 
+Apply the [testing guidelines](../../../guidelines/core/testing.md) for language,
+assertions, and security coverage. Set the shared language before fixture creation
+and carry it onto each dedicated user.
+
 ```python
 # tests/common.py
-from odoo.tests import TransactionCase, tagged
+from odoo.tests import TransactionCase
 
 
 class TestMyModuleCommon(TransactionCase):
     """Common setup for all tests in this module"""
 
+    test_lang = "en_US"
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, lang=cls.test_lang))
+        cls.env.user.lang = cls.test_lang
 
         # Create shared test data
         cls.company = cls.env.ref("base.main_company")
@@ -65,6 +74,9 @@ class TestMyModuleCommon(TransactionCase):
                 "name": "Test Manager",
                 "login": "test_manager",
                 "email": "manager@example.com",
+                "lang": cls.test_lang,
+                "company_id": cls.company.id,
+                "company_ids": [(6, 0, [cls.company.id])],
                 "groups_id": [
                     (
                         6,
@@ -83,6 +95,9 @@ class TestMyModuleCommon(TransactionCase):
                 "name": "Test User",
                 "login": "test_user",
                 "email": "user@example.com",
+                "lang": cls.test_lang,
+                "company_id": cls.company.id,
+                "company_ids": [(6, 0, [cls.company.id])],
                 "groups_id": [
                     (
                         6,
@@ -102,6 +117,7 @@ class TestMyModuleCommon(TransactionCase):
 
 ```python
 # tests/test_my_model.py
+from psycopg2.errors import NotNullViolation
 from odoo.tests import tagged
 from odoo.exceptions import ValidationError, UserError
 from .common import TestMyModuleCommon
@@ -136,8 +152,8 @@ class TestMyModel(TestMyModuleCommon):
         self.assertEqual(record.state, "draft")
 
     def test_name_required(self):
-        """Test that name is required"""
-        with self.assertRaises(Exception):
+        """Test the database NOT NULL constraint on name."""
+        with self.assertRaises(NotNullViolation):
             self.env["my.model"].create({})
 
     def test_state_workflow(self):
@@ -230,7 +246,13 @@ class TestMyModelComputed(TestMyModuleCommon):
 
 ### Constraint Tests
 
+These SQL examples assume database constraints; a Python constraint should assert
+its actual exception class, usually `ValidationError`.
+
 ```python
+from psycopg2.errors import UniqueViolation
+
+
 @tagged("post_install", "-at_install")
 class TestMyModelConstraints(TestMyModuleCommon):
     """Test model constraints"""
@@ -255,7 +277,7 @@ class TestMyModelConstraints(TestMyModuleCommon):
             }
         )
 
-        with self.assertRaises(Exception):  # IntegrityError wrapped
+        with self.assertRaises(UniqueViolation):
             self.env["my.model"].create(
                 {
                     "name": "Duplicate",
@@ -279,6 +301,11 @@ class TestMyModelConstraints(TestMyModuleCommon):
 
 ## Security Tests
 
+These examples assume basic users can create, read, and write their own records,
+while managers can also delete and confirm them. Adapt the fixtures and expected
+exception to the module's actual access contract. The confirmation tests exercise
+a method's group guard with otherwise valid data and write access.
+
 ```python
 # tests/test_security.py
 from odoo.tests import tagged
@@ -289,6 +316,13 @@ from .common import TestMyModuleCommon
 @tagged("post_install", "-at_install")
 class TestMyModelSecurity(TestMyModuleCommon):
     """Security and access rights tests"""
+
+    def _create_confirmable_record(self, user):
+        record = self.env["my.model"].with_user(user).create({"name": "Guard Test"})
+        self.env["my.model.line"].with_user(user).create(
+            {"model_id": record.id, "name": "Line 1", "quantity": 1}
+        )
+        return record
 
     def test_user_can_read_own_records(self):
         """Test basic user can read their own records"""
@@ -311,12 +345,28 @@ class TestMyModelSecurity(TestMyModuleCommon):
 
         with self.assertRaises(AccessError):
             record.with_user(self.user_basic).unlink()
+        self.assertTrue(record.exists())
 
     def test_manager_can_delete(self):
         """Test manager can delete records"""
         record = self.env["my.model"].create({"name": "Test"})
         record.with_user(self.user_manager).unlink()
         self.assertFalse(record.exists())
+
+    def test_basic_user_cannot_confirm(self):
+        record = self._create_confirmable_record(self.user_basic)
+        # Establish that ordinary writes work before exercising the method guard.
+        record.write({"name": "Ready for Confirmation"})
+        self.assertEqual(record.state, "draft")
+
+        with self.assertRaises(AccessError):
+            record.action_confirm()
+        self.assertEqual(record.state, "draft")
+
+    def test_manager_can_confirm(self):
+        record = self._create_confirmable_record(self.user_manager)
+        record.action_confirm()
+        self.assertEqual(record.state, "confirmed")
 
     def test_multi_company_isolation(self):
         """Test records are isolated by company"""
@@ -332,6 +382,8 @@ class TestMyModelSecurity(TestMyModuleCommon):
             {
                 "name": "User Company 2",
                 "login": "user_c2",
+                "lang": self.test_lang,
+                "groups_id": [(6, 0, [self.env.ref("base.group_user").id])],
                 "company_id": company2.id,
                 "company_ids": [(6, 0, [company2.id])],
             }
@@ -348,15 +400,15 @@ class TestMyModelSecurity(TestMyModuleCommon):
         # User in company2 should not see it
         records = self.env["my.model"].with_user(user_company2).search([])
         self.assertNotIn(record, records)
-
-    def test_sudo_bypasses_rules(self):
-        """Test sudo() bypasses record rules"""
-        record = self.env["my.model"].create({"name": "Test"})
-
-        # Admin can access via sudo
-        record_sudo = record.sudo()
-        self.assertTrue(record_sudo.exists())
 ```
+
+Odoo's `assertRaises` helper rolls back its savepoint on the expected exception.
+State assertions after it verify the transaction outcome; proving that a guard
+prevents an external side effect also requires observing that boundary, such as
+asserting that a patched mail sender was never called. Keep the guard itself real.
+
+For translation-specific examples, use
+[Testing Translations](translation-i18n-patterns.md#testing-translations).
 
 ## Integration Tests
 
@@ -532,6 +584,9 @@ def test_view_visibility(self):
 ### v18+ Multi-Company Testing
 
 ```python
+from odoo.exceptions import UserError
+
+
 def test_check_company_auto(self):
     """Test automatic company checking (v18+)"""
     # Create partner in different company
@@ -544,7 +599,7 @@ def test_check_company_auto(self):
     )
 
     # Should raise if check_company=True
-    with self.assertRaises(Exception):
+    with self.assertRaises(UserError):
         self.env["my.model"].create(
             {
                 "name": "Cross Company",

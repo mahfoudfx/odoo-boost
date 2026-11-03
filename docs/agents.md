@@ -6,6 +6,14 @@ Odoo Boost supports 12 modern AI coding agents. For each agent, Odoo Boost gener
 2. **MCP Config** — Machine-readable configuration connecting the agent to the Odoo Boost MCP server
 3. **Skills & Progressive Routing** — Step-by-step guides along with `SKILLS_ROUTING.md`
 
+Skill, routing, and guideline-reference updates preserve custom files and local
+edits. Odoo Boost records checksums in `.odoo-boost-files.json` inside the skill
+and reference directories, and replaces only unchanged generated content.
+Existing files without ownership metadata are adopted only when they match the
+current bundled content; other files are preserved with a warning. Uninstall
+also preserves edited files and removes unchanged files recorded by older
+versions.
+
 ## Supported Agents
 
 ### Antigravity (App & CLI `agy`)

@@ -13,6 +13,7 @@ from odoo_boost.agents.files import (
 )
 from odoo_boost.agents.spec import AGENT_SPECS
 from odoo_boost.config.schema import OdooBoostConfig
+from odoo_boost.generated_files import remove_empty_parents
 
 
 def find_orphaned_agent_files(config: OdooBoostConfig, project_path: Path) -> dict[str, list[Path]]:
@@ -93,16 +94,6 @@ def clean_orphaned_agent_files(orphans: dict[str, list[Path]], project_path: Pat
                 removed.extend(remove_generated_skills(path))
                 parents_to_check.append(path.parent)
 
-    for candidate in parents_to_check:
-        curr = candidate
-        while curr != project_path and curr.is_relative_to(project_path) and curr != curr.parent:
-            try:
-                if curr.is_dir() and not any(curr.iterdir()):
-                    curr.rmdir()
-                    curr = curr.parent
-                else:
-                    break
-            except OSError:
-                break
+    remove_empty_parents(parents_to_check, project_path)
 
     return removed

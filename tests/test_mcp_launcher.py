@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
+
+import pytest
 
 from odoo_boost.config.schema import OdooBoostConfig
 from odoo_boost.config.schema import OdooConnection as OdooConnectionConfig
@@ -83,6 +86,12 @@ class TestBuildStdioCommand:
 
 
 class TestBuildHttpUrl:
+    @pytest.mark.parametrize("host", ["::1", "[::1]", "2001:db8::1"])
+    def test_ipv6_host(self, host):
+        parsed = urlparse(build_http_url(_config(mcp_host=host)))
+        assert parsed.hostname == host.strip("[]")
+        assert parsed.port == 8765
+
     def test_default_host(self):
         assert build_http_url(_config()) == "http://127.0.0.1:8765/mcp"
 

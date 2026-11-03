@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import time
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier, Lock
 from unittest.mock import MagicMock
 
 import pytest
@@ -138,6 +141,52 @@ class TestXmlRpcConnection:
         assert result == [{"id": 1}]
         assert conn.uid == 3
         mock_common.authenticate.assert_called_once()
+
+    def test_parallel_rpc_calls_do_not_overlap(self):
+        conn = self._make_conn()
+        transport_busy = Lock()
+        start = Barrier(8)
+
+        def request(result):
+            # Model the single in-flight request supported by HTTPConnection.
+            assert transport_busy.acquire(blocking=False), "overlapping RPC requests"
+            try:
+                time.sleep(0.01)
+                return result
+            finally:
+                transport_busy.release()
+
+        common = MagicMock()
+        common.authenticate.side_effect = lambda *args: request(2)
+        common.version.side_effect = lambda: request({"server_version": "18.0"})
+        conn._common = common
+        objects = MagicMock()
+        objects.execute_kw.side_effect = lambda *args: request([{"id": 1}])
+        conn._object = objects
+
+        def call(index):
+            start.wait(timeout=5)
+            if index % 2:
+                return conn.get_version()
+            return conn.execute("res.partner", "read", [1])
+
+        with ThreadPoolExecutor(max_workers=8) as workers:
+            results = list(workers.map(call, range(8)))
+
+        assert results == [[{"id": 1}], {"server_version": "18.0"}] * 4
+        common.authenticate.assert_called_once()
+
+    def test_failed_rpc_releases_connection_for_next_call(self):
+        conn = self._make_conn()
+        conn._uid = 2
+        objects = MagicMock()
+        objects.execute_kw.side_effect = [OSError("disconnected"), [{"id": 1}]]
+        conn._object = objects
+        with pytest.raises(ConnectionError):
+            conn.execute("res.partner", "read", [1])
+        with ThreadPoolExecutor(max_workers=1) as workers:
+            result = workers.submit(conn.execute, "res.partner", "read", [1]).result(timeout=5)
+        assert result == [{"id": 1}]
 
 
 class TestConnectionFactory:

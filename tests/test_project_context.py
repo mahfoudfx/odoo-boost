@@ -9,6 +9,7 @@ from odoo_boost.cli.install import _detect_project_venv
 from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
 from odoo_boost.mcp_server.context import ServerContext, bound_context
 from odoo_boost.mcp_server.tools.search_docs import search_docs
+from odoo_boost.offline_docs import METADATA_FILE
 from odoo_boost.project_context import project_context
 
 
@@ -101,10 +102,11 @@ def test_missing_conf_is_compact_and_does_not_leak_other_options(tmp_path):
     assert "secret" not in str(result)
 
 
-def test_search_docs_uses_configured_local_checkout_when_page_exists(tmp_path):
+def test_search_docs_uses_configured_versioned_cache_when_page_exists(tmp_path):
     page = tmp_path / "docs" / "content" / "developer" / "reference" / "backend" / "orm.rst"
     page.parent.mkdir(parents=True)
     page.write_text("ORM reference\n")
+    (tmp_path / "docs" / METADATA_FILE).write_text(json.dumps({"series": "18.0"}))
     config = _config(tmp_path, odoo_version="18.0", odoo_docs_path="docs")
     with bound_context(ServerContext(connection=MagicMock(), config=config)):
         result = json.loads(search_docs("orm"))

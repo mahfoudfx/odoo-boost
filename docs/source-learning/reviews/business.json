@@ -1,0 +1,226 @@
+{
+  "fully_read_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/community/inventory__configuration.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/basics-of-accounting__reconciliation.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/configuration__reconciliation-models.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/odoo-erp__odoo-localization.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/basics-of-accounting__anglo-saxon-accounting.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/accounting__anglosaxon-accounting.txt"
+  ],
+  "partial_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__configuration.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__operations.txt"
+  ],
+  "partial_locators": [
+    {
+      "file": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__configuration.txt",
+      "ranges": [
+        "155-245",
+        "850-1105"
+      ]
+    },
+    {
+      "file": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__operations.txt",
+      "ranges": [
+        "750-930"
+      ]
+    }
+  ],
+  "lessons": [
+    {
+      "lesson_id": "SB-01",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/community/inventory__configuration.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__configuration.txt#lines-155-245"
+      ],
+      "decision": "Reservation timing is operation policy; distinguish available from reserved and test time windows/competing demand.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/inventory_and_mrp/inventory/shipping_receiving/reservation_methods.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/inventory_and_mrp/inventory/shipping_receiving/reservation_methods.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "integrated",
+      "project_targets": [
+        "src/odoo_boost/skills/domain_stock/references/reservation-and-valuation.md"
+      ],
+      "benefit": "Prevents changing assignment logic when policy explains unreserved available stock.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-02",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__configuration.txt#lines-850-1105"
+      ],
+      "decision": "Packaging policy can intentionally reserve less than available; test full-only versus partial alongside backorders.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/inventory_and_mrp/inventory/product_management/configure/packaging.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/inventory_and_mrp/inventory/product_management/configure/packaging.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "integrated",
+      "project_targets": [
+        "src/odoo_boost/skills/domain_stock/references/reservation-and-valuation.md"
+      ],
+      "benefit": "Provides a verified numeric reservation acceptance scenario.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-03",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/community/inventory__configuration.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__configuration.txt#lines-850-1105"
+      ],
+      "decision": "Separate physical removal from costing; verify category priority, location ordering and package strategy rather than assuming physical distance or smallest package.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/inventory_and_mrp/inventory/shipping_receiving/removal_strategies.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/inventory_and_mrp/inventory/shipping_receiving/removal_strategies.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "integrated",
+      "project_targets": [
+        "src/odoo_boost/skills/domain_stock/references/reservation-and-valuation.md"
+      ],
+      "benefit": "Corrects overbroad book explanations and clarifies the decision surface.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-04",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/inventory__operations.txt#lines-750-930"
+      ],
+      "decision": "Landed costs adjust valuation, not a universal sales-price rule; preserve the book-versus-doc eligibility discrepancy pending target implementation/runtime.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/inventory_and_mrp/inventory/product_management/inventory_valuation/landed_costs.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/inventory_and_mrp/inventory/product_management/inventory_valuation/landed_costs.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "integrated-qualified",
+      "project_targets": [
+        "src/odoo_boost/skills/domain_stock/references/reservation-and-valuation.md"
+      ],
+      "benefit": "Avoids unintended repricing and unsupported automated-only eligibility rules.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-05",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/basics-of-accounting__reconciliation.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/basics-of-accounting__anglo-saxon-accounting.txt"
+      ],
+      "decision": "Separate invoice payment matching, configured outstanding accounts and bank settlement evidence.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/finance/accounting/bank/reconciliation.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/finance/accounting/bank/reconciliation.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "confirmed-existing",
+      "project_targets": [
+        "docs/source-learning-business-review.md"
+      ],
+      "benefit": "Keeps reconciliation tests tied to actual accounting facts and configuration.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-06",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/configuration__reconciliation-models.txt"
+      ],
+      "decision": "Treat reconciliation sequence/conditions as business policy; test competing matches and underpayment-only tolerance.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/finance/accounting/bank/reconciliation_models.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/finance/accounting/bank/reconciliation_models.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-business-review.md"
+      ],
+      "benefit": "Adds meaningful reconciliation automation failure cases without private API guesses.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-07",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/odoo-erp__odoo-localization.txt"
+      ],
+      "decision": "Record installed localization modules and company/branch configuration before making country behavior assumptions.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/finance/fiscal_localizations.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/finance/fiscal_localizations.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-business-review.md"
+      ],
+      "benefit": "Makes localization fixtures reproducible and avoids a country setting being treated as full configuration proof.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    },
+    {
+      "lesson_id": "SB-08",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/accounting__anglosaxon-accounting.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/accounting/basics-of-accounting__anglo-saxon-accounting.txt"
+      ],
+      "decision": "Keep Enterprise-only claim unresolved; qualify accounting mode and newer valuation timing independently.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/inventory_and_mrp/inventory/product_management/inventory_valuation/inventory_valuation_config.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "applications/inventory_and_mrp/inventory/product_management/inventory_valuation/inventory_valuation_config.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/applications/finance/accounting/get_started/inventory_valuation.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "applications/finance/accounting/get_started/inventory_valuation.rst#Valuation methods",
+          "result": "verified"
+        }
+      ],
+      "disposition": "qualified",
+      "project_targets": [
+        "docs/source-learning-business-review.md"
+      ],
+      "benefit": "Prevents universal posting templates and unsupported edition claims.",
+      "validation": "Pinned local official documentation and source prose reviewed; 35 skill delivery tests passed, local links and whitespace passed; no Odoo runtime scenarios executed."
+    }
+  ]
+}

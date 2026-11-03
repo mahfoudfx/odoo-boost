@@ -1,0 +1,1224 @@
+{
+  "fully_read_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/00_initial_module/my_hostel/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/00_initial_module/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/00_initial_module/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/00_initial_module/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/js/field_widget.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/xml/field_widget.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/scss/field_widget.scss",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/models/hostel_room.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/js/field_widget.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/xml/field_widget.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/scss/field_widget.scss",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/views/hostel_room.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/models/hostel_room.py"
+  ],
+  "partial_files": [],
+  "content_review_map": [
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/00_initial_module/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/00_initial_module/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "e45434b3fdab3dad95a63fdd3a1a7abac5d70073d3f57f8c0555592cfd94a2aa"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/00_initial_module/my_hostel/views/hostel_room.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/00_initial_module/my_hostel/views/hostel_room.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "b741b79cc12eddaf1e3be40527f774be292d7fc7d7fe29fc37d52698be89de43"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "9bd1308d089dd3fba80fc7187ef6f99d751c35fc2e1e9270c01d9cdda02fb4ba"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6cbdf7fd1de0cc2b2472e3eb9dc1229fa822400a85c7d67272c2d2afcbd8f486"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6cbdf7fd1de0cc2b2472e3eb9dc1229fa822400a85c7d67272c2d2afcbd8f486"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "06c2c8afdf1e46b09484648cd3dd8816fc2f232154cbb5d4337cce446c998968"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "06c2c8afdf1e46b09484648cd3dd8816fc2f232154cbb5d4337cce446c998968"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "06c2c8afdf1e46b09484648cd3dd8816fc2f232154cbb5d4337cce446c998968"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "06c2c8afdf1e46b09484648cd3dd8816fc2f232154cbb5d4337cce446c998968"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "06c2c8afdf1e46b09484648cd3dd8816fc2f232154cbb5d4337cce446c998968"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "4bd6afa92405de3215d088bb31c5fecd4d39752527971cb4c72a0bee738abcd8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c374d6da8656a2defef4e695ef35b10560b470d3ac3f1528fbb86d0892d00a50"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "280f708f64382ae8c7d22a1e97453c35c6d140677e589af2ffff9fd0659caf4b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/03_content_and_widgets/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "280f708f64382ae8c7d22a1e97453c35c6d140677e589af2ffff9fd0659caf4b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "280f708f64382ae8c7d22a1e97453c35c6d140677e589af2ffff9fd0659caf4b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "280f708f64382ae8c7d22a1e97453c35c6d140677e589af2ffff9fd0659caf4b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "280f708f64382ae8c7d22a1e97453c35c6d140677e589af2ffff9fd0659caf4b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "22443737066fb20339d137b17fb8e44de301cf6bf0c6fd219546dadcb109b413"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/models/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "da1d5e3ef3dae1edd64df7031a9ebbfe32464fcdbf012577efc11da6d2b59d9f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "95ca756d5d3cd95a3502821ac5f500f0ddcba2159553c01dd9854860e5a4d39c"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "99de540337570a0b54d0167a6b4185d8a091ea395f547a4a9458a766d4c43f66"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/security/ir.model.access.csv",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/security/ir.model.access.csv",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "c3e9a84c96e2cc4f4b88bb5e32aac726965d17d17e875f1469eb84c296120343"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/07_list_view/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/08_search_view/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "d7125ce052da11ebe186997ebff4ff0b667dece799ff8fd619e468b67b3dc430"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "dfa0ea679da6b91f365f16381e759d5a65b3a0ef65a4caeb5936e9ab1014c742"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "dfa0ea679da6b91f365f16381e759d5a65b3a0ef65a4caeb5936e9ab1014c742"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "936a13381e69c5ce4c92a2bf5b2eab162cb569f8436b197e76d7c9d13c9c8f6e"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/security/groups.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6ae90c4ff9f1f769f9c670f44997453486bff13d7fc561e2aeef7f0902f3856a"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/03_content_and_widgets/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/__init__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/__init__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "872e5d8da65e13be87454fe5e68137e82499cda945c6e7562bb3cbecfee1482f"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/__manifest__.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/__manifest__.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "6242f29976a8d4dfdad2394de0a017234974e2daa1baba22672bad154a4b822b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/models/hostel_room_category.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/models/hostel_room_category.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "86bec230adf5b610a86afb0ad8a2b309df8fc4288fd65f6ef05b6fca3d5980f8"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room_category_view.xml",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/04_form_button/my_hostel/views/hostel_room_category_view.xml",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "1cd661218a660d4515e1e14d077e9149f5307d3b5e235bebe139c5b324d40b10"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/07_list_view/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "60489bccd57b32e76cfb9ada5c6b19af5ec954174a3aa3ccb6d26e56028c6e5b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "60489bccd57b32e76cfb9ada5c6b19af5ec954174a3aa3ccb6d26e56028c6e5b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "60489bccd57b32e76cfb9ada5c6b19af5ec954174a3aa3ccb6d26e56028c6e5b"
+    },
+    {
+      "path": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/models/hostel.py",
+      "representative": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py",
+      "status": "pending-context",
+      "reason": "Content matches a fully read representative; recipe context not certified.",
+      "content_sha256": "60489bccd57b32e76cfb9ada5c6b19af5ec954174a3aa3ccb6d26e56028c6e5b"
+    }
+  ],
+  "lessons": [
+    {
+      "lesson_id": "SU-01",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/ir.model.access.csv"
+      ],
+      "decision": "Separate menu labels/action scope/search criteria from model/record authorization.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/backend/actions.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/actions.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Confirms UI/security guidance with direct-action and direct-ORM acceptance scenarios.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-02",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/models/hostel.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/05_action_context/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/06_filters_using_domain/my_hostel/models/hostel.py"
+      ],
+      "decision": "Separate environment language, default input fields and model translation/archive capabilities.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/backend/actions.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/actions.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        },
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/odoo/blob/6f00fdadb875342de2d14a179f25431f93cd63c9/odoo/models.py",
+          "revision": "6f00fdadb875342de2d14a179f25431f93cd63c9",
+          "locator": "BaseModel.default_get",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Prevents context keys being treated as implicit model fields or translation support.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-03",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/views/hostel_room.xml"
+      ],
+      "decision": "Inspect ordered action-view composition, fallback IDs and versioned tree/list modes.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/backend/actions.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/actions.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/actions.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Makes view selection predictable when multiple modules add views.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-04",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/10_view_inheritance/my_hostel/views/hostel_room.xml"
+      ],
+      "decision": "XPath inheritance uses first match on the current resolved architecture; anchor deliberately and verify extension priority/context.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/user_interface/view_records.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/user_interface/view_records.rst",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/user_interface/view_records.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/user_interface/view_records.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Adds exact inherited-view failure scenarios and avoids all-match assumptions.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-05",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/08_search_view/my_hostel/views/hostel_room.xml"
+      ],
+      "decision": "Distinguish search filter domains, completion domains and group-by context within fixed action scope.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/user_interface/view_architectures.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/user_interface/view_architectures.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Explains record exclusion and combined search criteria without unnecessary widget rewrites.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-06",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/09_search_view_panel/my_hostel/views/hostel_room.xml"
+      ],
+      "decision": "Treat search-panel counters/expansion as measured UX-performance choices; selection multi-values are supported.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/user_interface/view_architectures.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/user_interface/view_architectures.rst",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/user_interface/view_architectures.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/user_interface/view_architectures.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Avoids a false defect claim and adds zero-result/query-cost checks.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-07",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter09/02_action_specific_views/my_hostel/models/hostel.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/02_action_specific_views/my_hostel/models/hostel.py"
+      ],
+      "decision": "Trace buttons to complete callable implementations and enforce genuine state invariants outside UI-only paths.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/reference/backend/security.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/reference/backend/security.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/security.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/security.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Adds a concrete missing-helper example that static syntax checks miss.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    },
+    {
+      "lesson_id": "SU-08",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/js/field_widget.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/xml/field_widget.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/static/src/scss/field_widget.scss",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter15/01_field_widget/my_hostel/models/hostel_room.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/js/field_widget.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/xml/field_widget.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/static/src/scss/field_widget.scss",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/views/hostel_room.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter14/01_field_widget/my_hostel/models/hostel_room.py"
+      ],
+      "decision": "Use the actual Owl field registry/template/asset family and target module conversion rules; test readonly behavior and inspect actual field props.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/documentation/blob/fbf3e3a6ef0bda7c30b28f213848deca17c2a872/content/developer/howtos/javascript_field.rst",
+          "revision": "fbf3e3a6ef0bda7c30b28f213848deca17c2a872",
+          "locator": "developer/howtos/javascript_field.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/howtos/javascript_field.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/howtos/javascript_field.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-ui-review.md"
+      ],
+      "benefit": "Confirms frontend version guidance through paired field widgets instead of assuming legacy APIs from chapter names.",
+      "validation": "48 distinct textual Chapter09 recipe00-10 contents read plus paired widget context; missing-helper AST and base XPath checks; pinned official contracts; no Odoo/browser execution."
+    }
+  ],
+  "unresolved": [
+    {
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter09/01_menus_and_actions copy/my_hostel/security/groups.xml"
+      ],
+      "claim": "v19 implied_by_ids receives refs named base.user_root/base.user_admin; exact relation/schema not checked successfully, so runtime effect stays unresolved."
+    }
+  ]
+}

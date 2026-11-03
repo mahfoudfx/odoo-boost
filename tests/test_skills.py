@@ -116,6 +116,14 @@ class TestSkillMetadataAndRouting:
 
 
 class TestLoadSkill:
+    def test_loaded_files_cannot_mutate_the_bundled_content_cache(self):
+        from odoo_boost.skills.loader import load_skill_files
+
+        files = load_skill_files("creating_models")
+        original = files["SKILL.md"]
+        files["SKILL.md"] = "Caller mutation"
+        assert load_skill_files("creating_models")["SKILL.md"] == original
+
     def test_load_each_skill(self):
         for skill_name in list_skills():
             content = load_skill(skill_name)
@@ -138,6 +146,108 @@ class TestLoadSkill:
 
 
 class TestInstallSkills:
+    def test_unchanged_update_preserves_file_and_manifest_timestamps(self, tmp_path):
+        target = tmp_path / "skills"
+        installed = install_skills(target)
+        # Fixed timestamps make this check independent of filesystem clock resolution.
+        import os
+
+        for path in installed:
+            os.utime(path, ns=(1_000_000_000, 1_000_000_000))
+        assert install_skills(target) == installed
+        assert all(path.stat().st_mtime_ns == 1_000_000_000 for path in installed)
+
+    def test_reports_ownership_manifest_during_install_and_uninstall(self, tmp_path):
+        from odoo_boost.generated_files import MANIFEST, remove_owned_files
+
+        target = tmp_path / "skills"
+        manifest = target / MANIFEST
+        assert manifest in install_skills(target)
+        assert manifest in remove_owned_files(target)
+        assert not manifest.exists()
+
+    def test_preserves_existing_custom_skill_and_routing(self, tmp_path):
+        target = tmp_path / "skills"
+        custom = target / "creating-models" / "SKILL.md"
+        custom.parent.mkdir(parents=True)
+        custom.write_text("My own model creation skill")
+        routing = target / "SKILLS_ROUTING.md"
+        routing.write_text("My own routing")
+
+        installed = install_skills(target)
+
+        assert custom.read_text() == "My own model creation skill"
+        assert routing.read_text() == "My own routing"
+        assert custom not in installed and routing not in installed
+
+    def test_updates_owned_content_but_preserves_local_edits(self, tmp_path, monkeypatch):
+        from odoo_boost.skills import loader
+
+        target = tmp_path / "skills"
+        monkeypatch.setattr(loader, "list_skills", lambda category=None: ["creating_models"])
+        monkeypatch.setattr(loader, "load_skill_files", lambda name: {"SKILL.md": "version 1"})
+        install_skills(target, write_routing=False)
+        skill = target / "creating-models" / "SKILL.md"
+        monkeypatch.setattr(loader, "load_skill_files", lambda name: {"SKILL.md": "version 2"})
+        install_skills(target, write_routing=False)
+        assert skill.read_text() == "version 2"
+
+        skill.write_text("User's changes")
+        monkeypatch.setattr(loader, "load_skill_files", lambda name: {"SKILL.md": "version 3"})
+        install_skills(target, write_routing=False)
+        assert skill.read_text() == "User's changes"
+
+    def test_adopts_identical_legacy_content(self, tmp_path, monkeypatch):
+        from odoo_boost.skills import loader
+
+        target = tmp_path / "skills"
+        skill = target / "creating-models" / "SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("legacy version")
+        monkeypatch.setattr(loader, "list_skills", lambda category=None: ["creating_models"])
+        monkeypatch.setattr(loader, "load_skill_files", lambda name: {"SKILL.md": "legacy version"})
+        install_skills(target, write_routing=False)
+        monkeypatch.setattr(loader, "load_skill_files", lambda name: {"SKILL.md": "new version"})
+        install_skills(target, write_routing=False)
+        assert skill.read_text() == "new version"
+
+    def test_uninstall_removes_unchanged_older_files_and_preserves_edits(self, tmp_path):
+        from odoo_boost.agents.files import remove_generated_skills
+        from odoo_boost.generated_files import write_owned_files
+
+        target = tmp_path / "skills"
+        write_owned_files(target, {"old-skill/SKILL.md": "old content", "edited.md": "original"})
+        (target / "edited.md").write_text("edited")
+        remove_generated_skills(target)
+        assert not (target / "old-skill").exists()
+        assert (target / "edited.md").read_text() == "edited"
+
+    def test_guideline_references_preserve_edits(self, tmp_path):
+        from odoo_boost.guidelines.composer import install_guideline_references
+
+        target = tmp_path / "guidelines"
+        install_guideline_references(target, "18.0")
+        reference = target / "security.md"
+        reference.write_text("Local security policy")
+        install_guideline_references(target, "18.0")
+        assert reference.read_text() == "Local security policy"
+
+    def test_symlinked_installed_file_is_preserved_on_uninstall(self, tmp_path):
+        from odoo_boost.agents.files import remove_generated_skills
+
+        target = tmp_path / "skills"
+        install_skills(target)
+        skill = target / "creating-models" / "SKILL.md"
+        outside = tmp_path / "custom.md"
+        outside.write_text("custom")
+        skill.unlink()
+        skill.symlink_to(outside)
+
+        remove_generated_skills(target)
+
+        assert skill.is_symlink()
+        assert outside.read_text() == "custom"
+
     def test_creates_files(self, tmp_path):
         target = tmp_path / "skills"
         created = install_skills(target)
@@ -196,6 +306,20 @@ class TestInstallSkills:
         assert len(first) == len(second)
         for path in second:
             assert path.exists()
+
+    def test_computed_field_reference_resolves_after_installation(self, tmp_path):
+        import re
+
+        target = tmp_path / "skills"
+        install_skills(target)
+        skill = target / "domain-computed-fields" / "SKILL.md"
+        content = skill.read_text(encoding="utf-8")
+        references = re.findall(r"\.\./[^\s`)]+/computed-field-patterns\.md", content)
+        assert references, "Computed-field guidance must link to its detailed patterns"
+        for relative in references:
+            reference = (skill.parent / relative).resolve()
+            assert reference.is_relative_to(target.resolve())
+            assert reference.is_file(), f"Broken installed skill reference: {relative}"
 
     def test_content_matches_load(self, tmp_path):
         target = tmp_path / "skills"

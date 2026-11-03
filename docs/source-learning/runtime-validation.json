@@ -1,0 +1,120 @@
+{
+  "executed_on": "2026-11-03",
+  "scope": "independently-authored-framework-contracts",
+  "original_book_addons_executed": false,
+  "original_book_migrations_executed": false,
+  "source": {
+    "version": "18.0",
+    "edition": "Community",
+    "commit": "df8a3fb0ccfc69fdc612b69e0a22ef1b1b37b779",
+    "path": "/home/mahfoud/dev/web/odoo/sources/odoo18ce",
+    "available_refs": [
+      "18.0",
+      "origin/18.0"
+    ],
+    "shallow": true
+  },
+  "postgres_version": "18.6",
+  "python_version": "3.12.13",
+  "result": {
+    "work_dir": "/tmp/odoo-boost-learning-7f2io3mm",
+    "odoo_root": "/home/mahfoud/dev/web/odoo/sources/odoo18ce",
+    "expected_tests": 2,
+    "command": [
+      "/home/mahfoud/.local/share/mise/installs/python/3.12/bin/python",
+      "/home/mahfoud/dev/web/odoo/sources/odoo18ce/odoo-bin",
+      "-c",
+      "/dev/null",
+      "--addons-path",
+      "/home/mahfoud/dev/web/odoo/sources/odoo18ce/addons,/home/mahfoud/dev/web/odoo/sources/odoo18ce/odoo/addons,/tmp/odoo-boost-learning-7f2io3mm/addons",
+      "--data-dir",
+      "/tmp/odoo-boost-learning-7f2io3mm/data",
+      "--db_host",
+      "/tmp/odoo-boost-learning-7f2io3mm/socket",
+      "--db_port",
+      "55439",
+      "--db_user",
+      "mahfoud",
+      "-d",
+      "learning_contracts",
+      "-i",
+      "learning_contracts",
+      "--without-demo",
+      "all",
+      "--no-http",
+      "--workers",
+      "0",
+      "--test-enable",
+      "--test-tags",
+      "/learning_contracts",
+      "--stop-after-init",
+      "--logfile",
+      "/tmp/odoo-boost-learning-7f2io3mm/odoo.log"
+    ],
+    "exit_code": 0,
+    "failures": 0,
+    "errors": 0,
+    "tests_executed": 2,
+    "expected_tests_verified": true,
+    "postgres_stop_exit_code": 0
+  },
+  "tests": [
+    {
+      "name": "LearningContracts.test_custom_report_context_and_escaped_html",
+      "outcome": "passed",
+      "assertions": [
+        "Actual custom report context contains provider lines but no default docs/doc_ids/doc_model",
+        "Actual QWeb HTML contains both selected records",
+        "Angle brackets from record name are HTML escaped"
+      ]
+    },
+    {
+      "name": "LearningContracts.test_parent_rule_does_not_restrict_child_query",
+      "outcome": "passed",
+      "assertions": [
+        "Non-admin owner sees one parent document",
+        "Direct child search sees two children while no child rule applies",
+        "Adding explicit child ownership rule reduces non-admin child search count to one"
+      ]
+    }
+  ],
+  "isolation": {
+    "root": "/tmp/odoo-boost-learning-7f2io3mm",
+    "config": "/dev/null",
+    "postgres_listen_addresses": "",
+    "postgres_socket": "/tmp/odoo-boost-learning-7f2io3mm/socket",
+    "http_enabled": false,
+    "source_bytecode_writes": false,
+    "user_connection_settings_used": false,
+    "existing_databases_used": false,
+    "private_cluster_stopped": true
+  },
+  "logs": [
+    {
+      "path": "/tmp/odoo-boost-learning-7f2io3mm/odoo.log",
+      "sha256": "6017a4d57d8a7cb183243ee5e1fd62e2f54f38f89e15dad048c3715c78ccca14"
+    },
+    {
+      "path": "/tmp/odoo-boost-learning-7f2io3mm/postgres.log",
+      "sha256": "cb6078a67f300cc97b67ceb4c25437b0eaf344cb3ef9b6e552e122594396d54d"
+    },
+    {
+      "path": "/tmp/odoo-boost-learning-7f2io3mm/initdb.log",
+      "sha256": "eed22b34e0ad0109dd3d0fe5a3e3247584181fa9dc92fff63b7d6c1974eb628a"
+    }
+  ],
+  "harness": {
+    "path": "tools/validate_source_contracts.py",
+    "sha256": "9e1597838fed8032e78e515c8ba1b6fcddbefd49247902bd0509dfebf8622af7"
+  },
+  "summary_lines": [
+    "2026-11-03 13:37:35,628 334405 INFO learning_contracts odoo.addons.learning_contracts.tests.test_contracts: Starting LearningContracts.test_custom_report_context_and_escaped_html ... ",
+    "2026-11-03 13:37:35,648 334405 INFO learning_contracts odoo.addons.learning_contracts.tests.test_contracts: Starting LearningContracts.test_parent_rule_does_not_restrict_child_query ... ",
+    "2026-11-03 13:37:35,669 334405 INFO learning_contracts odoo.service.server: 2 post-tests in 0.09s, 74 queries ",
+    "2026-11-03 13:37:35,669 334405 INFO learning_contracts odoo.tests.result: 0 failed, 0 error(s) of 2 tests when loading database 'learning_contracts' "
+  ],
+  "limitations": [
+    "No matching15/17/19 original-addon execution",
+    "No PDF, browser, translated-field, company, migration or provider/hardware scenario executed"
+  ]
+}

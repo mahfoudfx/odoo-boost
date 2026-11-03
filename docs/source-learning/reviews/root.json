@@ -1,0 +1,107 @@
+{
+  "fully_read_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/.gitignore",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/views/book_list_template.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/views/book_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch04/library_app/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch04/library_member/views/book_list_template.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch04/library_member/views/book_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch04/library_member/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch04/library_member/views/member_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/book_demo.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/library.book.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/res.partner.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_app/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/data/stage_data.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/views/checkout_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/wizard/checkout_mass_message_wizard_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch10/library_checkout/views/checkout_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch10/library_checkout/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch11/library_checkout/views/checkout_kanban_view.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch11/library_checkout/views/library_menu.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/static/description/icon.png"
+  ],
+  "partial_files": [],
+  "lessons": [
+    {
+      "lesson_id": "SR-01",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch03/library_app/views/book_view.xml"
+      ],
+      "decision": "Test active/archive filters by actual selected records, not XML syntax alone.",
+      "problem": "Filter labels must agree with domains",
+      "official_evidence": [
+        {
+          "series": "15.0",
+          "url": "https://github.com/odoo/documentation/blob/f6b84ed59624ba8f0db2b1d0f7097e435550bb7e/content/developer/reference/backend/views.rst",
+          "revision": "f6b84ed59624ba8f0db2b1d0f7097e435550bb7e",
+          "locator": "developer/reference/backend/views.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-essentials-completion.md"
+      ],
+      "benefit": "Test active/archive filters by actual selected records, not XML syntax alone.",
+      "validation": "Full representative text read; icon visually inspected; pinned15 docs checked; no original addon/browser execution."
+    },
+    {
+      "lesson_id": "SR-02",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch11/library_checkout/views/checkout_kanban_view.xml"
+      ],
+      "decision": "Use field raw_value/value according to the legacy renderer, rather than comparing the wrapper.",
+      "problem": "Legacy kanban field wrapper contract",
+      "official_evidence": [
+        {
+          "series": "15.0",
+          "url": "https://github.com/odoo/documentation/blob/f6b84ed59624ba8f0db2b1d0f7097e435550bb7e/content/developer/reference/backend/views.rst",
+          "revision": "f6b84ed59624ba8f0db2b1d0f7097e435550bb7e",
+          "locator": "developer/reference/backend/views.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-essentials-completion.md"
+      ],
+      "benefit": "Use field raw_value/value according to the legacy renderer, rather than comparing the wrapper.",
+      "validation": "Full representative text read; icon visually inspected; pinned15 docs checked; no original addon/browser execution."
+    },
+    {
+      "lesson_id": "SR-03",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/res.partner.csv",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/library.book.csv",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch05/library_app/data/book_demo.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch08/library_checkout/data/stage_data.xml"
+      ],
+      "decision": "Keep stable identifiers and verify sequential data/action dependencies and noupdate upgrade policy.",
+      "problem": "Seed data and action dependency order",
+      "official_evidence": [
+        {
+          "series": "15.0",
+          "url": "https://github.com/odoo/documentation/blob/f6b84ed59624ba8f0db2b1d0f7097e435550bb7e/content/developer/reference/backend/data.rst",
+          "revision": "f6b84ed59624ba8f0db2b1d0f7097e435550bb7e",
+          "locator": "developer/reference/backend/data.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-essentials-completion.md"
+      ],
+      "benefit": "Keep stable identifiers and verify sequential data/action dependencies and noupdate upgrade policy.",
+      "validation": "Full representative text read; icon visually inspected; pinned15 docs checked; no original addon/browser execution."
+    }
+  ]
+}

@@ -1,27 +1,27 @@
-"""Tests for all 15 MCP tools using MockOdooConnection."""
+"""MCP tool behavior using MockOdooConnection."""
 
 from __future__ import annotations
 
 import json
+from xmlrpc.client import Fault
 
 import pytest
 
 from odoo_boost.mcp_server.tools.aggregate_records import aggregate_records
 from odoo_boost.mcp_server.tools.application_info import application_info
 from odoo_boost.mcp_server.tools.check_odoo_ls import check_odoo_ls
-from odoo_boost.mcp_server.tools.database_query import database_query
 from odoo_boost.mcp_server.tools.database_schema import database_schema
 from odoo_boost.mcp_server.tools.execute_method import execute_method
 from odoo_boost.mcp_server.tools.get_config import get_config
-from odoo_boost.mcp_server.tools.get_model_inheritance import get_model_inheritance
+from odoo_boost.mcp_server.tools.get_model_field_contributors import get_model_field_contributors
 from odoo_boost.mcp_server.tools.get_module_info import get_module_info
 from odoo_boost.mcp_server.tools.inspect_local_addon import inspect_local_addon
 from odoo_boost.mcp_server.tools.lint_odoo_code import lint_odoo_code
 from odoo_boost.mcp_server.tools.list_access_rights import list_access_rights
 from odoo_boost.mcp_server.tools.list_menus import list_menus
 from odoo_boost.mcp_server.tools.list_models import list_models
-from odoo_boost.mcp_server.tools.list_routes import list_routes
 from odoo_boost.mcp_server.tools.list_views import list_views
+from odoo_boost.mcp_server.tools.list_website_pages import list_website_pages
 from odoo_boost.mcp_server.tools.list_workflows import list_workflows
 from odoo_boost.mcp_server.tools.read_log_entries import read_log_entries
 from odoo_boost.mcp_server.tools.resolve_local_xml_id import resolve_local_xml_id
@@ -79,28 +79,28 @@ class TestDatabaseSchema:
 
 
 # ---------------------------------------------------------------------------
-# database_query
+# search_records
 # ---------------------------------------------------------------------------
 
 
-class TestDatabaseQuery:
+class TestSearchRecordFiltering:
     def test_basic_query(self):
-        result = json.loads(database_query("res.partner"))
+        result = json.loads(search_records("res.partner"))
         assert result["model"] == "res.partner"
         assert result["total_count"] == 2
         assert result["returned_count"] == 2
 
     def test_domain_filter(self):
-        result = json.loads(database_query("res.partner", domain='[["is_company", "=", true]]'))
+        result = json.loads(search_records("res.partner", domain='[["is_company", "=", true]]'))
         assert result["total_count"] == 1
 
     def test_fields_filter(self):
-        result = json.loads(database_query("res.partner", fields='["name"]'))
+        result = json.loads(search_records("res.partner", fields='["name"]'))
         for rec in result["records"]:
             assert "name" in rec
 
     def test_limit(self):
-        result = json.loads(database_query("res.partner", limit=1))
+        result = json.loads(search_records("res.partner", limit=1))
         assert result["returned_count"] == 1
 
 
@@ -162,7 +162,7 @@ class TestListMenus:
 
 
 # ---------------------------------------------------------------------------
-# list_routes
+# list_website_pages
 # ---------------------------------------------------------------------------
 
 
@@ -170,7 +170,7 @@ class TestListRoutes:
     def test_returns_result(self):
         # No website.page / website.rewrite seeded, so routes should be empty
         # (the tool catches exceptions silently)
-        result = json.loads(list_routes())
+        result = json.loads(list_website_pages())
         assert "total" in result
         assert "routes" in result
         assert "scope" in result
@@ -180,8 +180,10 @@ class TestListRoutes:
 
         conn = MagicMock()
         conn.search_read.return_value = []
-        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
-        list_routes(filter_url="shop")
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.tools.list_website_pages.get_connection", lambda: conn
+        )
+        list_website_pages(filter_url="shop")
         rewrite_call = conn.search_read.call_args_list[1]
         assert rewrite_call.kwargs["domain"] == [
             "|",
@@ -195,8 +197,10 @@ class TestListRoutes:
 
         conn = MagicMock()
         conn.search_read.side_effect = [Fault(1, "AccessError: forbidden"), []]
-        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
-        result = json.loads(list_routes())
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.tools.list_website_pages.get_connection", lambda: conn
+        )
+        result = json.loads(list_website_pages())
         assert result["complete"] is False
         assert result["unavailable"]["website.page"] == "access denied"
 
@@ -205,9 +209,11 @@ class TestListRoutes:
 
         conn = MagicMock()
         conn.search_read.side_effect = ConnectionError("Odoo offline")
-        monkeypatch.setattr("odoo_boost.mcp_server.tools.list_routes.get_connection", lambda: conn)
+        monkeypatch.setattr(
+            "odoo_boost.mcp_server.tools.list_website_pages.get_connection", lambda: conn
+        )
         with pytest.raises(ConnectionError, match="Odoo offline"):
-            list_routes()
+            list_website_pages()
 
 
 # ---------------------------------------------------------------------------
@@ -262,17 +268,6 @@ class TestGetModuleInfo:
 # ---------------------------------------------------------------------------
 # search_records
 # ---------------------------------------------------------------------------
-
-
-class TestSearchRecords:
-    def test_basic_search(self):
-        result = json.loads(search_records("res.partner"))
-        assert result["model"] == "res.partner"
-        assert result["total_count"] == 2
-
-    def test_with_domain(self):
-        result = json.loads(search_records("res.partner", domain='[["is_company", "=", true]]'))
-        assert result["total_count"] == 1
 
 
 # ---------------------------------------------------------------------------
@@ -357,6 +352,35 @@ class TestSearchDocs:
 
 
 class TestListWorkflows:
+    @pytest.mark.parametrize("failed_model", ["base.automation", "ir.actions.server"])
+    def test_connection_failure_propagates(self, server_context, monkeypatch, failed_model):
+        original = server_context.connection.search_read
+
+        def search_read(model, **kwargs):
+            if model == failed_model:
+                raise ConnectionError("Odoo unreachable")
+            return original(model, **kwargs)
+
+        monkeypatch.setattr(server_context.connection, "search_read", search_read)
+        with pytest.raises(ConnectionError, match="Odoo unreachable"):
+            list_workflows()
+
+    @pytest.mark.parametrize("failed_model", ["base.automation", "ir.actions.server"])
+    def test_query_failure_reports_partial_results(self, server_context, monkeypatch, failed_model):
+        original = server_context.connection.search_read
+
+        def search_read(model, **kwargs):
+            if model == failed_model:
+                raise Fault(1, "Access denied or model unavailable")
+            return original(model, **kwargs)
+
+        monkeypatch.setattr(server_context.connection, "search_read", search_read)
+        result = json.loads(list_workflows())
+        assert result["success"] is False
+        assert "Access denied" in result["errors"][failed_model]
+        remaining = "server_actions" if failed_model == "base.automation" else "automated_actions"
+        assert len(result[remaining]) == 1
+
     def test_returns_both_types(self):
         result = json.loads(list_workflows())
         assert "automated_actions" in result
@@ -400,19 +424,61 @@ class TestResolveXmlId:
 
 
 # ---------------------------------------------------------------------------
-# get_model_inheritance
+# get_model_field_contributors
 # ---------------------------------------------------------------------------
 
 
 class TestGetModelInheritance:
-    def test_get_model_inheritance_existing(self):
-        result = json.loads(get_model_inheritance("res.partner"))
+    def test_reports_metadata_scope_without_claiming_hierarchy(self):
+        result = json.loads(get_model_field_contributors("res.partner"))
+        assert result["scope"] == "field_contributors"
+        assert result["hierarchy_available"] is False
+        assert "addon source" in result["hierarchy_note"]
+
+    @pytest.mark.parametrize("response_format", ["compact", "full"])
+    def test_counts_all_fields_and_modules_beyond_first_page(self, server_context, response_format):
+        server_context.connection.seed(
+            "ir.model.fields",
+            [
+                {
+                    "id": n,
+                    "model": "res.partner",
+                    "name": f"field_{n}",
+                    "modules": "base",
+                    "state": "base",
+                }
+                for n in range(1, 201)
+            ]
+            + [
+                {
+                    "id": n,
+                    "model": "res.partner",
+                    "name": f"x_field_{n}",
+                    "modules": "late_module",
+                    "state": "manual",
+                }
+                for n in range(201, 261)
+            ],
+        )
+
+        result = json.loads(
+            get_model_field_contributors("res.partner", response_format=response_format)
+        )
+
+        assert result["total_fields"] == 260
+        assert result["custom_fields_count"] == 60
+        assert result["contributing_modules"] == ["base", "late_module"]
+        assert len(result["custom_fields"]) == (50 if response_format == "full" else 20)
+        assert result["custom_fields_truncated"] is True
+
+    def test_get_model_field_contributors_existing(self):
+        result = json.loads(get_model_field_contributors("res.partner"))
         assert result["found"] is True
         assert result["model"] == "res.partner"
         assert "contributing_modules" in result
 
-    def test_get_model_inheritance_nonexistent(self):
-        result = json.loads(get_model_inheritance("nonexistent.model"))
+    def test_get_model_field_contributors_nonexistent(self):
+        result = json.loads(get_model_field_contributors("nonexistent.model"))
         assert result["found"] is False
 
 
@@ -451,20 +517,12 @@ class TestLintAndLsTools:
         ("version", "warns"),
         [("16.0", False), ("17.0", True), ("20.0", True), ("21.0", False)],
     )
-    def test_name_get_warning_is_version_specific(
-        self, tmp_path, monkeypatch, sample_config, version, warns
-    ):
-        import importlib
+    def test_name_get_warning_is_version_specific(self, tmp_path, version, warns):
+        from odoo_boost.diagnostics import _run_fallback_ast_lint
 
-        lint_module = importlib.import_module("odoo_boost.mcp_server.tools.lint_odoo_code")
         source = tmp_path / "model.py"
         source.write_text("class Model:\n    def name_get(self):\n        return []\n")
-        monkeypatch.setattr(
-            lint_module,
-            "active_config",
-            lambda: sample_config.model_copy(update={"odoo_version": version}),
-        )
-        result = lint_module._run_fallback_ast_lint(source)
+        result = _run_fallback_ast_lint(source, version)
         assert any(issue.get("code") == "E8146" for issue in result["issues"]) is warns
 
     def test_lint_odoo_code(self, tmp_path):
@@ -482,14 +540,14 @@ class TestLintAndLsTools:
 
 
 # ---------------------------------------------------------------------------
-# database_query compact mode
+# search_records compact mode
 # ---------------------------------------------------------------------------
 
 
 class TestDatabaseQueryCompact:
     def test_compact_mode(self):
-        raw = json.loads(database_query("res.partner", compact=False))
-        compact = json.loads(database_query("res.partner", compact=True))
+        raw = json.loads(search_records("res.partner", compact=False))
+        compact = json.loads(search_records("res.partner", compact=True))
         assert raw["returned_count"] == compact["returned_count"]
         # Compact records should omit None or empty values
         if compact["records"]:
@@ -530,7 +588,7 @@ class TestMcpServerV2:
 
         # Verify tools count
         tools = await server.list_tools()
-        assert len(tools) == 23
+        assert len(tools) == 30
 
     @pytest.mark.anyio
     async def test_server_resilient_when_odoo_offline(
@@ -549,4 +607,4 @@ class TestMcpServerV2:
         # Server must start successfully without crashing
         server = create_mcp_server(sample_config)
         tools = await server.list_tools()
-        assert len(tools) == 23
+        assert len(tools) == 30

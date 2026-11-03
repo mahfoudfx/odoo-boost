@@ -1,5 +1,16 @@
 ## Views and UI
 
+### Audited Version Boundaries
+
+| View convention | 15 | 17 | 18 / 19 / 20 |
+|---|---|---|---|
+| List root and action mode | `tree` | `tree` | `list` |
+| Dynamic modifiers | `attrs` / `states` patterns | Inline Python expressions | Inline Python expressions |
+
+Use the same list-view naming in nested views and actions. Include fields used
+by modifier expressions in the architecture. Exact search-view attributes and
+chatter markup still require the target version's schema/parent view.
+
 ### View Types
 - **Form**: detail view for a single record. Uses `<form>` root element.
 - **List**: tabular view. Use the root element and dynamic-attribute syntax selected by
@@ -19,13 +30,17 @@
 - Use `<sheet>` inside `<form>` for the main content area.
 - Use `<group>` to organize fields into columns — `<group>` creates a 2-column layout.
 - Use `<notebook>` + `<page>` for tabbed sections.
-- Add `<div class="oe_chatter">` with `mail.thread` fields for chatter integration.
+- Use the target version's chatter element and model mixins; inspect the inherited
+  view rather than copying legacy chatter markup into a newer series.
 - Use `widget` attribute for special rendering (e.g. `widget="many2many_tags"`).
-- Use `invisible`, `readonly`, `required` attributes with expressions for dynamic UI.
+- Select modifier syntax from version notes: modern series use inline expressions;
+  older series may require `attrs` for dynamic conditions. Include fields referenced
+  by expressions in the view, even if invisible.
 
 ### Actions and Menus
 - Window actions (`ir.actions.act_window`) open views for a model.
-- Set `view_mode` to define available views: `"list,form"`, `"kanban,list,form"`.
+- Set `view_mode` with the configured version's list-view name (`list` or `tree`)
+  and keep it consistent with the view architecture.
 - Use `domain` on actions to pre-filter records.
 - Use `context` to set defaults: `{'default_type': 'out_invoice'}`.
 - Menus (`ir.ui.menu`) link to actions and define the navigation hierarchy.
@@ -34,3 +49,15 @@
 - View XML IDs: `<module>.<model_underscored>_view_<type>` (e.g. `sale.sale_order_view_form`).
 - Action XML IDs: `<module>.<model_underscored>_action` (e.g. `sale.sale_order_action`).
 - Menu XML IDs: `<module>.<model_underscored>_menu` or descriptive names.
+
+
+### Verification
+Inspect the resolved inherited architecture, not only the extension XML. Check
+XPath targets, action/menu references, modifiers and fields under intended user
+groups. A hidden button or readonly widget is a UI affordance, not a server-side
+permission check. Validate in the target version; static parsing alone does not
+prove the rendered view works.
+
+See [Odoo 18 view architecture](https://github.com/odoo/documentation/blob/18.0/content/developer/reference/user_interface/view_architectures.rst)
+and the [older view API](https://github.com/odoo/documentation/blob/16.0/content/developer/reference/backend/views.rst)
+when maintaining older addons.

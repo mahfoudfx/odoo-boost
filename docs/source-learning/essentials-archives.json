@@ -1,0 +1,42 @@
+{
+  "sources": [
+    {
+      "source_id": "B15-CODE",
+      "archive": "Odoo-15-Development-Essentials-Examples.zip",
+      "archive_sha256": "34cceb82db42f8401b2b5957d4ed88177982374e2b50b6fa5987c44ed5b681ad",
+      "extracted_path": "Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples",
+      "files": 419,
+      "distinct_contents": 96,
+      "availability": "examples-present",
+      "batch_id": "LEARN-2026-11-03-03"
+    },
+    {
+      "source_id": "E17-CODE",
+      "archive": "Odoo-17-Development-Essentials-Examples.zip",
+      "archive_sha256": "68018ff658ebff5c51681f00bd85a560bc5c04bc769f35462eac8c33b67286c7",
+      "extracted_path": "Odoo-17-Development-Essentials/Odoo-17-Development-Essentials-Examples",
+      "files": 2,
+      "distinct_contents": 2,
+      "availability": "metadata-only-no-examples",
+      "batch_id": "LEARN-2026-11-03-03"
+    }
+  ],
+  "static_scan": {
+    "counts": {
+      "<none>": 2,
+      ".md": 1,
+      ".sh": 5,
+      ".py": 221,
+      ".csv": 41,
+      ".xml": 127,
+      ".png": 10,
+      ".css": 6,
+      ".js": 4,
+      ".nginx": 1,
+      ".service": 1
+    },
+    "manifests": 25,
+    "parse_errors": [],
+    "missing_references": []
+  }
+}

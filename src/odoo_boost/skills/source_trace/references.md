@@ -13,6 +13,11 @@ for coupled or unfamiliar changes; the main `source_trace` skill defines when.
    root wins.
 3. Read the target module manifest and the transitive dependencies needed by
    the symbols you plan to extend.
+4. Verify that each match belongs to the intended class and actually loads:
+   follow the addon and package `__init__.py` imports for Python; check manifest
+   `data` entries for XML/CSV and the relevant asset bundle for JavaScript, Owl,
+   and styles. Distinguish test/demo-only files from production code. A search
+   hit or a declared dependency alone does not prove the definition is active.
 
 ## Trace the change
 

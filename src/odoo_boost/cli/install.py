@@ -14,7 +14,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 
-from odoo_boost.agents import AGENTS, ALL_AGENT_IDS
+from odoo_boost.agents import AGENTS, ALL_AGENT_IDS, install_agents
+from odoo_boost.cli.files import report_paths
 from odoo_boost.cli.gitignore import ignore_entry, managed_entries, update_gitignore
 from odoo_boost.config.schema import OdooBoostConfig, OdooConnection
 from odoo_boost.config.settings import save_config
@@ -183,11 +184,16 @@ def install(
     if get_version_profile(odoo_version) is None:
         console.print(version_guidance(odoo_version), markup=False)
 
-    from odoo_boost.odoo_ls import find_odoo_ls
+    from odoo_boost.odoo_ls import find_odoo_ls, is_usable
 
     ls_bin = find_odoo_ls()
-    if ls_bin:
+    if ls_bin and is_usable(ls_bin):
         console.print(f"  Detected Odoo Language Server: [green]{ls_bin}[/]")
+    elif ls_bin:
+        console.print(
+            f"  Odoo Language Server: [yellow]{ls_bin} has no typeshed stubs "
+            "(unusable; the development tools step repairs it)[/]"
+        )
     else:
         console.print(
             "  Odoo Language Server: [dim]not on PATH (using built-in pure-Python AST scanner)[/]"
@@ -327,20 +333,9 @@ def install(
     console.print(
         "  [yellow]Credentials are stored in plaintext — keep odoo-boost.json out of version control.[/]"
     )
-    generated_paths = [config_path]
-
-    # Install each agent
-    for agent_id in selected_agents:
-        agent_cls = AGENTS[agent_id]
-        agent = agent_cls(config=config, project_path=project_path)
-        created = agent.install()
-        generated_paths.extend(created)
-        for p in created:
-            try:
-                rel = p.relative_to(project_path)
-            except ValueError:
-                rel = p
-            console.print(f"  [green]Created[/] {rel}")
+    created = install_agents(config, project_path)
+    report_paths(console, created, project_path, "[green]Created[/]")
+    generated_paths = [config_path, *created]
 
     # Claude Code also creates the shared AGENTS.md file.
     if "claude_code" in selected_agents and generate_ai_files:
@@ -382,14 +377,18 @@ def install(
 
 def _install_development_tools() -> None:
     """Install optional diagnostics without making project setup depend on them."""
-    from odoo_boost.odoo_ls import find_odoo_ls, install_official_odoo_ls
+    from odoo_boost.odoo_ls import find_odoo_ls, install_official_odoo_ls, is_managed, is_usable
 
-    if find_odoo_ls():
-        console.print("  [green]Odoo LS already available.[/]")
+    existing = find_odoo_ls()
+    if existing and is_usable(existing) and not is_managed(existing):
+        # A working server from elsewhere (editor extension, manual install): keep it.
+        console.print(f"  [green]Odoo LS already available:[/] {existing}")
     else:
+        # Missing, stub-less or managed: install, repair or update to the latest release.
         try:
-            path, version = install_official_odoo_ls()
-            console.print(f"  [green]Installed official Odoo LS {version}:[/] {path}")
+            result = install_official_odoo_ls()
+            state = "Installed" if result.changed else "Up to date:"
+            console.print(f"  [green]{state} official Odoo LS {result.tag}:[/] {result.path}")
         except Exception as exc:
             console.print(f"  [yellow]Could not install Odoo LS:[/] {exc}")
 

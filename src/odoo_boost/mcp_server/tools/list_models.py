@@ -42,7 +42,7 @@ def list_models(
     models = conn.search_read(
         "ir.model",
         domain=domain,
-        fields=["model", "name", "info", "field_id"],
+        fields=["model", "name", "field_id"],
         limit=limit,
         offset=offset,
         order="model",

@@ -11,8 +11,8 @@ from pathlib import Path
 
 from mcp.server.mcpserver.exceptions import ToolError
 
-from odoo_boost.config.schema import OdooBoostConfig
-from odoo_boost.mcp_server.context import get_context
+from odoo_boost.local_paths import path_allowed, resolve_path
+from odoo_boost.mcp_server.context import active_config
 
 # Common ORM introspection methods allowed through execute_method in readonly mode.
 # Public addon methods can mutate state regardless of their name, so a blacklist
@@ -37,17 +37,9 @@ READONLY_METHODS: frozenset[str] = frozenset(
 )
 
 
-def _current_config() -> OdooBoostConfig | None:
-    """Return the active config, or None outside an MCP server (e.g. CLI lint)."""
-    try:
-        return get_context().config
-    except RuntimeError:
-        return None
-
-
 def enforce_method(method: str) -> None:
     """Allow only known read methods through arbitrary execution in readonly mode."""
-    config = _current_config()
+    config = active_config()
     if config is None or not config.readonly:
         return
     name = method.strip()
@@ -64,20 +56,9 @@ def enforce_path(raw_path: str) -> Path:
     Explicit ``allowed_roots`` take precedence. Otherwise the configured project
     path is the boundary unless external local paths were deliberately enabled.
     """
-    path = Path(raw_path).expanduser()
-    path = path.resolve() if path.is_absolute() else (Path.cwd() / path).resolve()
-
-    config = _current_config()
-    roots = config.allowed_roots if config else []
-    if config and not roots and not config.allow_external_local_paths:
-        roots = [config.project_path]
-    if not roots:
-        return path
-
-    for root in roots:
-        root_path = Path(root).expanduser().resolve()
-        if path == root_path or root_path in path.parents:
-            return path
-
-    allowed = ", ".join(roots)
-    raise ToolError(f"Path '{raw_path}' is outside the allowed roots: {allowed}.")
+    path = resolve_path(raw_path, Path.cwd())
+    config = active_config()
+    if config is not None and not path_allowed(path, config):
+        allowed = ", ".join(config.allowed_roots or [config.project_path])
+        raise ToolError(f"Path '{raw_path}' is outside the allowed roots: {allowed}.")
+    return path

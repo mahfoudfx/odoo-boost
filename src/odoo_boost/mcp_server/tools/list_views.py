@@ -45,9 +45,8 @@ def list_views(
     if view_id:
         domain.append(("id", "=", view_id))
 
-    fields = ["name", "model", "type", "priority", "inherit_id", "active"]
-    if include_arch:
-        fields.append("arch")
+    # Compact responses still need the XML to compute accurate metadata.
+    fields = ["name", "model", "type", "priority", "inherit_id", "active", "arch"]
 
     total = conn.search_count("ir.ui.view", domain)
     views = conn.search_read(
@@ -70,13 +69,11 @@ def list_views(
             "inherit_id": v.get("inherit_id", False) or None,
             "active": v.get("active", True),
         }
+        arch = v.get("arch", "") or ""
+        entry["arch_length"] = len(arch)
         if include_arch:
-            arch = v.get("arch", "") or ""
             entry["arch"] = arch
-            entry["arch_length"] = len(arch)
         else:
-            arch = v.get("arch", "") or ""
-            entry["arch_length"] = len(arch)
             entry["has_arch"] = bool(arch)
         rendered.append(entry)
 

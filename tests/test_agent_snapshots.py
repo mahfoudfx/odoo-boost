@@ -1,44 +1,84 @@
-"""Parametric generation checks across every agent and platform."""
+"""Serialized configuration contracts across every agent and transport."""
 
 from __future__ import annotations
 
+import json
+import sys
+
 import pytest
+import yaml
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
 
 from odoo_boost.agents import AGENTS
-from odoo_boost.agents.base import Agent
-
-AGENT_IDS = sorted(AGENTS)
-PLATFORMS = ("native", "windows", "http")
-ENDPOINT = "http://127.0.0.1:8765/mcp"
 
 
-def _make_config(sample_config, platform: str):
-    updates: dict = {"generate_ai_files": False, "mcp_token": "tok123"}
-    if platform == "native":
-        updates.update(mcp_transport="stdio", mcp_target="native")
-    elif platform == "windows":
-        updates.update(mcp_transport="stdio", mcp_target="wsl", wsl_distro="Ubuntu")
-    else:
-        updates.update(mcp_transport="http")
-    return sample_config.model_copy(update=updates)
-
-
-@pytest.mark.parametrize("platform", PLATFORMS)
-@pytest.mark.parametrize("agent_id", AGENT_IDS)
-def test_platform_generation(agent_id: str, platform: str, sample_config, tmp_path):
-    agent: Agent = AGENTS[agent_id](
-        config=_make_config(sample_config, platform), project_path=tmp_path
+@pytest.mark.parametrize("platform", ["native", "windows", "http", "auto"])
+@pytest.mark.parametrize("agent_id", sorted(AGENTS))
+def test_platform_generation(agent_id, platform, sample_config, tmp_path):
+    config = sample_config.model_copy(
+        update={
+            "generate_ai_files": False,
+            "mcp_token": "tok123",
+            "mcp_transport": "http" if platform == "http" else "stdio",
+            "mcp_target": "wsl"
+            if platform == "windows"
+            else platform
+            if platform == "auto"
+            else "native",
+            "wsl_distro": "Ubuntu",
+        }
     )
-
+    agent = AGENTS[agent_id](config=config, project_path=tmp_path)
     created = agent.install()
-    assert agent.mcp_config_path in created
-    content = agent.mcp_config_path.read_text(encoding="utf-8")
-    assert content.strip(), f"{agent_id}/{platform}: empty config"
+    expected_paths = [agent.mcp_config_path]
+    if platform == "auto":
+        expected_paths.append(agent.windows_mcp_config_path)
+    assert created == expected_paths
+    assert agent.windows_mcp_config_path.exists() is (platform == "auto")
 
-    if platform == "windows":
-        assert "wsl.exe" in content, f"{agent_id}: missing wsl.exe launcher"
-    elif platform == "http":
-        assert ENDPOINT in content, f"{agent_id}: missing endpoint URL"
-        assert "tok123" in content, f"{agent_id}: token not embedded for HTTP"
-    else:
-        assert "wsl.exe" not in content, f"{agent_id}: unexpected wsl.exe in native config"
+    for path in expected_paths:
+        content = path.read_text(encoding="utf-8")
+        if agent_id == "codex":
+            data, root = tomllib.loads(content), "mcp_servers"
+        elif agent_id == "hermes":
+            data, root = yaml.safe_load(content), "mcp_servers"
+        else:
+            data = json.loads(content)
+            root = {"copilot": "servers", "opencode": "mcp", "zed": "context_servers"}.get(
+                agent_id, "mcpServers"
+            )
+        assert set(data) == {root}
+        assert set(data[root]) == {"odoo-boost"}
+        server = data[root]["odoo-boost"]
+        if platform == "http":
+            url_key = "serverUrl" if agent_id == "antigravity" else "url"
+            header_key = "http_headers" if agent_id == "codex" else "headers"
+            expected = {
+                url_key: "http://127.0.0.1:8765/mcp",
+                header_key: {"Authorization": "Bearer tok123"},
+            }
+            if agent_id == "opencode":
+                expected.update(type="remote", enabled=True)
+            elif agent_id not in {"antigravity", "codex", "hermes", "zed"}:
+                expected["type"] = "http"
+        else:
+            command = [
+                sys.executable,
+                "-m",
+                "odoo_boost",
+                "mcp",
+                "-c",
+                str(tmp_path / "odoo-boost.json"),
+            ]
+            if platform == "windows" or path == agent.windows_mcp_config_path:
+                command = ["wsl.exe", "-d", "Ubuntu", "--cd", str(tmp_path), "--", *command]
+            expected = (
+                {"type": "local", "command": command}
+                if agent_id == "opencode"
+                else {"command": command[0], "args": command[1:]}
+            )
+        assert server == expected

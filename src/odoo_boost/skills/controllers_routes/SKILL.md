@@ -18,18 +18,28 @@ steps below when adding a route.
 ## Create a route
 
 Load the configured version notes before copying route decorators; route types and
-response handling are version-sensitive.
+response handling are version-sensitive. The JSON example uses `type="json"`
+for 15/17/18; select `type="jsonrpc"` for 19/20. The older spelling remains a
+deprecated alias in audited 19/20 source. Bearer authentication is documented
+for 18/19/20, and 20 additionally requires `bearer_scope`.
 
 ### 1. Create Controller File (`controllers/main.py`)
 ```python
 from odoo import http
 from odoo.http import request
+from werkzeug.exceptions import BadRequest
 
 
 class MyController(http.Controller):
     # --- Website Page (HTML) ---
     @http.route("/my/page", type="http", auth="user", website=True)
     def my_page(self, page=1, **kwargs):
+        try:
+            page = int(page)
+        except (TypeError, ValueError):
+            raise BadRequest("Invalid page")
+        if not 1 <= page <= 1000:
+            raise BadRequest("Page out of range")
         records = request.env["my.model"].search([], limit=20, offset=(page - 1) * 20)
         return request.render(
             "my_module.my_page_template",
@@ -41,8 +51,8 @@ class MyController(http.Controller):
 
     # --- JSON API Endpoint ---
     @http.route("/api/my-model", type="json", auth="user", methods=["POST"])
-    def api_list(self, domain=None, limit=20, **kwargs):
-        records = request.env["my.model"].search_read(domain or [], limit=limit)
+    def api_list(self):
+        records = request.env["my.model"].search_read([], fields=["name"], limit=20)
         return {"status": "ok", "data": records}
 
     # --- Public Page (no login required) ---
@@ -60,17 +70,15 @@ class MyController(http.Controller):
             record.file_content,
             headers=[
                 ("Content-Type", "application/octet-stream"),
-                ("Content-Disposition", f"attachment; filename={record.filename}"),
+                ("Content-Disposition", 'attachment; filename="download.bin"'),
             ],
         )
-
-    # --- Webhook (external POST, no CSRF) ---
-    @http.route("/webhook/my-event", type="json", auth="none", methods=["POST"], csrf=False)
-    def webhook(self, **kwargs):
-        data = request.get_json_data()
-        # Verify the provider signature before processing `data`.
-        return {"received": True}
 ```
+
+For an external webhook, select HTTP versus JSON-RPC from the provider protocol;
+plain JSON is not a JSON-RPC envelope. Authenticate the raw request using the
+provider's verified scheme before processing and define replay/idempotency rules.
+Implement this separately; an unverified signature comment is not authentication.
 
 ### 2. Register Controller (`controllers/__init__.py`)
 ```python
@@ -104,11 +112,11 @@ from . import models
 ## Route Parameters Reference
 | Parameter | Values | Description |
 |-----------|--------|-------------|
-| `type` | `'http'`, `'json'` | HTTP returns HTML, JSON returns JSON-RPC |
+| `type` | Version-specific | `json` on 15/17/18; `jsonrpc` on 19/20; 20 also has a separate `json2` dispatcher |
 | `auth` | `'user'`, `'public'`, `'none'` | Authentication level |
 | `methods` | `['GET']`, `['POST']`, etc. | Allowed HTTP methods |
 | `website` | `True`/`False` | Integrate with website module |
-| `csrf` | `True`/`False` | CSRF protection (default True) |
+| `csrf` | `True`/`False` | Check dispatcher defaults; HTTP and JSON-RPC differ |
 
 ## Checklist
 - [ ] Controller inherits from `http.Controller`
@@ -119,3 +127,13 @@ from . import models
 - [ ] Business logic delegated to model methods
 - [ ] Input parameters validated
 - [ ] Controller registered in `__init__.py` chain
+
+
+Redecorate overridden handlers with `@http.route()` to retain publication.
+The example JSON route spelling applies to older series; load version notes
+before use. Authentication does not authorize every record. For file routes,
+verify field access, binary encoding and the supported response helper against
+the target model; the generic response above is only suitable for actual bytes.
+
+Official basis: [controller extension](https://github.com/odoo/documentation/blob/19.0/content/developer/reference/backend/http.rst)
+and [route/dispatcher contract](https://github.com/odoo/odoo/blob/19.0/odoo/http.py).

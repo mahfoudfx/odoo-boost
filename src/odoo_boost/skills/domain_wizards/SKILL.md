@@ -12,8 +12,7 @@ Wizards are interactive dialog popups used for user confirmation, parameter coll
 Create under `wizard/my_wizard.py`:
 
 ```python
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo import fields, models
 
 
 class BatchUpdateWizard(models.TransientModel):
@@ -29,23 +28,6 @@ class BatchUpdateWizard(models.TransientModel):
         default="confirmed",
         required=True,
     )
-
-    def action_apply(self):
-        self.ensure_one()
-        active_ids = self.env.context.get("active_ids", [])
-        records = self.env["my.model"].browse(active_ids)
-        if not records:
-            raise UserError(_("No records selected."))
-
-        records.write(
-            {
-                "state": self.new_state,
-            }
-        )
-        for rec in records:
-            rec.message_post(body=_("Batch update applied: %s") % self.reason)
-
-        return {"type": "ir.actions.act_window_close"}
 ```
 
 ## 2. Wizard View Definition
@@ -84,3 +66,25 @@ To make the wizard triggerable from the "Action" menu on list or form views:
 </record>
 ```
 Notice `target="new"` opens the view as a modal dialog.
+
+
+## Trust boundary and verification
+
+`active_model`, `active_id`, `active_ids`, default context values, and readonly
+wizard fields can be supplied by a caller. Validate the expected model and target
+selection, existence, eligibility, company consistency, and allowed transitions
+on the server. Keep target operations under the intended user's access checks;
+transient ownership does not authorize writes to persistent records.
+
+Use the target model's business method rather than writing its state directly.
+Keep the operation atomic unless its documented workflow requires otherwise.
+Test empty selections, stale/deleted records, another user's IDs, cross-company
+records, and a disallowed transition. A cancelled dialog must not mutate records.
+
+The model/view examples above are structural templates. Implement `action_apply`
+with the verified business operation before using the view button. Add chatter only if the
+persistent model inherits the appropriate mixin.
+
+Official references: [public method security](https://github.com/odoo/documentation/blob/18.0/content/developer/reference/backend/security.rst),
+[window actions](https://github.com/odoo/documentation/blob/18.0/content/developer/reference/backend/actions.rst),
+and [ORM model types](https://github.com/odoo/documentation/blob/18.0/content/developer/reference/backend/orm.rst).

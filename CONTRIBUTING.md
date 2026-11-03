@@ -1,5 +1,13 @@
 # Contributing to Odoo Boost
 
+Use English for project documentation, code comments, docstrings, and source messages.
+
+For learning from books, example repositories or additional Odoo sources, follow
+the [internal source learning workflow](docs/source-learning-workflow.md).
+Its [ledger](docs/source-learning-ledger.md) records provenance, official checks,
+coverage and project value; the [scan plan](docs/source-scan-plan.md) tracks the
+remaining comprehensive review.
+
 ## Development Setup
 
 ```bash
@@ -53,7 +61,8 @@ src/odoo_boost/
 A foundational constraint of Odoo Boost is that local static inspection must remain **lightweight, fast, and completely free of Docker or external heavy daemons**:
 - AST analysis relies on Python's standard `ast` module.
 - XML analysis relies on `defusedxml` (with `xml.etree` fallback) for hardened, zero-dependency parsing.
-- External tools like `pylint-odoo`, `lxml`, and `odoo-ls` must always be optional with graceful fallbacks.
+- External tools like `pylint-odoo` and `odoo-ls` must always be optional with graceful fallbacks.
+- Built-in XML inspection uses the required `defusedxml` dependency. RelaxNG validation requires separate tooling.
 
 ## Adding a New MCP Tool
 
@@ -66,6 +75,7 @@ from __future__ import annotations
 
 from odoo_boost.mcp_server.context import get_connection
 from odoo_boost.mcp_server.tools._common import json_response
+
 
 def my_tool(param1: str, limit: int = 10) -> str:
     """One-line description shown to the AI agent.
@@ -150,6 +160,7 @@ def custom_prompt(arg: str) -> str:
 ```python
 from odoo_boost.agents.base import Agent
 from odoo_boost.agents.spec import AGENT_SPECS
+
 
 class MyAgentAgent(Agent):
     spec = AGENT_SPECS["my_agent"]

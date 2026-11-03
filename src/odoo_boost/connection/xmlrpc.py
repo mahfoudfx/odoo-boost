@@ -6,6 +6,7 @@ import http.client
 import xmlrpc.client
 from collections.abc import Iterator
 from contextlib import contextmanager
+from threading import RLock
 from typing import Any, cast
 
 from odoo_boost.connection.base import OdooConnection as BaseConnection
@@ -79,6 +80,9 @@ class XmlRpcConnection(BaseConnection):
         self._username = username
         self._password = password
         self._timeout = timeout
+        # MCP dispatches synchronous tools in worker threads. ServerProxy caches
+        # an HTTP connection, so complete RPC requests must be serialized.
+        self._rpc_lock = RLock()
         self._uid: int | None = None
         self._common: xmlrpc.client.ServerProxy | None = None
         self._object: xmlrpc.client.ServerProxy | None = None
@@ -113,15 +117,17 @@ class XmlRpcConnection(BaseConnection):
     # -- public interface ----------------------------------------------------
 
     def authenticate(self) -> int:
-        with _translate_connection_errors(self._url):
-            uid = self._common_proxy.authenticate(
-                self._database, self._username, self._password, {}
-            )
-
-        if not uid:
-            raise ConnectionError(f"Authentication failed for {self._username}@{self._database}")
-        self._uid = int(uid)  # type: ignore[arg-type]
-        return self._uid
+        with self._rpc_lock:
+            with _translate_connection_errors(self._url):
+                uid = self._common_proxy.authenticate(
+                    self._database, self._username, self._password, {}
+                )
+            if not uid:
+                raise ConnectionError(
+                    f"Authentication failed for {self._username}@{self._database}"
+                )
+            self._uid = int(uid)  # type: ignore[arg-type]
+            return self._uid
 
     @property
     def uid(self) -> int:
@@ -136,17 +142,18 @@ class XmlRpcConnection(BaseConnection):
         *args: Any,
         **kwargs: Any,
     ) -> Any:
-        uid = self.ensure_authenticated()
-        with _translate_connection_errors(self._url):
-            return self._object_proxy.execute_kw(
-                self._database,
-                uid,
-                self._password,
-                model,
-                method,
-                list(args),
-                kwargs or {},
-            )
+        with self._rpc_lock:
+            uid = self.ensure_authenticated()
+            with _translate_connection_errors(self._url):
+                return self._object_proxy.execute_kw(
+                    self._database,
+                    uid,
+                    self._password,
+                    model,
+                    method,
+                    list(args),
+                    kwargs or {},
+                )
 
     def search_read(
         self,
@@ -175,5 +182,5 @@ class XmlRpcConnection(BaseConnection):
         return int(self.execute(model, "search_count", domain or []))
 
     def get_version(self) -> dict[str, Any]:
-        with _translate_connection_errors(self._url):
+        with self._rpc_lock, _translate_connection_errors(self._url):
             return self._common_proxy.version()  # type: ignore[return-value]

@@ -71,3 +71,14 @@ cross-repository rules.
 - **List vs Tree**: For Odoo 18+, ensure `<list>` is used instead of deprecated `<tree>`.
 - **Search View Attributes**: Ensure no `string` or `expand` attributes on `<group>` inside search views (Odoo 19).
 - **Inline Expressions (Odoo 17+)**: Ensure `invisible="state != 'draft'"` instead of `attrs="{'invisible': ...}"`.
+
+## Executable validation
+
+Use `plan_changed_checks` for changes spanning multiple technical surfaces. Run
+`diagnose_odoo_code` on the exact addon or file for relevant static checks; enable
+Odoo LS when framework diagnostics are needed. Use `trace_odoo_source` and
+`list_controller_routes` for source relationships. Run `run_odoo_tests` only with
+the explicitly configured disposable test database. Report executed checks,
+review-required findings and unavailable checks separately. Reading this skill
+is not a successful audit or test run. For tiny presentation edits, run the
+smallest relevant syntax check instead of a broad scan.

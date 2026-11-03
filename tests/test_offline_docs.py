@@ -20,6 +20,7 @@ from odoo_boost.offline_docs import (
     _pack_for,
     available_packs,
     cached_docs,
+    install_checkout,
     install_pack,
     search_local_docs,
 )
@@ -67,6 +68,27 @@ def test_pack_install_and_search_all_sections(tmp_path):
     assert search_local_docs(root, "sales", version="18.0", section="applications")["results"]
     with pytest.raises(OfflineDocsError, match="requested 19.0"):
         search_local_docs(root, "fields", version="19.0")
+
+
+def test_checkout_cache_reuses_content_revision_and_invalidates_edits(tmp_path):
+    checkout = tmp_path / "checkout"
+    page = checkout / "content" / "developer" / "orm.rst"
+    page.parent.mkdir(parents=True)
+    (checkout / "LICENSE").write_text("Documentation license")
+    page.write_text("Computed fields have dependencies.\n")
+    cache = tmp_path / "cache"
+
+    original = install_checkout(checkout, "18.0", cache_dir=cache)
+    assert install_checkout(checkout, "18.0", cache_dir=cache) == original
+    # Downloaded non-git trees use the same content hash fallback.
+    assert install_checkout(checkout, "18.0", cache_dir=cache, source_kind="download") == original
+
+    page.write_text("Computed fields now use changed dependencies.\n")
+    updated = install_checkout(checkout, "18.0", cache_dir=cache)
+    assert updated != original
+    assert cached_docs("18.0", cache_dir=cache) == updated
+    result = search_local_docs(updated, "changed dependencies", version="18.0")
+    assert "changed dependencies" in result["results"][0]["excerpt"]
 
 
 def test_pack_rejects_version_mismatch_and_traversal(tmp_path):
@@ -214,3 +236,78 @@ def test_packaged_snapshots_cover_three_latest_series():
             for topic, details in _TOPICS.items():
                 path = profile.doc_paths.get(topic, details["path"]).split("#", 1)[0]
                 assert "content" + path.removesuffix(".html") + ".rst" in names
+
+
+def test_curated_docs_use_version_paths_and_reject_mismatched_local_series(tmp_path):
+    archive = _pack(tmp_path / "docs.zip")
+    with ZipFile(archive, "a") as pack:
+        pack.writestr("content/developer/reference/user_interface/view_architectures.rst", "Views")
+    root = install_pack("18.0", pack_path=archive, cache_dir=tmp_path / "cache")
+    config = OdooBoostConfig(
+        connection=OdooConnection(url="http://localhost", database="test"),
+        odoo_version="18.0",
+        odoo_docs_path=str(root),
+    )
+    with bound_context(ServerContext(connection=MagicMock(), config=config)):
+        views = json.loads(search_docs(topic="views"))["results"]
+        assert any(
+            item.get("local_source", "").endswith("view_architectures.rst") for item in views
+        )
+        orm = json.loads(search_docs(topic="orm", version="19.0"))["results"]
+        assert orm
+        assert all("local_source" not in item for item in orm)
+
+
+def test_docs_cli_relative_cache_from_project_subdirectory(tmp_path, monkeypatch):
+    config = OdooBoostConfig(
+        connection=OdooConnection(url="http://localhost", database="test"),
+        odoo_version="18.0",
+        project_path=str(tmp_path),
+    )
+    config_file = save_config(config, tmp_path / "odoo-boost.json")
+    archive = _pack(tmp_path / "docs.zip")
+    child = tmp_path / "subdir"
+    child.mkdir()
+    monkeypatch.chdir(child)
+    result = CliRunner().invoke(
+        app,
+        [
+            "docs",
+            "install",
+            "--version",
+            "18.0",
+            "--source",
+            "archive",
+            "--path",
+            str(archive),
+            "--cache-dir",
+            "cache",
+            "--config",
+            str(config_file),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    saved = load_config(config_file)
+    assert Path(saved.odoo_docs_path).is_absolute()
+    with bound_context(ServerContext(connection=MagicMock(), config=saved)):
+        assert json.loads(search_docs(query="computed fields"))["results"]
+
+
+@pytest.mark.parametrize("metadata", [None, "invalid", "[]", '{"series": "19.0"}'])
+def test_curated_docs_omit_unverified_local_pages(tmp_path, metadata):
+    from odoo_boost.offline_docs import METADATA_FILE
+
+    page = tmp_path / "content/developer/reference/backend/orm.rst"
+    page.parent.mkdir(parents=True)
+    page.write_text("ORM")
+    if metadata is not None:
+        (tmp_path / METADATA_FILE).write_text(metadata)
+    config = OdooBoostConfig(
+        connection=OdooConnection(url="http://localhost", database="test"),
+        odoo_version="18.0",
+        odoo_docs_path=str(tmp_path),
+    )
+    with bound_context(ServerContext(connection=MagicMock(), config=config)):
+        results = json.loads(search_docs(topic="orm"))["results"]
+    assert results
+    assert all("local_source" not in item for item in results)

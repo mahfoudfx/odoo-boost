@@ -210,6 +210,11 @@ def _source_revision(checkout: Path) -> str:
                 return result.stdout.strip()
         except (OSError, subprocess.SubprocessError):
             pass
+    return _content_revision(checkout)
+
+
+def _content_revision(checkout: Path) -> str:
+    """Hash checkout content identically for copied and non-git sources."""
     digest = hashlib.sha256()
     for path in [checkout / "LICENSE", *sorted((checkout / "content").rglob("*.rst"))]:
         digest.update(path.relative_to(checkout).as_posix().encode())
@@ -244,13 +249,9 @@ def install_checkout(
                 )
         except (OSError, subprocess.TimeoutExpired):
             pass
-    revision = _source_revision(checkout) if source_kind == "download" else ""
-    if source_kind != "download":
-        digest = hashlib.sha256()
-        for page in [checkout / "LICENSE", *sorted((checkout / "content").rglob("*.rst"))]:
-            digest.update(page.relative_to(checkout).as_posix().encode())
-            digest.update(page.read_bytes())
-        revision = digest.hexdigest()
+    revision = (
+        _source_revision(checkout) if source_kind == "download" else _content_revision(checkout)
+    )
     cache = cache_dir or default_cache_dir()
     target = cache / series / revision
     if (target / METADATA_FILE).is_file() and (target / INDEX_FILE).is_file():

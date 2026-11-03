@@ -19,7 +19,12 @@ check and diff; use the creation steps below for a new component.
 
 Load the configured version notes and inspect the component being extended before
 copying imports, hooks, services, or registry APIs. The example shows a common modern
-pattern, not a compatibility contract for every supported Odoo version.
+pattern for the audited 17/18/19/20 APIs. On Odoo 15, adapt imports and lifecycle
+to its global Owl API and set `owl="1"` on the Owl template. The 15/17 native
+JS loader uses first-line `@odoo-module` opt-in; 18/19/20 transform standard
+`static/src` and `static/tests` native modules automatically. For RPC to
+controllers, 15/17 document the RPC service, while 18/19/20 document the imported
+`rpc` helper. Check the core JavaScript guideline before porting the example.
 
 Organize frontend files by feature. Prefer registries, services, hooks, composition,
 and documented extension points over patching framework code. When patching is the
@@ -134,10 +139,12 @@ registry.category("actions").add("my_module.my_action", MyComponent);
 ```
 
 ## Checklist
-- [ ] `@odoo-module` pragma at the top of JS file
+- [ ] Native module transformation/pragma matches the configured Odoo series
 - [ ] `static template` matches the QWeb template name
 - [ ] `static props` defined for type validation
 - [ ] Services used via `useService()` in `setup()`
 - [ ] Template uses `t-key` on `t-foreach` loops
-- [ ] Assets declared in `__manifest__.py`
+- [ ] Assets declared in the bundle used by the target client
+- [ ] Loading, empty, failure, and success paths verified
+- [ ] Async destruction and timer/listener cleanup reviewed
 - [ ] Component registered in appropriate registry (if needed)

@@ -8,6 +8,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from odoo_boost.source_files import iter_source_files, source_allowed
+
 try:
     import defusedxml.ElementTree as ET
 except ImportError:
@@ -19,12 +21,6 @@ logger = logging.getLogger(__name__)
 def _get_literal_value(node: ast.AST) -> Any:
     """Safely extract a literal or simple string/boolean value from an AST node."""
     if isinstance(node, ast.Constant):
-        return node.value
-    if isinstance(node, ast.Str):
-        return node.s
-    if isinstance(node, ast.Num):
-        return node.n
-    if isinstance(node, ast.NameConstant):
         return node.value
     if isinstance(node, ast.List):
         return [_get_literal_value(elt) for elt in node.elts]
@@ -50,6 +46,22 @@ def _extract_decorator_name(dec: ast.AST) -> str:
     return "decorator"
 
 
+def _field_definition(value: ast.AST, line: int) -> dict[str, Any] | None:
+    """Extract fields.Type(...) calls, including positional relational targets."""
+    if not isinstance(value, ast.Call) or not isinstance(value.func, ast.Attribute):
+        return None
+    if not isinstance(value.func.value, ast.Name) or value.func.value.id != "fields":
+        return None
+    field_type = value.func.attr
+    attributes: dict[str, Any] = {}
+    if value.args and field_type in ("Many2one", "One2many", "Many2many"):
+        comodel = _get_literal_value(value.args[0])
+        if comodel:
+            attributes["comodel_name"] = comodel
+    attributes.update({kw.arg: _get_literal_value(kw.value) for kw in value.keywords if kw.arg})
+    return {"type": field_type, "line": line, "attributes": attributes}
+
+
 class _ModelVisitor(ast.NodeVisitor):
     """AST visitor extracting Odoo model definitions, fields, and methods."""
 
@@ -58,7 +70,6 @@ class _ModelVisitor(ast.NodeVisitor):
         self.models: list[dict[str, Any]] = []
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        # Check if inherits from an Odoo model class or looks like an Odoo model
         model_info: dict[str, Any] = {
             "class_name": node.name,
             "file": self.filename,
@@ -70,16 +81,6 @@ class _ModelVisitor(ast.NodeVisitor):
             "fields": {},
             "methods": [],
         }
-
-        is_odoo_model = False
-
-        # Inspect bases
-        for base in node.bases:
-            if isinstance(base, ast.Attribute):
-                if base.attr in ("Model", "TransientModel", "AbstractModel"):
-                    is_odoo_model = True
-            elif isinstance(base, ast.Name) and "Model" in base.id:
-                is_odoo_model = True
 
         for item in node.body:
             # Model attributes: _name, _inherit, _description, etc.
@@ -96,41 +97,9 @@ class _ModelVisitor(ast.NodeVisitor):
                         ):
                             val = _get_literal_value(item.value)
                             model_info[target.id] = val
-                            is_odoo_model = True
 
-                        # Field definitions: name = fields.Char(...)
-                        elif isinstance(item.value, ast.Call):
-                            call = item.value
-                            func = call.func
-                            if (
-                                isinstance(func, ast.Attribute)
-                                and isinstance(func.value, ast.Name)
-                                and func.value.id == "fields"
-                            ):
-                                is_odoo_model = True
-                                field_name = target.id
-                                field_type = func.attr
-                                field_kwargs: dict[str, Any] = {}
-
-                                # First arg for relational fields is often comodel_name
-                                if call.args and field_type in (
-                                    "Many2one",
-                                    "One2many",
-                                    "Many2many",
-                                ):
-                                    comodel = _get_literal_value(call.args[0])
-                                    if comodel:
-                                        field_kwargs["comodel_name"] = comodel
-
-                                for kw in call.keywords:
-                                    if kw.arg:
-                                        field_kwargs[kw.arg] = _get_literal_value(kw.value)
-
-                                model_info["fields"][field_name] = {
-                                    "type": field_type,
-                                    "line": item.lineno,
-                                    "attributes": field_kwargs,
-                                }
+                        elif field := _field_definition(item.value, item.lineno):
+                            model_info["fields"][target.id] = field
 
             # Methods
             elif isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -143,7 +112,7 @@ class _ModelVisitor(ast.NodeVisitor):
                     }
                 )
 
-        if is_odoo_model and (model_info["_name"] or model_info["_inherit"]):
+        if model_info["_name"] or model_info["_inherit"]:
             self.models.append(model_info)
 
         self.generic_visit(node)
@@ -251,6 +220,11 @@ def _cached_xml(path: Path) -> dict[str, Any]:
 def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     """Scan an entire local addon directory on disk for models, fields, and XML definitions."""
     path = Path(addon_path).resolve()
+    return _scan_sources(path, sorted(iter_source_files(path, {".py", ".xml"})))
+
+
+def _scan_sources(path: Path, sources: list[Path]) -> dict[str, Any]:
+    """Assemble a scan from one inventory, also reused on an addon cache miss."""
     if not path.is_dir():
         return {"error": f"Path '{path}' is not a directory"}
 
@@ -270,7 +244,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
     manifest_file = path / "__manifest__.py"
     if not manifest_file.exists():
         manifest_file = path / "__openerp__.py"
-    if manifest_file.exists():
+    if manifest_file.exists() and source_allowed(manifest_file, path):
         try:
             m_content = manifest_file.read_text(encoding="utf-8", errors="replace")
             m_val = ast.literal_eval(m_content)
@@ -286,24 +260,15 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
             logger.warning("Error evaluating manifest %s: %s", manifest_file, exc)
             result["manifest"] = {"raw": "Error evaluating manifest dictionary"}
 
-    # Scan Python files
-    for py_file in sorted(path.rglob("*.py")):
-        # Skip hidden or build directories
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
-            continue
-        result["python_files_count"] += 1
-        models = _cached_python(py_file)
-        result["models"].extend(models)
-
-    # Scan XML files
-    for xml_file in sorted(path.rglob("*.xml")):
-        if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
-            continue
-        result["xml_files_count"] += 1
-        xml_data = _cached_xml(xml_file)
-        result["records"].extend(xml_data["records"])
-        result["templates"].extend(xml_data["templates"])
-        result["menuitems"].extend(xml_data["menuitems"])
+    for source in sources:
+        if source.suffix == ".py":
+            result["python_files_count"] += 1
+            result["models"].extend(_cached_python(source))
+        else:
+            result["xml_files_count"] += 1
+            xml_data = _cached_xml(source)
+            for key in ("records", "templates", "menuitems"):
+                result[key].extend(xml_data[key])
 
     return result
 
@@ -311,9 +276,7 @@ def scan_addon(addon_path: str | Path) -> dict[str, Any]:
 def _addon_fingerprint(path: Path) -> tuple[tuple[str, int, int], ...]:
     """Return a cheap signature that changes with relevant addon source files."""
     entries: list[tuple[str, int, int]] = []
-    for source in sorted((*path.rglob("*.py"), *path.rglob("*.xml"))):
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in source.parts):
-            continue
+    for source in sorted(iter_source_files(path, {".py", ".xml"})):
         try:
             stat = source.stat()
         except OSError:
@@ -325,8 +288,8 @@ def _addon_fingerprint(path: Path) -> tuple[tuple[str, int, int], ...]:
 @lru_cache(maxsize=32)
 def _scan_addon_cached(path: str, fingerprint: tuple[tuple[str, int, int], ...]) -> dict[str, Any]:
     """Cache parsed addon data; *fingerprint* provides automatic invalidation."""
-    del fingerprint
-    return scan_addon(path)
+    root = Path(path)
+    return _scan_sources(root, [root / relative for relative, _, _ in fingerprint])
 
 
 def scan_addon_cached(addon_path: str | Path) -> dict[str, Any]:
@@ -336,37 +299,52 @@ def scan_addon_cached(addon_path: str | Path) -> dict[str, Any]:
 
 
 def find_local_xml_id(addon_path: str | Path, xml_id: str) -> dict[str, Any] | None:
-    """Find a specific XML ID definition in the local addon directory."""
+    """Find an XML ID, preserving explicit namespaces and addon ownership."""
     path = Path(addon_path).resolve()
-    target_id = xml_id.split(".")[-1] if "." in xml_id else xml_id
-
-    for xml_file in sorted(path.rglob("*.xml")):
-        if any(part.startswith((".", "build", "dist")) for part in xml_file.parts):
-            continue
+    for xml_file in sorted(iter_source_files(path, {".xml"})):
+        module = path.name
+        for parent in xml_file.parents:
+            if (parent / "__manifest__.py").is_file() or (parent / "__openerp__.py").is_file():
+                module = parent.name
+                break
+            if parent == path:
+                break
         data = _cached_xml(xml_file)
-        for rec in data["records"]:
-            if rec["id"] == target_id:
-                return {"type": "record", **rec}
-        for tmpl in data["templates"]:
-            if tmpl["id"] == target_id:
-                return {"type": "template", **tmpl}
-        for menu in data["menuitems"]:
-            if menu["id"] == target_id:
-                return {"type": "menuitem", **menu}
-
+        for key, kind in (
+            ("records", "record"),
+            ("templates", "template"),
+            ("menuitems", "menuitem"),
+        ):
+            for definition in data[key]:
+                declared = definition["id"]
+                qualified = declared if "." in declared else f"{module}.{declared}"
+                matches = (
+                    qualified == xml_id if "." in xml_id else qualified.split(".", 1)[-1] == xml_id
+                )
+                if matches:
+                    return {"type": kind, **definition}
     return None
+
+
+def model_matches(definition: dict[str, Any], model_name: str) -> bool:
+    """Match a model declaration or any model extended through _inherit."""
+    inherited = definition.get("_inherit")
+    return (
+        definition.get("_name") == model_name
+        or inherited == model_name
+        or isinstance(inherited, (list, tuple))
+        and model_name in inherited
+    )
 
 
 def find_model_in_local_files(addon_path: str | Path, model_name: str) -> dict[str, Any] | None:
     """Find a specific Odoo model definition in local Python files."""
     path = Path(addon_path).resolve()
 
-    for py_file in sorted(path.rglob("*.py")):
-        if any(part.startswith((".", "__pycache__", "build", "dist")) for part in py_file.parts):
-            continue
+    for py_file in sorted(iter_source_files(path, {".py"})):
         models = _cached_python(py_file)
         for m in models:
-            if m.get("_name") == model_name or m.get("_inherit") == model_name:
+            if model_matches(m, model_name):
                 return m
 
     return None

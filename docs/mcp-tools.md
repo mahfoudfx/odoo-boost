@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-Odoo Boost provides 23 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
+Odoo Boost provides 30 MCP tools that give your AI agent deep introspection into a running Odoo instance as well as local addons.
 
 All tools return JSON strings.
 
@@ -21,7 +21,7 @@ check the individual tool signature for full-output support.
 | `execute_method` | capped by `max_response_chars` | uncapped result |
 | `get_config` | values truncated (~200 chars), secrets redacted | full values (`reveal_secrets=true` for secrets) |
 | `read_log_entries` | messages truncated (~500 chars) | full messages |
-| `list_access_rights` | rule domains truncated when unfiltered | complete domains |
+| `list_access_rights` | domains truncated when unfiltered | complete domains |
 | `list_workflows` | code preview only | full server-action code |
 | `get_module_info` | models capped (paginated) | all models |
 | `search_records` | values verbatim (data fidelity) | — (opt-in `compact=true` to strip/truncate) |
@@ -36,7 +36,7 @@ must still satisfy the configured filesystem boundary.
 
 Global settings in `odoo-boost.json`: `compact_responses` (default `true`),
 `max_response_chars` (default 40000, `0` disables), and `redact_config_secrets`
-(default `true`). All 23 tools are registered; the agent client controls whether
+(default `true`). All 30 tools are registered; the agent client controls whether
 tool definitions are loaded eagerly or discovered on demand; the MCP server
 cannot require one behavior. Per-call `response_format` controls detail
 where supported. Oversized responses are replaced by a bounded
@@ -122,36 +122,6 @@ Get the field definitions (schema) of an Odoo model.
 
 ---
 
-## 3. database_query
-
-Compatibility alias for `search_records` with a default limit of 80 instead of 20. Both perform the same ORM `search_read`; use `search_records` for new calls. Odoo access rights apply.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `model` | str | yes | — | Technical model name |
-| `domain` | str | no | `"[]"` | Odoo domain as JSON string |
-| `fields` | str | no | `"[]"` | JSON list of field names. Empty for all |
-| `limit` | int | no | `80` | Max records to return |
-| `offset` | int | no | `0` | Records to skip |
-| `order` | str | no | `""` | Sort order, e.g. `"name asc"` |
-| `compact` | bool | no | `false` | When true, strips false/null values and uses compact JSON |
-
-**Returns:**
-```json
-{
-  "model": "res.partner",
-  "total_count": 523,
-  "returned_count": 5,
-  "offset": 0,
-  "limit": 5,
-  "records": [
-    { "id": 1, "name": "My Company", "email": "info@example.com" }
-  ]
-}
-```
-
----
-
 ## 4. aggregate_records
 
 Perform server-side `read_group` aggregations (e.g. sums, counts, averages, and group-bys) without fetching thousands of individual records.
@@ -207,23 +177,35 @@ Resolve an external ID (`ir.model.data` XML ID like `base.main_company` or `acco
 
 ---
 
-## 6. get_model_inheritance
+## 6. get_model_field_contributors
 
-Inspect an Odoo model's inheritance hierarchy, including `_inherit` extension chains, `_inherits` delegation pointers, and parent models.
+Inspect field counts, custom field names, and modules contributing fields to an
+Odoo model. This tool does not expose `_inherit` chains, `_inherits` delegation pointers, or parent models.
+Inspect the addon source for those relationships. Responses explicitly report
+`scope: "field_contributors"` and `hierarchy_available: false`.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `model_name` | str | yes | — | Technical model name, e.g. `product.product` |
+| `model` | str | yes | — | Technical model name, e.g. `product.product` |
+| `response_format` | str | no | `"compact"` | Compact returns up to 20 custom field names; full returns up to 50. |
+
+Field counts and contributing modules cover all matching fields visible to the
+configured Odoo user. `custom_fields_truncated` indicates whether the name list
+was shortened.
 
 **Returns:**
 ```json
 {
   "model": "product.product",
   "name": "Product Variant",
-  "inherit": ["mail.thread", "mail.activity.mixin"],
-  "inherits": {
-    "product.template": "product_tmpl_id"
-  }
+  "scope": "field_contributors",
+  "hierarchy_available": false,
+  "hierarchy_note": "Field metadata does not expose _inherit chains or _inherits delegation. Inspect the model definitions in addon source for those relationships.",
+  "total_fields": 280,
+  "custom_fields_count": 1,
+  "custom_fields": ["x_reference"],
+  "custom_fields_truncated": false,
+  "contributing_modules": ["product", "sale"]
 }
 ```
 
@@ -311,19 +293,37 @@ Lint an Odoo module or file with `pylint-odoo` when installed. Its fallback AST 
 ## 10. check_odoo_ls
 
 Run the official `odoo_ls_server --parse` diagnostic mode on a local path and
-return its JSON diagnostics. Odoo Boost detects the configured `odoo_ls_path`,
-the executable on `PATH`, or its managed user-bin installation. Install the
-latest stable binary directly from official `odoo/odoo-ls` release assets with:
+return its diagnostics. A run takes several seconds: Odoo LS loads the whole
+Odoo framework before checking the path. Odoo Boost uses the configured
+`odoo_ls_path`, otherwise the first usable executable on `PATH` or in its
+managed install. Install, update or repair it from the official `odoo/odoo-ls`
+release assets with:
 
 ```bash
 odoo-boost odoo-ls install
 odoo-boost odoo-ls status
 ```
 
-Downloads happen only through this explicit command. The installer accepts
-only the expected platform archive from the official GitHub repository and
-installs it atomically. Use `--version 1.4.0` to pin a release and `--force` to
-replace an existing managed binary.
+Odoo LS loads its Python stubs from a `typeshed` directory next to its
+executable. Release archives ship only the executable, so the installer also
+downloads the release's `typeshed.zip` and rebuilds the managed directory
+(`~/.local/share/odoo-boost/odoo-ls`, or `%LOCALAPPDATA%\odoo-boost\odoo-ls` on
+Windows) atomically. On Linux and macOS it links `~/.local/bin/odoo_ls_server`
+to it, replacing only a stub-less executable or an earlier managed link, never a
+working foreign one. Without the stubs the server reports no diagnostics at all;
+`status` and this tool detect that case instead of returning an empty result.
+Running `install` again updates to the latest release, or does nothing when it
+is current. Use `--version 1.6.1` to pin a release and `--force` to reinstall.
+
+The tool passes the nearest `odools.toml` above `path` to Odoo LS. Without one,
+it passes the configured `odoo_source_path`, the existing `addons_path` entries
+and the `venv_path` interpreter. When Odoo LS does not load the framework, the
+response carries a `warning`: only syntax and JavaScript checks ran.
+
+Only diagnostics for files under `path` are returned (`outside_path_count`
+counts the others), most severe first. Compact responses hold the 30 most
+severe as one-line records plus counts per severity and code; `full` returns
+every diagnostic with its raw Odoo LS fields.
 
 Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"`).
 
@@ -331,10 +331,24 @@ Parameters: `path` (default `"."`) and `response_format` (`"compact"` or `"full"
 ```json
 {
   "installed": true,
-  "binary": "/usr/local/bin/odoo-ls",
-  "exit_code": 0,
-  "diagnostic_count": 0,
-  "diagnostics": [],
+  "binary": "/home/me/.local/share/odoo-boost/odoo-ls/odoo_ls_server",
+  "success": true,
+  "odoo_version": "18.0.0",
+  "config": "/home/me/project/odools.toml",
+  "diagnostic_count": 1,
+  "outside_path_count": 7,
+  "by_severity": {"error": 1},
+  "by_code": {"OLS03014": 1},
+  "diagnostics": [
+    {
+      "file": "models/sale.py",
+      "line": 42,
+      "column": 18,
+      "severity": "error",
+      "message": "Field does not exist on model or not in dependencies",
+      "code": "OLS03014"
+    }
+  ],
   "truncated": false,
   "response_format": "compact"
 }
@@ -382,7 +396,7 @@ List Odoo menu items (`ir.ui.menu`).
 
 ---
 
-## 14. list_routes
+## 14. list_website_pages
 
 List `website.page` and `website.rewrite` ORM records. This does not enumerate Python controller routes. The result includes `complete` and `unavailable` fields when a model is missing or access is denied; connection failures surface as tool errors.
 
@@ -395,14 +409,24 @@ List `website.page` and `website.rewrite` ORM records. This does not enumerate P
 
 ## 15. list_access_rights
 
-List access rights (`ir.model.access`) and record rules (`ir.rule`) for a model.
+List access metadata for a model using the connected server's detected version.
+Odoo 15–19 use `ir.model.access` and `ir.rule`. Odoo 20 uses `ir.access`:
+`access_rights` contains group permissions and `record_rules` contains global
+restrictions. Both lists retain their totals, returned counts, and independent
+pagination. Odoo 20 adds `security_model="ir.access"` and includes each entry's
+`kind`, raw `operation`, and `domain`; permission domains are preserved too.
+CRUD flags describe applicability, not effective access for a particular user.
+
+The live server version takes precedence over project configuration. Unknown
+versions or metadata errors are reported without guessing or falling back to
+removed models.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `model_name` | str | no | `""` | Filter by model name. Empty for all |
 | `limit` | int | no | `50` | Max entries per type |
 | `offset` | int | no | `0` | Entries to skip per type |
-| `response_format` | str | no | `"compact"` | Unfiltered rule domains are truncated in compact mode |
+| `response_format` | str | no | `"compact"` | Unfiltered domains are truncated; full or model-filtered queries preserve them |
 
 ---
 
@@ -497,6 +521,11 @@ Look up curated official Odoo documentation links by topic and registered versio
 
 List automated actions (`base.automation`) and server actions (`ir.actions.server`).
 
+Connection failures are reported as tool errors. If a model is unavailable or a
+query is denied, the response includes `success: false` and an `errors` mapping
+keyed by model name, alongside any results from the other query. An empty list
+for a failed query does not mean that no actions exist.
+
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `model_name` | str | no | `""` | Filter by model name |
@@ -536,3 +565,30 @@ Pre-populates a migration analysis prompt that asks the agent to verify view, OR
 - **Arguments**:
   - `path` (string, required): Directory path of the addon to analyze.
   - `target_version` (string, optional, defaults to configured `odoo_version`): Target Odoo version.
+
+## Development workflows
+
+| Tool | Arguments | Behavior |
+|---|---|---|
+| `trace_odoo_source` | `path`, optional `model`, `method` | Static model definitions, `_inherit`, `_inherits`, method locations and view parents. Scoped declarations, not runtime MRO. |
+| `list_controller_routes` | `path`, optional `filter_url` | Python route decorators, explicit options and inherited-route overrides. Dynamic values and effective routing need runtime/source review. |
+| `diagnose_odoo_code` | `path`, `include_odoo_ls=false` | Unified static, pylint/fallback and optional LS diagnostics. Reports passed, failed, partial, not-run and unavailable coverage. |
+| `plan_changed_checks` | `path="."`, `base="HEAD"` | Check recommendations for tracked/staged/untracked git changes; executes no validation. |
+| `compare_local_runtime` | `addon_path`, `model` | Local field/XML ID presence and module-version metadata versus runtime. Runtime extras are informational. No effective view or field-semantics comparison. |
+| `tool_readiness` | none | Registered tools and linter/LS prerequisites. Live permissions remain explicitly unprobed. |
+| `tool_metrics` | none | Per-server calls, failures, latency, response characters, consecutive same-tool calls; process-wide scanner cache hits/misses. No arguments or record payloads. |
+| `run_odoo_tests` | `addon_path`, `test_tags`, `database` | Focused tests using explicitly configured disposable DB, dedicated test configuration, framework and VENV. Returns partial if no test execution summary is found. |
+
+Static checks include Python/XML parsing, manifest data/demo existence, local ACL
+candidates, SQL-construction/sudo/public-route review candidates and local XML
+references. Warnings requiring review are not proof of a vulnerability. Static
+checks do not prove company isolation, effective permissions, runtime XPath
+validity or absence of N+1 queries.
+
+### Breaking tool-name changes
+
+`get_model_inheritance` is replaced by `get_model_field_contributors`.
+`list_routes` is replaced by `list_website_pages` (pages and rewrites).
+`database_query` is removed; use `search_records`, whose default limit is 20.
+No compatibility aliases are registered. Update saved prompts/integrations and
+restart your MCP clients to refresh discovery.
