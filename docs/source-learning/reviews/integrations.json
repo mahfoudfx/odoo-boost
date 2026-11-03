@@ -1,0 +1,310 @@
+{
+  "fully_read_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/01_load_assets/point_of_sale_customization/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/01_load_assets/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/01_load_assets/point_of_sale_customization/static/src/xml/point_of_sale_customization.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/03_make_rpc/point_of_sale_customization/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/03_make_rpc/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/03_make_rpc/point_of_sale_customization/static/src/xml/point_of_sale_customization.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/models/pos_session.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/static/src/xml/point_of_sale_customization.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/controllers/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/controllers/main.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/models/payment_provider.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/models/payment_transaction.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/models/payment_gateway.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/data/payment_provider_data.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/views/payment_provider.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/views/payment_provider_views.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/views/payment_templates.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/models/product.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/static/src/xml/point_of_sale_customization.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/controllers/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/models/__init__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/models/hostel_student.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/views/hostel_student.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/security/hostel_security.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/security/ir.model.access.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/point-of-sales__custom-pos-ui.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/point-of-sales__customize-customer-receipts.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/iot-box__load-drivers.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/iot-box__connect-iot-box-with-odoo.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/iot__devices.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/point-of-sale__orders.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/ecommerce__configure-ecommerce-payments.txt"
+  ],
+  "partial_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub::OEBPS/B20997_24.xhtml#Loading drivers and listing connected devices; Taking input from devices",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_21.xhtml#Taking input from devices",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_19.xhtml#Making RPC calls; Modifying existing business logic; Modifying customer receipts; Integrating Razorpay with Point of Sale"
+  ],
+  "lessons": [
+    {
+      "lesson_id": "SI-01",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_19.xhtml#Making RPC calls; Modifying existing business logic; Modifying customer receipts; Integrating Razorpay with Point of Sale"
+      ],
+      "decision": "Trace versioned asset, data, component and receipt contracts as one extension chain.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/odoo/blob/6f00fdadb875342de2d14a179f25431f93cd63c9/addons/point_of_sale/models/pos_session.py",
+          "revision": "6f00fdadb875342de2d14a179f25431f93cd63c9",
+          "locator": "addons/point_of_sale/models/pos_session.py",
+          "result": "qualified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/odoo/blob/9dea17e805e1f513416b53c566895df26f0f560d/addons/point_of_sale/models/product_product.py",
+          "revision": "9dea17e805e1f513416b53c566895df26f0f560d",
+          "locator": "addons/point_of_sale/models/product_product.py",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Trace versioned asset, data, component and receipt contracts as one extension chain.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-02",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/__init__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/models/__init__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/models/product.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/models/pos_session.py"
+      ],
+      "decision": "Inspect import graph before adding loaders; v19 example loader is not imported and pinned default loaders already contain standard_price.",
+      "official_evidence": [
+        {
+          "series": "17.0",
+          "url": "https://github.com/odoo/odoo/blob/6f00fdadb875342de2d14a179f25431f93cd63c9/addons/point_of_sale/models/pos_session.py",
+          "revision": "6f00fdadb875342de2d14a179f25431f93cd63c9",
+          "locator": "addons/point_of_sale/models/pos_session.py",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/odoo/blob/9dea17e805e1f513416b53c566895df26f0f560d/addons/point_of_sale/models/product_product.py",
+          "revision": "9dea17e805e1f513416b53c566895df26f0f560d",
+          "locator": "addons/point_of_sale/models/product_product.py",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Inspect import graph before adding loaders; v19 example loader is not imported and pinned default loaders already contain standard_price.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-03",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/03_make_rpc/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_19.xhtml#Making RPC calls; Modifying existing business logic; Modifying customer receipts; Integrating Razorpay with Point of Sale"
+      ],
+      "decision": "Bound and order server queries; design offline/transport failures explicitly; distinguish UI warning from server invariant.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/sales/point_of_sale.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/applications/sales/point_of_sale.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/developer/reference/backend/security.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/developer/reference/backend/security.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Bound and order server queries; design offline/transport failures explicitly; distinguish UI warning from server invariant.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-04",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/controllers/main.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/models/payment_transaction.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/11_payment_gateway/payment_gateway_generic/data/payment_provider_data.xml"
+      ],
+      "decision": "Authenticate provider evidence before processing; a framework state machine and optional amount validation do not make a simulated callback trustworthy.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/odoo/blob/9dea17e805e1f513416b53c566895df26f0f560d/addons/payment/models/payment_transaction.py",
+          "revision": "9dea17e805e1f513416b53c566895df26f0f560d",
+          "locator": "addons/payment/models/payment_transaction.py",
+          "result": "verified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/odoo/blob/9dea17e805e1f513416b53c566895df26f0f560d/addons/payment_razorpay/controllers/main.py",
+          "revision": "9dea17e805e1f513416b53c566895df26f0f560d",
+          "locator": "addons/payment_razorpay/controllers/main.py",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Authenticate provider evidence before processing; a framework state machine and optional amount validation do not make a simulated callback trustworthy.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-05",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_19.xhtml#Making RPC calls; Modifying existing business logic; Modifying customer receipts; Integrating Razorpay with Point of Sale",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/enterprise/ecommerce__configure-ecommerce-payments.txt"
+      ],
+      "decision": "Separate online providers from POS payment methods and terminal configuration; inspect actual module/dependency prerequisites.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/applications/sales/point_of_sale/payment_methods/terminals/razorpay.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "content/applications/sales/point_of_sale/payment_methods/terminals/razorpay.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Separate online providers from POS payment methods and terminal configuration; inspect actual module/dependency prerequisites.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-06",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/models/hostel_student.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter21/05_capture_image/my_hostel/views/hostel_student.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/iot-box__connect-iot-box-with-odoo.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_21.xhtml#Taking input from devices"
+      ],
+      "decision": "Diagnose network, pairing, image, handlers, supported device and application widget separately; exact Enterprise widget internals remain unresolved.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/general/iot/connect.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/applications/general/iot/connect.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/general/iot/iot_advanced/updating_iot.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/applications/general/iot/iot_advanced/updating_iot.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/applications/general/iot/devices/camera.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/applications/general/iot/devices/camera.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Diagnose network, pairing, image, handlers, supported device and application widget separately; exact Enterprise widget internals remain unresolved.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-07",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/iot-box__load-drivers.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub::OEBPS/B20997_24.xhtml#Loading drivers and listing connected devices; Taking input from devices"
+      ],
+      "decision": "Use selective device compatibility checks; an in-memory 500-entry duplicate cache is not durable exactly-once operation.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/odoo/blob/55f9d29cd13c935226c2b6e48eb661bc89310e8b/addons/hw_drivers/driver.py",
+          "revision": "55f9d29cd13c935226c2b6e48eb661bc89310e8b",
+          "locator": "addons/hw_drivers/driver.py",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Use selective device compatibility checks; an in-memory 500-entry duplicate cache is not durable exactly-once operation.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    },
+    {
+      "lesson_id": "SI-08",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/point-of-sales__custom-pos-ui.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/point-of-sales__customize-customer-receipts.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter22/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter19/06_modify_recipt/point_of_sale_customization/static/src/js/point_of_sale_customization.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub::OEBPS/Text/Chapter_19.xhtml#Making RPC calls; Modifying existing business logic; Modifying customer receipts; Integrating Razorpay with Point of Sale"
+      ],
+      "decision": "Specify savings formula and refund/tax/currency scenarios; compare prose intent with actual fields before trusting a UI recipe.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/developer/reference/backend/security.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "content/developer/reference/backend/security.rst",
+          "result": "qualified"
+        },
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/odoo/blob/9dea17e805e1f513416b53c566895df26f0f560d/addons/point_of_sale/models/product_product.py",
+          "revision": "9dea17e805e1f513416b53c566895df26f0f560d",
+          "locator": "addons/point_of_sale/models/product_product.py",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-integrations-review.md"
+      ],
+      "benefit": "Specify savings formula and refund/tax/currency scenarios; compare prose intent with actual fields before trusting a UI recipe.",
+      "validation": "Exact selected source/import/manifest reading; pinned official documentation and selected implementation bodies; no Odoo/browser/provider/hardware runtime execution."
+    }
+  ],
+  "official_source_manifest": "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-official-source-audit/integrations/manifest.json"
+}

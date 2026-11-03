@@ -14,3 +14,6 @@ Use this path for a bounded translation request. If the source string is built a
 3. Validate the changed PO files with an available PO parser or `msgfmt -c`; verify every requested term and locale, then review the diff. If no parser is available, check stanza syntax and report that limitation. Stop when the requested strings and focused check agree.
 
 Use the project's normal deployment process for loading translations. A local catalog edit does not itself call for a database upgrade or an investigation of Odoo's translation engine.
+
+For changed source terms, a newly supported language, or extraction/loading work,
+follow [the translation lifecycle](references/extraction-lifecycle.md).

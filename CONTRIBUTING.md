@@ -2,6 +2,12 @@
 
 Use English for project documentation, code comments, docstrings, and source messages.
 
+For learning from books, example repositories or additional Odoo sources, follow
+the [internal source learning workflow](docs/source-learning-workflow.md).
+Its [ledger](docs/source-learning-ledger.md) records provenance, official checks,
+coverage and project value; the [scan plan](docs/source-scan-plan.md) tracks the
+remaining comprehensive review.
+
 ## Development Setup
 
 ```bash

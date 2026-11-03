@@ -1,0 +1,1532 @@
+[
+  {
+    "gap_id": "CY-FAIL-001",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-fields/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-fields/",
+    "failure_kind": "http-404",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-field/",
+    "recovered_file": "recovered/cy-fail-001.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:27.666195+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-fields/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:34:49.156189+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-field/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-field/",
+        "extracted_chars": 4908,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.478092+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-fields/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-web-library/owl-field/",
+        "extracted_chars": 4908,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-001.html",
+    "content_sha256": "d1a5a25d0dabd32e31d18feff86d53e6d8ef6854e0bd43fcf66a7b4ec3e52b0e",
+    "html_sha256": "a5ea36c58b40c78ed3e89d5dc277e3aee032e5a01bbf565908e7a4e1440c91c9"
+  },
+  {
+    "gap_id": "CY-FAIL-002",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+    "original_error": "Missing chapter content",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-002.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:27.667261+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:22.238813+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.506057+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "extracted_chars": 1976,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.478551+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/manage-branches/",
+        "extracted_chars": 1976,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-002.html",
+    "content_sha256": "8307b146c93a70a3808bbada3c2404f678ca53c65f614e56bca01d79abcf30f7",
+    "html_sha256": "c5359e43175f045b450b567ffdbfc3d681ba3fca01f53af526c5a8adead7be6b"
+  },
+  {
+    "gap_id": "CY-FAIL-003",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+    "original_error": "Missing chapter content",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-003.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:27.668006+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:22.239725+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.506482+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "extracted_chars": 1532,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.478954+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/debugging/",
+        "extracted_chars": 1532,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-003.html",
+    "content_sha256": "ec8458821c39a5abd5d50d2feb43b04b6f86a168d11640e39391edf17b6442cd",
+    "html_sha256": "e2f12d2353b3d18512e144b9d8a68b38464d18385e8a99fb83e1224796593d05"
+  },
+  {
+    "gap_id": "CY-FAIL-004",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+    "original_error": "Missing chapter content",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-004.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:28.133108+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:22.240818+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.506926+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "extracted_chars": 957,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.512851+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/backup-instance/",
+        "extracted_chars": 957,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-004.html",
+    "content_sha256": "a4009622645cd39c8a08c39c41553c40251ed49a98efa153817dac8bd9f06afe",
+    "html_sha256": "0f67258ca99b1302c6afdfab02dce87f296c7b01eb929f73a32ad3ea6568f2c8"
+  },
+  {
+    "gap_id": "CY-FAIL-005",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+    "original_error": "Missing chapter content",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-005.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:28.446979+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:23.008037+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.528540+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "extracted_chars": 3265,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.513388+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/builds/",
+        "extracted_chars": 3265,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-005.html",
+    "content_sha256": "096cd6a4514a9129882b26c21556fa9dea4648490dad3b147e4aa37602cb19ed",
+    "html_sha256": "fbde83cd7e19c22f52796deef6d2e3b9827ad4ff5766b11f1502aba9fefd43dd"
+  },
+  {
+    "gap_id": "CY-FAIL-006",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+    "original_error": "Missing chapter content",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-006.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:28.469048+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:23.018474+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.531993+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "extracted_chars": 3454,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.514580+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/odoo-sh/other-sh-options/",
+        "extracted_chars": 3452,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-006.html",
+    "content_sha256": "abd31d170d7ceb4ff907a43266b3bb97918f3e4727b07dcb4edc4c4d35bc74cd",
+    "html_sha256": "afeccf5696d498d89c2c14545913a9c288a61eea9c133e8aa51058b08933138f"
+  },
+  {
+    "gap_id": "CY-FAIL-007",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/buttons/context/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/buttons/context/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/context/",
+    "recovered_file": "development/views__context.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:28.932782+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/buttons/context/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.492856+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/context/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/views__context.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "55a076ffda80538f588410b2ba818faee94bf4a5cf5a1139989afc36f85152ff"
+  },
+  {
+    "gap_id": "CY-FAIL-008",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/views-inheritance/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/views-inheritance/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/view-inheritance/",
+    "recovered_file": "development/views__view-inheritance.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.245960+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/views-inheritance/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.492946+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/view-inheritance/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/views__view-inheritance.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "acc581066ba051cf5c2770b48101c95222ce4604e58c9b05c193f454a4309d79"
+  },
+  {
+    "gap_id": "CY-FAIL-009",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-view/pivot-view/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-view/pivot-view/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/pivot-view/",
+    "recovered_file": "development/views__pivot-view.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.359857+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-view/pivot-view/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493014+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/pivot-view/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/views__pivot-view.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "31262d88d131e34d03cfbbc2e58eb5156afb10e1dc17ad8db2485b69e518a75a"
+  },
+  {
+    "gap_id": "CY-FAIL-010",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-style/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-style/",
+    "failure_kind": "http-404",
+    "status": "unresolved-http",
+    "retry_result": "http-error",
+    "replacement_url": null,
+    "recovered_file": null,
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.398070+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/cohort-style/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      }
+    ]
+  },
+  {
+    "gap_id": "CY-FAIL-011",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spent/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spent/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/add-time-spent/",
+    "recovered_file": "development/views__add-time-spent.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.694528+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spent/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493066+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/add-time-spent/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/views__add-time-spent.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "556516b6f1901bf3d39006216b6e8298e17ec8c2ed7a54c7a2c15f2205a93951"
+  },
+  {
+    "gap_id": "CY-FAIL-012",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spend/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spend/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/add-time-spent/",
+    "recovered_file": "development/views__add-time-spent.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.814924+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/add-time-spend/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493114+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/views/add-time-spent/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/views__add-time-spent.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "556516b6f1901bf3d39006216b6e8298e17ec8c2ed7a54c7a2c15f2205a93951"
+  },
+  {
+    "gap_id": "CY-FAIL-013",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/internationalization/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/internationalization/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/internationalization/",
+    "recovered_file": "development/internationalization.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:29.847303+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/security/internationalization/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493196+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/internationalization/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/internationalization.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "af9e001cbfce15e19346a6a1ad3234f54eafac9180962360c6f0f10e07cf0981"
+  },
+  {
+    "gap_id": "CY-FAIL-014",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/internationalization/custom-widget/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/internationalization/custom-widget/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/web-development/custom-widget/",
+    "recovered_file": "development/web-development__custom-widget.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:30.165059+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/internationalization/custom-widget/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493272+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/web-development/custom-widget/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/web-development__custom-widget.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "90cd2929e209738bf136643c3544059a71a135ee140b3e5ef6bc45e85f15bb61"
+  },
+  {
+    "gap_id": "CY-FAIL-015",
+    "source_id": "CY18-DEV",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/data-development/New-view-creation/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/data-development/New-view-creation/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/web-development/new-view-creation/",
+    "recovered_file": "development/web-development__new-view-creation.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:30.262496+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/data-development/New-view-creation/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493337+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-development/web-development/new-view-creation/",
+        "navigation_evidence": "recovered/cy-fail-002.html",
+        "saved_content": "development/web-development__new-view-creation.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "a39fd8a3c6191c782c5c144c96a76b099e7097b9e41c66d907ed87746ff77ad8"
+  },
+  {
+    "gap_id": "CY-FAIL-016",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/contacts/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-016.txt",
+    "content_sha256": "2be6b80d696e4e8c47d9a6570e65c876290bb05dca24d8b82ff471f1e5c602c3",
+    "html_sha256": "95e40386c5535bbe1fb4736578f1ca96039090577adc5ae1ff3aec53b59ed9c4",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:30.324405+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/contacts/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/contacts/",
+        "extracted_chars": 341,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.579024+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/contacts/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/contacts/",
+        "extracted_chars": 341,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-016.html"
+  },
+  {
+    "gap_id": "CY-FAIL-017",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-017.txt",
+    "content_sha256": "123e75b9f3a1cf03d646f3a2345515841b70f16157997bf617ac6b6605cadf28",
+    "html_sha256": "69b714767065b1650bae9cc7657ca3199244ba80562761c953a8ff4b7f411413",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:30.605496+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/",
+        "extracted_chars": 1860,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.580862+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/",
+        "extracted_chars": 1860,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-017.html"
+  },
+  {
+    "gap_id": "CY-FAIL-018",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-018.txt",
+    "content_sha256": "4beb8bee296f1baa542bb8fbf4e4058e94e5cf6411634195bfe095632b1e02a0",
+    "html_sha256": "79afc537745f13ab82e20516b498ddd8a98653f98fc73f2a10d6b347be05ddbd",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:30.739549+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+        "extracted_chars": 4824,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.582349+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+        "extracted_chars": 4824,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-018.html"
+  },
+  {
+    "gap_id": "CY-FAIL-019",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/validating-the-barcode-for-a-product/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-019.txt",
+    "content_sha256": "230b42ad0f64cb6ba8b2bc90e2483da2318c22c522b02ac4473f84da6db77ebf",
+    "html_sha256": "ee796f4277e0b1d122bd41d104b2bd92010dfb8c1392c0fa89d9908fc5f9bf52",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:31.273936+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/validating-the-barcode-for-a-product/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/validating-the-barcode-for-a-product/",
+        "extracted_chars": 645,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.673303+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/validating-the-barcode-for-a-product/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/validating-the-barcode-for-a-product/",
+        "extracted_chars": 645,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-019.html"
+  },
+  {
+    "gap_id": "CY-FAIL-020",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-020.txt",
+    "content_sha256": "23fd403467c41e6d65f2f92ae0b71190c78b35d440ad8b2e0467785e3db9afb9",
+    "html_sha256": "a7ce84558df4a42933a65cc168934921df12ae02c06ff7e0169ab4b6590b9248",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:31.507699+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+        "extracted_chars": 816,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.696515+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+        "extracted_chars": 816,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-020.html"
+  },
+  {
+    "gap_id": "CY-FAIL-021",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "unresolved-http",
+    "retry_result": "soft-404",
+    "replacement_url": null,
+    "recovered_file": null,
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:31.646401+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/404/Default.aspx?aspxerrorpath=/odoo/odoo-books/v18/employees/default.aspx",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:24:23.152157+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/404/Default.aspx?aspxerrorpath=/odoo/odoo-books/v18/employees/default.aspx",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:25:14.532607+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/404/Default.aspx?aspxerrorpath=/odoo/odoo-books/v18/employees/default.aspx",
+        "extracted_chars": 1,
+        "result": "needs-content-inspection"
+      },
+      {
+        "date": "2026-11-03T13:26:38.422258+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/404/Default.aspx?aspxerrorpath=/odoo/odoo-books/v18/employees/default.aspx",
+        "extracted_chars": 1,
+        "result": "soft-404"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-021.html"
+  },
+  {
+    "gap_id": "CY-FAIL-022",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-022.txt",
+    "content_sha256": "0972ad0b03d072c43d891ecb63c9e428ee94ba6245f360d4eb0f97fcb01a4a52",
+    "html_sha256": "dfa45d50df3e796e48b6e15eed4014ac465e194469d58bb701b5db95d8b33fb1",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:32.215006+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "extracted_chars": 626,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.732351+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "extracted_chars": 626,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-022.html"
+  },
+  {
+    "gap_id": "CY-FAIL-023",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-023.txt",
+    "content_sha256": "ec30d2e69c029bbb50c400c8c20d449017fc2b24b0384d81b7e38ad0c9920cfd",
+    "html_sha256": "8955f212c3dad5acebc8ee1a34b71433bd9e042066a3428ff58513a50578b712",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:32.438942+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "extracted_chars": 6445,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.815586+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "extracted_chars": 6445,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-023.html"
+  },
+  {
+    "gap_id": "CY-FAIL-024",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-024.txt",
+    "content_sha256": "a0e8931cd38aa18f55bf4a28743a691e85b0179564fb655aaedf8b38b9c56877",
+    "html_sha256": "e820d34d38dc08622712f19dc4bec109c281aca6d660d5da93f2c89c9a89d8e0",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:32.746303+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "extracted_chars": 1916,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.825644+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "extracted_chars": 1916,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-024.html"
+  },
+  {
+    "gap_id": "CY-FAIL-025",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-025.txt",
+    "content_sha256": "0b39145364ee401a90f45baf36dbaf5f5b9219b32ec609bc108aacd5468d746d",
+    "html_sha256": "2fc2b14e9e0e0782d628dd18f1ebf9b0f08d713378f527788b3a0e9795997ce8",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:33.136474+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "extracted_chars": 4458,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.832525+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "extracted_chars": 4458,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-025.html"
+  },
+  {
+    "gap_id": "CY-FAIL-026",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-026.txt",
+    "content_sha256": "cdf5c23f23ad58573e2237c4a3a028ca6698e4890758600523308fee71fd9c94",
+    "html_sha256": "75ba04136a08d1cfefddaa7b292c62feb971ce77ca566337264fcacec9f7654d",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:33.341702+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "extracted_chars": 6632,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.986021+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "extracted_chars": 6632,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-026.html"
+  },
+  {
+    "gap_id": "CY-FAIL-027",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/reporting-and-analytics/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-027.txt",
+    "content_sha256": "ffea24f7f465f8e974cd293b9d374d211b4cb0f4251c7ee8c49f030746312528",
+    "html_sha256": "8fb88a5145941205b292d573906c1b85d5b4fea986844262f53d72ddb5bfec9f",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:33.712626+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/reporting-and-analytics/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/reporting-and-analytics/",
+        "extracted_chars": 2431,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.989777+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/reporting-and-analytics/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/reporting-and-analytics/",
+        "extracted_chars": 2431,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-027.html"
+  },
+  {
+    "gap_id": "CY-FAIL-028",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/products-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/products-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/products-menu/",
+    "recovered_file": "enterprise/manufacturing__products-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.057149+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/products-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493572+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/products-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/manufacturing__products-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "8c3b6a3df5520f826db71f52d0f348f5e8dcab3ebcafe54e1f44a531b7c05f29"
+  },
+  {
+    "gap_id": "CY-FAIL-029",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/reporting/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/reporting/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/reporting/",
+    "recovered_file": "enterprise/manufacturing__reporting.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.358879+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/settings/reporting/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.493740+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/manufacturing/reporting/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/manufacturing__reporting.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "c55405825de9e57010fe57c70fb765859d0a7d6a502b33b9bb03bc276a8e50aa"
+  },
+  {
+    "gap_id": "CY-FAIL-030",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/order-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/purchase/order-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/orders-menu/",
+    "recovered_file": "enterprise/purchase__orders-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.513739+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/order-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.494699+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/orders-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/purchase__orders-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "00dd063f4af36cd1ad606c75d9d3e918453f84e9ff0f8321b543044658e60d9f"
+  },
+  {
+    "gap_id": "CY-FAIL-031",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchse/orders-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/purchse/orders-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/orders-menu/",
+    "recovered_file": "enterprise/purchase__orders-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.654405+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchse/orders-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495181+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/orders-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/purchase__orders-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "00dd063f4af36cd1ad606c75d9d3e918453f84e9ff0f8321b543044658e60d9f"
+  },
+  {
+    "gap_id": "CY-FAIL-032",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/product-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/purchase/product-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/products-menu/",
+    "recovered_file": "enterprise/purchase__products-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.822198+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/product-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495313+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/purchase/products-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/purchase__products-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "deefaaf370ddb3ea26e478afe2a780774c99bf049ebe453724f443995d9f9ba9"
+  },
+  {
+    "gap_id": "CY-FAIL-033",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/maintenance/overview-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/maintenance/overview-menu/",
+    "failure_kind": "http-404",
+    "status": "unresolved-http",
+    "retry_result": "http-error",
+    "replacement_url": null,
+    "recovered_file": null,
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:34.993662+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/maintenance/overview-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      }
+    ]
+  },
+  {
+    "gap_id": "CY-FAIL-034",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-feature/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-feature/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+    "recovered_file": "recovered/cy-fail-018.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.112348+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-feature/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495461+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/exploring-the-barcode-app-features/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "recovered/cy-fail-018.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "4beb8bee296f1baa542bb8fbf4e4058e94e5cf6411634195bfe095632b1e02a0"
+  },
+  {
+    "gap_id": "CY-FAIL-035",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustment/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustment/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+    "recovered_file": "recovered/cy-fail-020.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.286825+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustment/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495591+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/inventory-adjustments/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "recovered/cy-fail-020.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "23fd403467c41e6d65f2f92ae0b71190c78b35d440ad8b2e0467785e3db9afb9"
+  },
+  {
+    "gap_id": "CY-FAIL-036",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/batch-transfers/\"",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/barcode/batch-transfers/%22",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/batch-transfers/",
+    "recovered_file": "enterprise/barcode__batch-transfers.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.458536+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/batch-transfers/\"",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495712+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/barcode/batch-transfers/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/barcode__batch-transfers.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "387bae508a8cb37cee477c8d104f7a33c7f25b6b5285a17c74d414f111864920"
+  },
+  {
+    "gap_id": "CY-FAIL-037",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/sitemap/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/sitemap/",
+    "failure_kind": "http-404",
+    "status": "unresolved-http",
+    "retry_result": "http-error",
+    "replacement_url": null,
+    "recovered_file": null,
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.581448+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/sitemap/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      }
+    ]
+  },
+  {
+    "gap_id": "CY-FAIL-038",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/configuration-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/employees/configuration-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/configuration/",
+    "recovered_file": "enterprise/employees__configuration.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.734584+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/configuration-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495827+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/employees/configuration/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/employees__configuration.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "7cb70fb0f291740627ace502dd73feac1d4bb10a2bb227111b4194bcf4d996b7"
+  },
+  {
+    "gap_id": "CY-FAIL-039",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configurtion-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configurtion-menu/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration-menu/",
+    "recovered_file": "enterprise/recruitment__configuration-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:35.931256+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configurtion-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.495958+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/recruitment__configuration-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "67dfe4e2f9462ee5d183a38119236ae419f405e0e55fae494143f6d9d01d7d12"
+  },
+  {
+    "gap_id": "CY-FAIL-040",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration/",
+    "failure_kind": "http-404",
+    "status": "resolved-alias",
+    "retry_result": "publisher-navigation-alias-to-saved-content",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration-menu/",
+    "recovered_file": "enterprise/recruitment__configuration-menu.txt",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:36.091706+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      },
+      {
+        "date": "2026-11-03T13:26:38.496106+00:00",
+        "result": "publisher-navigation-alias-to-saved-content",
+        "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/recruitment/configuration-menu/",
+        "navigation_evidence": "recovered/cy-fail-016.html",
+        "saved_content": "enterprise/recruitment__configuration-menu.txt",
+        "note": "Original URL remains invalid; corrected publisher navigation target maps to existing usable chapter text. No new technical verification or fresh HTTP pass claimed."
+      }
+    ],
+    "content_sha256": "67dfe4e2f9462ee5d183a38119236ae419f405e0e55fae494143f6d9d01d7d12"
+  },
+  {
+    "gap_id": "CY-FAIL-041",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+    "recovered_file": "recovered/cy-fail-041.txt",
+    "content_sha256": "ec30d2e69c029bbb50c400c8c20d449017fc2b24b0384d81b7e38ad0c9920cfd",
+    "html_sha256": "8955f212c3dad5acebc8ee1a34b71433bd9e042066a3428ff58513a50578b712",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:36.223524+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "extracted_chars": 6445,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:33.990967+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/my-time-menu/",
+        "extracted_chars": 6445,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-041.html"
+  },
+  {
+    "gap_id": "CY-FAIL-042",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+    "recovered_file": "recovered/cy-fail-042.txt",
+    "content_sha256": "0972ad0b03d072c43d891ecb63c9e428ee94ba6245f360d4eb0f97fcb01a4a52",
+    "html_sha256": "dfa45d50df3e796e48b6e15eed4014ac465e194469d58bb701b5db95d8b33fb1",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:36.400607+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "extracted_chars": 626,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:34.122832+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/",
+        "extracted_chars": 626,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-042.html"
+  },
+  {
+    "gap_id": "CY-FAIL-043",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+    "recovered_file": "recovered/cy-fail-043.txt",
+    "content_sha256": "a0e8931cd38aa18f55bf4a28743a691e85b0179564fb655aaedf8b38b9c56877",
+    "html_sha256": "e820d34d38dc08622712f19dc4bec109c281aca6d660d5da93f2c89c9a89d8e0",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:36.558278+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "extracted_chars": 1916,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:34.123115+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/overview-menu/",
+        "extracted_chars": 1916,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-043.html"
+  },
+  {
+    "gap_id": "CY-FAIL-044",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+    "recovered_file": "recovered/cy-fail-044.txt",
+    "content_sha256": "0b39145364ee401a90f45baf36dbaf5f5b9219b32ec609bc108aacd5468d746d",
+    "html_sha256": "2fc2b14e9e0e0782d628dd18f1ebf9b0f08d713378f527788b3a0e9795997ce8",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:37.637128+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "extracted_chars": 4458,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:34.126840+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/management-menu/",
+        "extracted_chars": 4458,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-044.html"
+  },
+  {
+    "gap_id": "CY-FAIL-045",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+    "recovered_file": "recovered/cy-fail-045.txt",
+    "content_sha256": "cdf5c23f23ad58573e2237c4a3a028ca6698e4890758600523308fee71fd9c94",
+    "html_sha256": "75ba04136a08d1cfefddaa7b292c62feb971ce77ca566337264fcacec9f7654d",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:37.817581+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "extracted_chars": 6632,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:34.269915+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/v18/timeoff/configuration-menu/",
+        "extracted_chars": 6632,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-045.html"
+  },
+  {
+    "gap_id": "CY-FAIL-046",
+    "source_id": "CY18-ENT",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/v18/discuss/meetings/configuration-menu/",
+    "original_error": "404 Client Error: Not Found for url: https://www.cybrosys.com/odoo/odoo-books/v18/discuss/meetings/configuration-menu/",
+    "failure_kind": "http-404",
+    "status": "unresolved-http",
+    "retry_result": "http-error",
+    "replacement_url": null,
+    "recovered_file": null,
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:37.974535+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/v18/discuss/meetings/configuration-menu/",
+        "result": "http-error",
+        "http_status": 404,
+        "detail": "HTTP Error 404: Not Found"
+      }
+    ]
+  },
+  {
+    "gap_id": "CY-FAIL-047",
+    "source_id": "CY18-ACC",
+    "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-accounting/accounting-management/accounting-management-actions/",
+    "original_error": "Missing book content container",
+    "failure_kind": "content-extraction",
+    "status": "recovered",
+    "retry_result": "usable-book-body-saved",
+    "replacement_url": null,
+    "recovered_file": "recovered/cy-fail-047.txt",
+    "content_sha256": "1ad686117f0f57c57fe67e840adbef972f4fab2fabb4e1bb2c41449959c4228d",
+    "html_sha256": "ef707c39a6339af12b553530a27892514905158fdc9add4aaa798f707fafd0bf",
+    "attempts": [
+      {
+        "date": "2026-11-03T13:21:38.425695+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-accounting/accounting-management/accounting-management-actions/",
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-accounting/accounting-management/accounting-management-actions/",
+        "extracted_chars": 6979,
+        "result": "usable-book-body-saved"
+      },
+      {
+        "date": "2026-11-03T13:37:34.270331+00:00",
+        "url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-accounting/accounting-management/accounting-management-actions/",
+        "cached_html": true,
+        "http_status": 200,
+        "final_url": "https://www.cybrosys.com/odoo/odoo-books/odoo-18-accounting/accounting-management/accounting-management-actions/",
+        "extracted_chars": 6978,
+        "result": "usable-book-body-saved"
+      }
+    ],
+    "fetched_html": "recovered/cy-fail-047.html"
+  }
+]

@@ -27,6 +27,8 @@ mise.toml
 odoo-boost.json
 CLAUDE.md
 AGENTS.md
+# This repository's maintainer instructions are authored, not generated.
+!/AGENTS.md
 .windsurfrules
 .clinerules
 .mcp.json

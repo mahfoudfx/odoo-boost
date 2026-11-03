@@ -1,0 +1,272 @@
+{
+  "fully_read_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_book_report.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_publisher_report.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_publisher_report.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/static/src/js/snippets.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/views/snippets.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter11/06_import_translation/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter11/06_import_translation/my_hostel/i18n/nl_BE.po",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter11/06_import_translation/my_hostel/models/hostel_room.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/models/hostel_room.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/models/hostel_student.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/reports/hostel_room_detail_report.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/reports/hostel_room_detail_report_template.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/03_static_snippets/my_hostel/views/snippets.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/controllers/main.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/security/hostel_security.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/security/ir.model.access.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/static/src/builder/snippet_option.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/static/src/builder/snippet_options.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/static/src/js/snippets.js",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/views/snippets.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/09_multiple_websites/my_hostel/controllers/main.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/09_multiple_websites/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/__manifest__.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/controllers/main.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/models/hostel.py",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/security/hostel_security.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/security/ir.model.access.csv",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/security/rules.xml",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization__export-translation.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization__import-translation.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/website-development__dynamic-snippets.txt",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/website-development__snippets.txt"
+  ],
+  "partial_files": [
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-656",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-674",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-707",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_597",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_602",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_606",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo 15 Development Essentials.epub!OEBPS/B16119_12_Final_PD_ePub.xhtml#_idParaDest-369",
+    "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo 15 Development Essentials.epub!OEBPS/B16119_12_Final_PD_ePub.xhtml#_idParaDest-371"
+  ],
+  "lessons": [
+    {
+      "lesson_id": "SW-01",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/static/src/builder/snippet_option.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-656",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-674"
+      ],
+      "decision": "Separate saved snippet structure, frontend interactions and editor option/plugin APIs. Resolve the v19 sample/doc registry discrepancy against exact source before copying.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/howtos/website_themes/building_blocks.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/howtos/website_themes/building_blocks.rst",
+          "result": "unresolved"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-web-review.md"
+      ],
+      "benefit": "Provides concrete builder-migration and lifecycle criteria.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-02",
+      "origin": "code example",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/static/src/js/snippets.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E-Examples/Chapter14/04_dynamic_snippets/my_hostel/views/snippets.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/static/src/js/snippets.js",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/controllers/main.py"
+      ],
+      "decision": "Check asset loading and DOM/data/server-limit contracts end to end; parse success does not establish usable editor behavior.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/howtos/website_themes/building_blocks.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/howtos/website_themes/building_blocks.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-web-review.md"
+      ],
+      "benefit": "Concrete tests for saved options, paging limits and disabled assets.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-03",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/controllers/main.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/models/hostel.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/security/rules.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/10_publish_management/my_hostel/__manifest__.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter22/04_dynamic_snippets/my_hostel/security/ir.model.access.csv",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-17-Development-Cookbook-5E/Odoo-17-Development-Cookbook-5E.epub!OEBPS/B20997_14.xhtml#_idParaDest-707"
+      ],
+      "decision": "Website scope, publication and model authorization require distinct policy; sudo list searches bypass publication rules, while public auth alone grants no model ACL.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/security.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/security.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-web-review.md"
+      ],
+      "benefit": "New publication/access counterexamples support existing security/controller guidance.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-04",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter11/06_import_translation/my_hostel/i18n/nl_BE.po",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization__export-translation.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/internationalization__import-translation.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_597",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_602",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_606"
+      ],
+      "decision": "Separate extracting source terms, maintaining catalogs, loading languages and validating output; preserve keys, references, placeholders and human translation intent.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/howtos/translations.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/howtos/translations.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "reference-added",
+      "project_targets": [
+        "src/odoo_boost/skills/translation_edits/references/extraction-lifecycle.md"
+      ],
+      "benefit": "Extends bounded translation edits with an on-demand extraction/loading procedure.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-05",
+      "origin": "book prose",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_597",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_602",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E.epub!OEBPS/Text/Chapter_11.xhtml#h1_606"
+      ],
+      "decision": "Verify target-series CLI before using translation import/export commands; choose overwrite deliberately and preserve POT/PO distinctions.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/cli.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/cli.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "reference-added",
+      "project_targets": [
+        "src/odoo_boost/skills/translation_edits/references/extraction-lifecycle.md"
+      ],
+      "benefit": "Resolves inconsistent old/new command explanations in the v19 book.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-06",
+      "origin": "official-only",
+      "input_locators": [],
+      "decision": "Inspect actual builder-edited views and frontend module translation exposure; recheck translations after master-language edits.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/howtos/website_themes/translations.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/howtos/website_themes/translations.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "reference-added",
+      "project_targets": [
+        "src/odoo_boost/skills/translation_edits/references/extraction-lifecycle.md"
+      ],
+      "benefit": "Adds rendered-view acceptance criteria missing from a catalog-only review.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-07",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_publisher_report.py",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_publisher_report.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo-15-Development-Essentials-Examples/ch12/library_app/reports/library_book_report.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo-19-Development-Cookbook-6E/Odoo-19-Development-Cookbook-6E-Examples/Chapter12/10_qweb_report/my_hostel/reports/hostel_room_detail_report_template.xml",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo 15 Development Essentials.epub!OEBPS/B16119_12_Final_PD_ePub.xhtml#_idParaDest-369",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/Odoo 15 Development Essentials/Odoo 15 Development Essentials.epub!OEBPS/B16119_12_Final_PD_ePub.xhtml#_idParaDest-371"
+      ],
+      "decision": "Match custom report values with the template and distinguish template language from translated record context. Verify field presentation versus raw selection keys.",
+      "official_evidence": [
+        {
+          "series": "19.0",
+          "url": "https://github.com/odoo/documentation/blob/de94dcddba224a1ece042792fa444e7ba0c31fdf/content/developer/reference/backend/reports.rst",
+          "revision": "de94dcddba224a1ece042792fa444e7ba0c31fdf",
+          "locator": "developer/reference/backend/reports.rst",
+          "result": "verified"
+        },
+        {
+          "series": "15.0",
+          "url": "https://github.com/odoo/documentation/blob/f6b84ed59624ba8f0db2b1d0f7097e435550bb7e/content/developer/reference/backend/reports.rst",
+          "revision": "f6b84ed59624ba8f0db2b1d0f7097e435550bb7e",
+          "locator": "developer/reference/backend/reports.rst",
+          "result": "verified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-web-review.md"
+      ],
+      "benefit": "Confirms existing report skill and records prose/code typo and language review scenarios.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    },
+    {
+      "lesson_id": "SW-08",
+      "origin": "both",
+      "input_locators": [
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/website-development__snippets.txt",
+        "/home/mahfoud/dev/web/odoo/odoo-boost/references/odoo-books/cybrosys/development/website-development__dynamic-snippets.txt"
+      ],
+      "decision": "Validate the fidelity of saved embedded code against original HTML before copying; review malformed XML, escaped output, public data and currency policy separately.",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/developer/reference/frontend/qweb.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "developer/reference/frontend/qweb.rst",
+          "result": "qualified"
+        }
+      ],
+      "disposition": "note-only",
+      "project_targets": [
+        "docs/source-learning-web-review.md"
+      ],
+      "benefit": "Captures source-quality and publication counterexamples without prescribing unverified pricing APIs.",
+      "validation": "Named code/prose read and pinned official contracts checked; no Odoo/browser/report execution. 35 skill-loading tests passed. See report for per-claim qualifications."
+    }
+  ],
+  "report": "docs/source-learning-web-review.md",
+  "validation": {
+    "skill_tests": "35 passed",
+    "runtime": "not run"
+  }
+}

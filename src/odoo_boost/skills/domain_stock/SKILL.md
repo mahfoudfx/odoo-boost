@@ -74,6 +74,9 @@ of asserting that every validated movement immediately posts a journal entry.
 
 ## Verification
 
+For competing orders, packaging reservations, removal strategies or landed-cost
+changes, use the [reservation and valuation decision guide](references/reservation-and-valuation.md).
+
 Check sufficient and insufficient availability, partial movement and backorder,
 required tracking, return, unit conversion/rounding, and cross-company rejection.
 For adjustments, compare count, applied movement, on-hand result and audit trail.

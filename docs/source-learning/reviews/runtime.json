@@ -1,0 +1,53 @@
+{
+  "fully_read_files": [],
+  "partial_files": [],
+  "lessons": [
+    {
+      "lesson_id": "SRUN-01",
+      "origin": "official-only",
+      "input_locators": [],
+      "decision": "Child rules require explicit direct-query policy",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/developer/reference/backend/security.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "developer/reference/backend/security.rst",
+          "result": "runtime-verified"
+        }
+      ],
+      "disposition": "runtime-contract-test",
+      "project_targets": [
+        "tools/validate_source_contracts.py",
+        "docs/source-learning-runtime-review.md",
+        "docs/source-learning/runtime-validation.json"
+      ],
+      "benefit": "Runtime confirms that a parent ownership rule alone leaves independently exposed child models readable, and an explicit child rule constrains them.",
+      "validation": "2 independent Odoo18 tests passed on source df8a3fb0ccfc69fdc612b69e0a22ef1b1b37b779; exact argv and logs checksums retained. Original book addon/migration status remains not-run."
+    },
+    {
+      "lesson_id": "SRUN-02",
+      "origin": "official-only",
+      "input_locators": [],
+      "decision": "Custom report context and escaped rendering",
+      "official_evidence": [
+        {
+          "series": "18.0",
+          "url": "https://github.com/odoo/documentation/blob/ca129a822019682bd32552e4cbabba2520d1308e/content/developer/reference/backend/reports.rst",
+          "revision": "ca129a822019682bd32552e4cbabba2520d1308e",
+          "locator": "developer/reference/backend/reports.rst",
+          "result": "runtime-verified"
+        }
+      ],
+      "disposition": "runtime-contract-test",
+      "project_targets": [
+        "tools/validate_source_contracts.py",
+        "docs/source-learning-runtime-review.md",
+        "docs/source-learning/runtime-validation.json"
+      ],
+      "benefit": "Runtime confirms custom report values omit default document keys unless supplied and safely render ordinary t-out data.",
+      "validation": "2 independent Odoo18 tests passed on source df8a3fb0ccfc69fdc612b69e0a22ef1b1b37b779; exact argv and logs checksums retained. Original book addon/migration status remains not-run."
+    }
+  ],
+  "runtime_record": "docs/source-learning/runtime-validation.json"
+}
