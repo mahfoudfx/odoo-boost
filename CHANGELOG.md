@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-03
+
+### Added
+
+- Practical stock guidance for reservation timing, packaging, removal strategies
+  and valuation decisions, checked against official Odoo references.
+- Translation guidance for exporting, loading and checking language catalogs.
+- An internal source-learning workflow with contribution reports, coverage and
+  evidence tracking, recovery tools and isolated framework validation.
+
 ### Development workflow improvements
 
 - Add unified diagnostics, conservative XML/ACL/security checks, source/route
@@ -268,7 +278,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial implementation: connection layer, core MCP server, guidelines, and the
   install wizard.
 
-[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/mahfoudfx/odoo-boost/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/mahfoudfx/odoo-boost/compare/v0.11.0...v0.12.0
