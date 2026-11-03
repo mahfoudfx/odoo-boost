@@ -506,28 +506,60 @@ class MyController(http.Controller):
 
 ## Testing Translations
 
-### Test Translated Values
+Keep these checks in `tests/test_translation.py` and import it from
+`tests/__init__.py`. Business tests use the shared English environment described
+in the [testing guidelines](../../../guidelines/core/testing.md#deterministic-language-and-assertions).
+
+### Test Translated Field Values
+
+This example assumes `my.model.name` has `translate=True` and uses the common
+base from the [test patterns](odoo-test-patterns.md#common-test-setup). The distinct
+English fixture strings identify language slots; they test field storage and
+lookup. Catalog tests should instead check the expected localized text.
+
 ```python
-def test_translation(self):
-    """Test field translation works."""
-    # Create record with English name
-    record = self.env["my.model"].create(
-        {
-            "name": "English Name",
-        }
-    )
+# tests/test_translation.py
+from odoo.tests import tagged
+from .common import TestMyModuleCommon
 
-    # Set French translation
-    record.with_context(lang="fr_FR").write(
-        {
-            "name": "Nom Français",
-        }
-    )
 
-    # Verify translations
-    self.assertEqual(record.name, "English Name")
-    self.assertEqual(record.with_context(lang="fr_FR").name, "Nom Français")
+@tagged("post_install", "-at_install")
+class TestMyModelTranslation(TestMyModuleCommon):
+    expected_names = {
+        "fr_FR": "French test value",
+        "de_DE": "German test value",
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        for lang in cls.expected_names:
+            if not cls.env["res.lang"]._activate_lang(lang):
+                raise AssertionError(f"Missing language fixture: {lang}")
+
+    def test_translated_name(self):
+        for lang, expected in self.expected_names.items():
+            with self.subTest(lang=lang):
+                # A new record isolates each language's writes.
+                record = self.env["my.model"].with_context(lang="en_US").create(
+                    {"name": "Source test value"}
+                )
+                translated = record.with_context(lang=lang)
+                translated.write({"name": expected})
+
+                self.assertEqual(translated.name, expected)
+                self.assertEqual(record.name, "Source test value")
 ```
+
+In the checked [Odoo 15](https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/models/res_lang.py)
+and [Odoo 19](https://github.com/odoo/odoo/blob/19.0/odoo/addons/base/models/res_lang.py)
+sources, `_activate_lang` activates an existing language without loading its
+catalogs. Verify this helper against the target version. For module messages,
+load the module's translation catalog explicitly during test setup through that
+version's translation loader, then check each language in its own `subTest`.
+Run these tests without `--load-language`; required setup belongs to the test.
+Assert the expected localized value rather than merely checking that it is
+nonempty, which would also accept a fallback to the English source.
 
 ---
 

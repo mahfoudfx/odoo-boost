@@ -1,5 +1,7 @@
 # Contributing to Odoo Boost
 
+Use English for project documentation, code comments, docstrings, and source messages.
+
 ## Development Setup
 
 ```bash

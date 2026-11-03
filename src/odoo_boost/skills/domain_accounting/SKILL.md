@@ -12,14 +12,20 @@ Working with financial data in Odoo requires adhering to double-entry bookkeepin
 - `account.move`: The journal entry header (represents invoices, bills, manual journal entries).
   - `move_type`: `'entry'`, `'out_invoice'`, `'out_refund'`, `'in_invoice'`, `'in_refund'`, `'out_receipt'`, `'in_receipt'`.
 - `account.move.line`: Journal items belonging to a move (`move_id`).
-  - Strict invariant: For any posted entry (`state == 'posted'`), `sum(debit) == sum(credit)`.
+  - Posted entries must balance in company currency using its rounding precision;
+    binary float equality is not the validation rule.
 - `account.journal`: The journal container (`type`: `'sale'`, `'purchase'`, `'cash'`, `'bank'`, `'general'`).
 
 ## 1. Creating Programmatic Journal Entries
-Always use `Command` operations and let the ORM compute balances and currency rates where possible:
+For Python-side relation values in the audited 15/17/18/19/20 series, prefer
+`Command` helpers. RPC payloads use the serialized command protocol. Let the
+standard accounting workflow compute balances and rates where possible. The
+example is structural: validate inputs and permissions before exposing its public
+method to callers, and verify configuration in the target database:
 
 ```python
-from odoo import Command, models
+from odoo import fields, models
+from odoo.fields import Command
 
 
 class MyModel(models.Model):
@@ -74,7 +80,6 @@ invoice = self.env["account.move"].create(
                     "product_id": product.id,
                     "quantity": 2.0,
                     "price_unit": 100.0,
-                    "tax_ids": [Command.set(product.taxes_id.ids)],
                 }
             ),
         ],
@@ -83,10 +88,58 @@ invoice = self.env["account.move"].create(
 ```
 
 ## 3. Best Practices & Invariants
-- **Never modify posted lines**: An entry with `state == 'posted'` should not have amounts directly written; call `button_draft()` first if permitted, or create a reversal entry (`_reverse_moves()`).
-- **Rounding & Monetary Fields**: Always specify `currency_field` on `fields.Monetary`:
+- **Correct validated invoices through credit/debit notes**: Follow the standard
+  reversal/correction workflow and the localization's lock and audit rules. A reset
+  to draft is not a universal repair procedure. Inspect reversal method signatures
+  in the target version before calling private APIs.
+- **Rounding & Monetary Fields**: Associate each monetary amount with the correct
+  currency; an explicit `currency_field` makes this association clear. It is not
+  universally required when the standard `currency_id` field is present:
   ```python
   amount = fields.Monetary(currency_field="currency_id")
   currency_id = fields.Many2one("res.currency", default=lambda self: self.env.company.currency_id)
   ```
-- **Fiscal Position Translation**: Apply partner fiscal positions to map accounts and taxes automatically (`partner.property_account_position_id.map_tax(taxes)`).
+- **Fiscal positions**: Resolve the effective fiscal position through the target
+  invoice workflow, including company and delivery context. Map both taxes and
+  accounts; do not assume copying product taxes applies fiscal-position rules.
+
+
+## Workflow Verification
+
+The examples above illustrate creation inputs; they are not complete accounting
+configuration or authorization procedures. Confirm company, journal, accounts,
+localization, currencies, taxes and effective fiscal position before creating an
+entry. Prefer the existing invoicing flow over rebuilding computed journal lines.
+
+Keep draft, posted, payment-registered, and reconciled states distinct. A credit
+note does not alone prove cash was refunded or returned goods were received.
+Verify residual amounts, partial payments, exchange differences, rounding, lock
+dates, and reconciliation through the matching standard workflows. Test as the
+intended accounting user in the intended company.
+
+## Verified version boundaries
+
+Credit/debit-note correction and the distinction among posting, payment and
+reconciliation were checked in official 15/17/18/19/20 documentation. Exact
+payment-state transitions depend on journal/outstanding-account configuration;
+registering a payment does not universally require the same subsequent step.
+
+Fiscal-position setup differs: 15/17/18 show tax mapping on fiscal-position
+records; 19/20 configure tax mapping on the taxes themselves, still using fiscal
+positions. Account mapping remains part of the workflow. Use the matching
+configuration and invoice pipeline rather than copying an older `map_tax` call.
+
+The balance/rounding invariant is supported by each branch's `account_move.py`;
+private balancing, reversal and tax methods are not stable cross-version APIs.
+A generic example is not evidence that every localization or configured journal
+will accept its values.
+
+Official references (select the matching branch for 15/17/18/19/20):
+- [Credit notes and refunds](https://github.com/odoo/documentation/blob/18.0/content/applications/finance/accounting/customer_invoices/credit_notes.rst)
+- [Fiscal positions](https://github.com/odoo/documentation/blob/18.0/content/applications/finance/accounting/taxes/fiscal_positions.rst)
+- [Payments](https://github.com/odoo/documentation/blob/18.0/content/applications/finance/accounting/payments.rst)
+- [Fiscal positions, 19](https://github.com/odoo/documentation/blob/19.0/content/applications/finance/accounting/taxes/fiscal_positions.rst)
+- [Move model, 19](https://github.com/odoo/odoo/blob/19.0/addons/account/models/account_move.py)
+
+Choose the matching version's workflow and localization before applying these
+principles; book examples are not authoritative API contracts.

@@ -16,6 +16,13 @@ For a smart button's text, icon, or position, edit the existing button in place.
 
 The creation examples and checklist below apply when creating a new view, action, or menu. They are not requirements for a small edit to an existing view.
 
+## Version gate for creation examples
+
+The examples below target 18/19/20 list and modifier syntax. For 17, use `tree`
+in list roots and action modes while retaining inline modifiers. For 15, use
+`tree` and that version's `attrs`/`states` dynamic modifier patterns. Choose
+chatter markup from the actual inherited view and model mixins.
+
 ## Steps
 
 ### 1. Form View
@@ -54,10 +61,8 @@ The creation examples and checklist below apply when creating a new view, action
                     </page>
                 </notebook>
             </sheet>
-            <div class="oe_chatter">
-                <field name="message_follower_ids"/>
-                <field name="message_ids"/>
-            </div>
+            <!-- Requires mail.thread on this example model. -->
+            <chatter/>
         </form>
     </field>
 </record>

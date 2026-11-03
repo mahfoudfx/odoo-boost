@@ -36,6 +36,7 @@ VERSION_REGISTRY: dict[str, VersionSpec] = {
             "display_name": "name_get",
             "json_route_type": "json",
             "search_group_attributes": "expand/string supported",
+            "security_declarations": "ir.model.access + ir.rule",
         },
         # Legacy documentation has a different layout. Use its verified index
         # where a deep link has not been verified, rather than a modern URL.
@@ -87,17 +88,25 @@ VERSION_REGISTRY: dict[str, VersionSpec] = {
             "module": "/developer/tutorials/server_framework_101/01_architecture.html",
         },
     ),
-    "18.0": VersionSpec(parent="17.0", features={"list_view_tag": "list"}),
+    "18.0": VersionSpec(
+        parent="17.0",
+        features={"list_view_tag": "list", "cron_progress": "_notify_progress"},
+    ),
     "19.0": VersionSpec(
         parent="18.0",
-        features={"json_route_type": "jsonrpc", "search_group_attributes": "expand/string removed"},
+        features={
+            "json_route_type": "jsonrpc",
+            "search_group_attributes": "expand/string removed",
+            "domain_composition": "fields.Domain",
+            "cron_progress": "_commit_progress",
+        },
         doc_paths={"web_services": "/developer/reference/external_rpc_api.html"},
     ),
     "20.0": VersionSpec(
         parent="19.0",
         features={
-            "domain_composition": "fields.Domain",
             "route_auth": "bearer auth requires bearer_scope",
+            "security_declarations": "ir.access permissions/restrictions",
             "supported_python": "3.12-3.14",
             "minimum_postgresql": "16",
         },

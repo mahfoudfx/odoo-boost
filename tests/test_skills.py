@@ -307,6 +307,20 @@ class TestInstallSkills:
         for path in second:
             assert path.exists()
 
+    def test_computed_field_reference_resolves_after_installation(self, tmp_path):
+        import re
+
+        target = tmp_path / "skills"
+        install_skills(target)
+        skill = target / "domain-computed-fields" / "SKILL.md"
+        content = skill.read_text(encoding="utf-8")
+        references = re.findall(r"\.\./[^\s`)]+/computed-field-patterns\.md", content)
+        assert references, "Computed-field guidance must link to its detailed patterns"
+        for relative in references:
+            reference = (skill.parent / relative).resolve()
+            assert reference.is_relative_to(target.resolve())
+            assert reference.is_file(), f"Broken installed skill reference: {relative}"
+
     def test_content_matches_load(self, tmp_path):
         target = tmp_path / "skills"
         install_skills(target)

@@ -1,9 +1,13 @@
-"""MCP tool: list_access_rights – ir.model.access + ir.rule."""
+"""MCP tool: list_access_rights – version-aware access metadata."""
 
 from __future__ import annotations
 
+from typing import Any
+
+from odoo_boost.connection.base import OdooConnection
 from odoo_boost.mcp_server.context import get_connection
 from odoo_boost.mcp_server.tools._common import compact_text, json_response, resolve_full
+from odoo_boost.versions import detect_version, get_version_profile
 
 
 def _m2o_name(value: object) -> str:
@@ -12,16 +16,72 @@ def _m2o_name(value: object) -> str:
     return str(value or "")
 
 
+def _list_unified_access(
+    conn: OdooConnection, model_name: str, limit: int, offset: int, full: bool
+) -> str:
+    """Keep permission domains and distinguish global restrictions from grants."""
+    result: dict[str, Any] = {
+        "security_model": "ir.access",
+        "model_filter": model_name or "(all)",
+        "response_format": "full" if full else "compact",
+        "offset": offset,
+        "limit": limit,
+    }
+    for key, permission in (("access_rights", True), ("record_rules", False)):
+        domain: list[Any] = [("group_id", "!=" if permission else "=", False)]
+        if model_name:
+            domain.append(("model_id.model", "=", model_name))
+        result[f"{key}_total"] = conn.search_count("ir.access", domain)
+        records = conn.search_read(
+            "ir.access",
+            domain=domain,
+            fields=["name", "model_id", "group_id", "operation", "domain"],
+            limit=limit,
+            offset=offset,
+            order="model_id, name, id",
+        )
+        entries = []
+        for record in records:
+            operation = record.get("operation") or ""
+            record_domain = record.get("domain") or ""
+            entry = {
+                "name": record["name"],
+                "model": _m2o_name(record.get("model_id")),
+                "group": _m2o_name(record.get("group_id")),
+                "kind": "permission" if permission else "restriction",
+                "operation": operation,
+                "domain": compact_text(record_domain, 120)
+                if not full and not model_name
+                else record_domain,
+                # These flags describe applicability, not effective user access.
+                "read": "r" in operation,
+                "write": "u" in operation,
+                "create": "c" in operation,
+                "unlink": "d" in operation,
+            }
+            if not permission:
+                entry["global"] = True
+            entries.append(entry)
+        result[key] = entries
+        result[f"{key}_returned"] = len(entries)
+    return json_response(result)
+
+
 def list_access_rights(
     model_name: str = "",
     limit: int = 50,
     offset: int = 0,
     response_format: str | None = None,
 ) -> str:
-    """List access rights (ir.model.access) and record rules (ir.rule) for a model.
+    """List access metadata using the connected server's security schema.
 
-    Compact mode truncates record-rule domains when no model filter is given
-    (they can be long); a model-specific query keeps them complete.
+    Older servers return ACLs and record rules. Odoo 20 returns ir.access group
+    permissions in access_rights and global restrictions in record_rules, with
+    explicit kind, operation and domain fields. Flags describe the operations
+    each declaration applies to, not effective access for a particular user.
+
+    Compact mode truncates domains when no model filter is given; full mode or
+    a model-specific query keeps them complete. Limit/offset apply to each list.
 
     Args:
         model_name: Filter by model technical name (e.g. 'res.partner').
@@ -31,6 +91,13 @@ def list_access_rights(
     """
     full = resolve_full(response_format)
     conn = get_connection()
+    # Live metadata must not follow an obsolete configured project version.
+    series = detect_version(conn.get_version())
+    profile = get_version_profile(series)
+    if profile is None:
+        raise ValueError(f"Cannot select access metadata schema for Odoo {series or 'unknown'}")
+    if profile.features.get("security_declarations") == "ir.access permissions/restrictions":
+        return _list_unified_access(conn, model_name, limit, offset, full)
 
     # --- ACL (ir.model.access) ---
     acl_domain: list = []

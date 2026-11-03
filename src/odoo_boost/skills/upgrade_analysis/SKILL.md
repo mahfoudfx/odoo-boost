@@ -16,9 +16,11 @@ This skill guides migration analysis and refactoring across Odoo versions from v
 | Dynamic attributes | `attrs` / `states` | Inline expressions | Inline expressions | Inline expressions | Inline expressions |
 | Search view `<group>` | `expand` / `string` | Supported | Supported | Removed | Removed |
 | Relational commands | Tuples; `Command` from v15 | `Command` | `Command` | `Command` | `Command` |
-| Dynamic domain composition | Verify target | Verify target | Verify target | Verify target | `fields.Domain` |
+| Dynamic domain composition | Verify target | Verify target | Verify target | `fields.Domain` | `fields.Domain` |
 | Python runtime | Check deployment | 3.10+ | 3.10+ | 3.10+ | 3.12–3.14 |
 | Web client framework | Legacy/Owl mix | Owl 2 | Inspect target source | Inspect target source | Inspect target source |
+| Access metadata | Separate ACL/rules | Separate ACL/rules | Separate ACL/rules | Separate ACL/rules | Unified `ir.access` |
+| Cron progress | Verify target | Verify target | `_notify_progress` | `_commit_progress` | `_commit_progress` |
 
 ## Migration Steps Checklist
 
@@ -48,7 +50,7 @@ This skill guides migration analysis and refactoring across Odoo versions from v
 ### 2. Python & ORM Modernization
 - **Use `Command` constants in Python on Odoo 15+**:
   ```python
-  from odoo import Command
+  from odoo.fields import Command
 
   # Replace [(0, 0, vals)] -> Command.create(vals)
   # Replace [(4, id)]        -> Command.link(id)
@@ -57,7 +59,9 @@ This skill guides migration analysis and refactoring across Odoo versions from v
   ```
 - **Audit `self.env.cr`**:
   - Replace `cr.commit()` or manual cursor management.
-  - In v19, use `self.env.flush_all()` prior to raw SQL reads if needed.
+  - Flush the relevant fields before SQL reads in any supported series where
+    pending ORM writes affect the query; use the target API and narrow the flush
+    where practical. SQL writes also need cache/dependency handling.
 
 ### 3. Manifest Upgrades
 - Update version prefix for the target series, for example `20.0.1.0.0`.
@@ -79,3 +83,21 @@ load order, security files, tests, and OCA metadata against the target branch.
 Use the repository's documented test command and database setup before any
 live install or upgrade; the operating rules require explicit authorization
 for database-touching commands.
+
+
+## Existing-data upgrades
+
+For field conversions, renamed records/external IDs, `noupdate` changes, or data
+upgrade scripts, read [data upgrade procedure](references/data-upgrades.md).
+Record the installed/target module versions, phase, selected scripts, conversion
+policy, and validation on representative existing rows. Clean-install success
+and syntax changes alone do not establish data-upgrade correctness.
+
+
+The systematic audit covers 15, 17, 18, 19 and 20. Matrix entries for 14/16
+retain prior guidance and are not a new certification for those versions. For
+20 access migration, translate group grants and global restrictions deliberately;
+old CSV columns and rule `perm_*` flags are not interchangeable with `ir.access`.
+For stock/UoM, fiscal positions and chatter, load the corresponding domain skill
+version table before porting. Changes to data semantics need regression checks
+beyond replacing API names.

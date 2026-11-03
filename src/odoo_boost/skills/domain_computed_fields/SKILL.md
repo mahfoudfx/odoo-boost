@@ -11,10 +11,10 @@ Computed fields calculate their value dynamically via a Python method. Correct d
 ## 1. Stored vs Non-Stored Compute Fields
 - **Non-stored (`store=False` default)**:
   - Calculated on-demand when accessed by the view or code.
-  - Cannot be searched or ordered in database queries unless a `search=` or `order=` method is defined.
+  - Can support domain searches through `search=`. A `search` method alone does not make the field SQL-sortable; there is no field `order=` callback. Odoo 20 source also supports SQL-backed computation (`compute_sql`), which requires a separate API/security review.
 - **Stored (`store=True`)**:
   - Saved in the PostgreSQL database table.
-  - Recomputed automatically only when one of the fields declared in `@api.depends(...)` changes.
+  - Recomputed through ORM dependency tracking; creation and explicit recomputation also matter. Declare every source field, including relational paths.
   - Can be indexed and filtered in standard ORM search queries.
 
 ## 2. Complete Assignment Invariant
@@ -45,28 +45,22 @@ class OrderLine(models.Model):
 ```
 
 ## 3. Inverse and Search Methods
-```python
-class ResPartner(models.Model):
-    _inherit = "res.partner"
 
-    full_address = fields.Char(
-        compute="_compute_full_address",
-        inverse="_inverse_full_address",
-        search="_search_full_address",
-    )
+An inverse updates source fields so the computed result matches the edited value.
+Define behavior for empty input, rounding and ambiguous inversions. A search method
+must return the domain equivalent to the requested operation; OR-ing searches on
+parts of a concatenated address does not implement exact or negative searches on
+the full address. Implement supported operators explicitly and verify equivalence.
+See the linked pattern reference for the decision procedure.
 
-    def _inverse_full_address(self):
-        """Allows writing to a computed field."""
-        for partner in self:
-            if partner.full_address:
-                parts = partner.full_address.split(",")
-                partner.street = parts[0].strip() if parts else False
-
-    def _search_full_address(self, operator, value):
-        """Allows searching against non-stored compute fields."""
-        return [
-            "|",
-            ("street", operator, value),
-            ("city", operator, value),
-        ]
-```
+## 4. Cache, Access, and Verification
+- For non-stored values that vary by user, company, or context, declare relevant
+  `@api.depends_context` keys as supported by the target version.
+- Empty `@api.depends()` does not provide a clock or external-event trigger.
+  Decide how time-sensitive values refresh and test that boundary explicitly.
+- Check `compute_sudo` and related-field access against the intended reader.
+- Keep separate inverse methods when fields must not share inverse protection.
+- Verify multi-record computation, empty relations, source-field edits, inverse
+  round trips, and search-domain equivalence, including negative operators.
+- For worked patterns and source links, read
+  `../pattern-library/references/computed-field-patterns.md`.

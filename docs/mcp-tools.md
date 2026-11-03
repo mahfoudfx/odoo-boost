@@ -21,7 +21,7 @@ check the individual tool signature for full-output support.
 | `execute_method` | capped by `max_response_chars` | uncapped result |
 | `get_config` | values truncated (~200 chars), secrets redacted | full values (`reveal_secrets=true` for secrets) |
 | `read_log_entries` | messages truncated (~500 chars) | full messages |
-| `list_access_rights` | rule domains truncated when unfiltered | complete domains |
+| `list_access_rights` | domains truncated when unfiltered | complete domains |
 | `list_workflows` | code preview only | full server-action code |
 | `get_module_info` | models capped (paginated) | all models |
 | `search_records` | values verbatim (data fidelity) | — (opt-in `compact=true` to strip/truncate) |
@@ -409,14 +409,24 @@ List `website.page` and `website.rewrite` ORM records. This does not enumerate P
 
 ## 15. list_access_rights
 
-List access rights (`ir.model.access`) and record rules (`ir.rule`) for a model.
+List access metadata for a model using the connected server's detected version.
+Odoo 15–19 use `ir.model.access` and `ir.rule`. Odoo 20 uses `ir.access`:
+`access_rights` contains group permissions and `record_rules` contains global
+restrictions. Both lists retain their totals, returned counts, and independent
+pagination. Odoo 20 adds `security_model="ir.access"` and includes each entry's
+`kind`, raw `operation`, and `domain`; permission domains are preserved too.
+CRUD flags describe applicability, not effective access for a particular user.
+
+The live server version takes precedence over project configuration. Unknown
+versions or metadata errors are reported without guessing or falling back to
+removed models.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `model_name` | str | no | `""` | Filter by model name. Empty for all |
 | `limit` | int | no | `50` | Max entries per type |
 | `offset` | int | no | `0` | Entries to skip per type |
-| `response_format` | str | no | `"compact"` | Unfiltered rule domains are truncated in compact mode |
+| `response_format` | str | no | `"compact"` | Unfiltered domains are truncated; full or model-filtered queries preserve them |
 
 ---
 

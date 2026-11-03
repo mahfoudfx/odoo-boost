@@ -4,65 +4,57 @@ description: Implement reliable, batch-safe recurring background jobs with ir.cr
 globs: ["models/**/*.py", "data/**/*.xml"]
 ---
 
-# Crons & Scheduled Actions (`ir.cron`)
+# Crons and Scheduled Actions
 
-Scheduled actions run recurring background operations in Odoo, such as email dispatch,
-synchronizations, invoice generation, or maintenance jobs. This skill covers `ir.cron`;
-use **Automated Actions** for `base.automation` and server actions tied to record events.
+Use this skill for `ir.cron`; event-based `base.automation` is a separate mechanism.
 
-## 1. Defining the Cron in Data XML
-Define the XML record in `data/ir_cron_data.xml` with `noupdate="1"` so administrators can customize the schedule without module upgrades resetting it:
+## Define the workload
 
-```xml
-<odoo noupdate="1">
-    <record id="ir_cron_sync_external_orders" model="ir.cron">
-        <field name="name">Sync External Orders</field>
-        <field name="model_id" ref="model_sale_order"/>
-        <field name="state">code</field>
-        <field name="code">model._cron_sync_external_orders()</field>
-        <field name="interval_number">1</field>
-        <field name="interval_type">hours</field>
-        <field name="numbercall">-1</field>
-        <field name="active" eval="True"/>
-    </record>
-</odoo>
-```
+1. Identify the eligible domain, configured cron user, company scope, side effects,
+   retry policy, and maximum batch size. Cron context is not a browser session.
+2. Declare only schedule fields available in the target series. Older recipes may
+   include `numbercall`; verify model fields before porting their XML. Use stable
+   external IDs and choose `noupdate` deliberately to preserve administrator settings.
+3. Process a bounded batch under the configured user's permissions. Record success
+   so subsequent runs find remaining work. When processing changes the search domain,
+   re-query remaining records or use a stable cursor; increasing offsets can skip work.
 
-## 2. Model Method Implementation & Batch Safety
-Cron tasks often process large datasets. Methods must be batch-friendly and avoid memory exhaustion or long database lockups:
+## Select the scheduler API
 
-```python
-import logging
-from odoo import api, models
+- Odoo 15/17: use the documented scheduled-action interface for that series;
+  do not copy newer progress calls into it.
+- Odoo 18: the actions reference documents `_notify_progress(done=..., remaining=...)`.
+- Odoo 19/20: use the documented `_commit_progress` batching contract. Return when
+  its remaining-time result reaches zero; let the scheduler manage repeated batches.
 
-_logger = logging.getLogger(__name__)
+The progress method in 19/20 has commit semantics. Keep it outside a per-record
+savepoint and use it only in the intended scheduler context. Ordinary model methods
+leave transaction ownership to the framework; generic `cr.commit()` loops are not
+an interchangeable batching API.
 
+## Handle failures and retries
 
-class SaleOrder(models.Model):
-    _inherit = "sale.order"
+For a recoverable record failure, isolate its work in a savepoint and catch the
+exception outside that savepoint, so failed SQL is rolled back before more queries.
+Choose which exception types are recoverable; let unexpected failures propagate.
+A logged exception alone does not repair an aborted transaction. Follow the target
+scheduler's documented rollback/progress contract when managing batches explicitly.
 
-    @api.model
-    def _cron_sync_external_orders(self, batch_size=100):
-        """Processes pending orders in chunks."""
-        pending_records = self.search(
-            [
-                ("state", "=", "draft"),
-                ("needs_sync", "=", True),
-            ],
-            limit=batch_size,
-        )
+External side effects require idempotency or deduplication: a database rollback
+cannot recall an email or remote API operation. Define a failure state/backoff so
+one bad first record cannot starve the remaining queue. Consider concurrent workers
+and re-check eligibility when acquiring work.
 
-        _logger.info("Starting order sync cron: %d orders to process", len(pending_records))
-        for order in pending_records:
-            try:
-                order._process_single_sync()
-            except Exception as exc:
-                _logger.exception("Failed to sync order %s: %s", order.name, exc)
-                # Continue processing other records rather than failing entire cron
-                continue
-```
+## Verify completion
 
-## 3. Best Practices
-- **Never rely on UI context**: Cron jobs run as `base.user_root` (or the user specified in `user_id`) without browser session context. Never expect `self.env.user` to be a normal interactive user.
-- **Log Meaningfully**: Use Python's standard `logging` with module prefixes (`_logger.info`, `_logger.warning`).
-- **Use `limit`**: Never do an unconstrained `.search([])` inside a cron if the table grows continuously over time.
+Test more than one batch, an empty batch, a failure in the middle, and a retry.
+Confirm permissions/company scope, no skipped records, and no duplicated external
+side effects. Use the scheduler's supported trigger in a disposable test database;
+Odoo 19 documents `method_direct_trigger` in registry test mode.
+
+## Official references
+
+- [Odoo 18 scheduled actions](https://github.com/odoo/documentation/blob/18.0/content/developer/reference/backend/actions.rst)
+- [Odoo 19 batching](https://github.com/odoo/documentation/blob/19.0/content/developer/reference/backend/actions.rst)
+- [Odoo 20 batching](https://github.com/odoo/documentation/blob/20.0/content/developer/reference/backend/actions.rst)
+- [Transaction ownership and exception handling](https://github.com/odoo/documentation/blob/18.0/content/contributing/development/coding_guidelines.rst)

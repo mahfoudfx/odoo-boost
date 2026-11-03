@@ -23,10 +23,13 @@
   - Onchange methods should only be used to suggest defaults or dynamic warning banners in the UI.
 
 ### 3. Security & Access Rights
-- Every new persistent business model needs an intentional ACL entry in
-  `security/ir.model.access.csv`; evaluate transient and abstract models separately.
+- Every new persistent business model needs an intentional access policy. Select
+  the target version's access model and CSV filename from the
+  [module layout guide](module_structure.md); evaluate transient and abstract
+  models separately.
 - Never use `sudo()` to bypass security checks unless strictly required (e.g. public portal actions or low-level background tasks). Always restrict the scope of `sudo()`: `self.sudo().read(...)` instead of converting the entire recordset.
-- When multi-company rules are needed, define record rules with `['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]`.
+- For multi-company restrictions, choose shared or company-restricted record
+  domains from the `domain-multi-company` skill and use the target access model.
 
 ### 4. Manifest & File Layout
 - Manifest keys:
